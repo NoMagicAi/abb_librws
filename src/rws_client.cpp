@@ -478,6 +478,8 @@ RWSResult RWSClient::setSpeedRatio(unsigned int ratio)
 RWSResult RWSClient::loadModuleIntoTask(const std::string& task, const FileResource& resource, const bool replace)
 {
   std::string uri = generateRAPIDTasksPath(task) + "?" + Queries::ACTION_LOAD_MODULE;
+
+  // Path to file should be a direct path, i.e. without "/fileservice/"
   std::string content =
       Identifiers::MODULEPATH + "=" + resource.directory + "/" + resource.filename +
       "&replace=" + ((replace) ? "true" : "false");
