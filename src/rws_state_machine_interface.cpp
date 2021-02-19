@@ -733,7 +733,7 @@ void RWSStateMachineInterface::toggleIOSignal(const std::string& iosignal)
     for (int i = 0; i < max_number_of_attempts && !result; ++i)
     {
       setDigitalSignal(iosignal, false);
-      result = (getDigitalSignal(iosignal) == false);
+      result = !getDigitalSignal(iosignal);
     }
 
     if (result)
@@ -743,7 +743,7 @@ void RWSStateMachineInterface::toggleIOSignal(const std::string& iosignal)
       for (int i = 0; i < max_number_of_attempts && !result; ++i)
       {
         setDigitalSignal(iosignal, true);
-        result = (getDigitalSignal(iosignal) == true);
+        result = getDigitalSignal(iosignal);
       }
     }
   }

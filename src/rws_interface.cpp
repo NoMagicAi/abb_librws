@@ -994,7 +994,7 @@ bool RWSInterface::getDigitalSignal(std::string const& signal_name)
   if (value != SystemConstants::IOSignals::HIGH && value != SystemConstants::IOSignals::LOW)
     throw std::logic_error("Unexpected value \"" + value + "\" of a digital signal");
     
-  return getIOSignal(signal_name) == SystemConstants::IOSignals::HIGH;
+  return value == SystemConstants::IOSignals::HIGH;
 }
 
 
