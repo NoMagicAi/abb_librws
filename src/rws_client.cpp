@@ -76,6 +76,47 @@ RWSError::RWSError()
  * Primary methods
  */
 
+RWSClient::RWSClient(const std::string& ip_address)
+:
+RWSClient {ip_address,
+            SystemConstants::General::DEFAULT_PORT_NUMBER,
+            SystemConstants::General::DEFAULT_USERNAME,
+            SystemConstants::General::DEFAULT_PASSWORD}
+{}
+
+
+RWSClient::RWSClient(const std::string& ip_address, const std::string& username, const std::string& password)
+:
+RWSClient {ip_address,
+            SystemConstants::General::DEFAULT_PORT_NUMBER,
+            username,
+            password}
+{}
+
+
+RWSClient::RWSClient(const std::string& ip_address, const unsigned short port)
+:
+RWSClient {ip_address,
+            port,
+            SystemConstants::General::DEFAULT_USERNAME,
+            SystemConstants::General::DEFAULT_PASSWORD}
+{}
+
+
+RWSClient::RWSClient(const std::string& ip_address,
+          const unsigned short port,
+          const std::string& username,
+          const std::string& password)
+:
+POCOClient {ip_address,
+            port,
+            username,
+            password}
+{
+  // Make a request to the server to check connection and initiate authentification.
+  getRobotWareSystem();
+}
+
 
 RWSClient::~RWSClient()
 {

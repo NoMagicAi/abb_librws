@@ -137,13 +137,7 @@ public:
    * 
    * \throw \a std::exception if something goes wrong.
    */
-  RWSClient(const std::string& ip_address)
-  :
-  POCOClient(ip_address,
-             SystemConstants::General::DEFAULT_PORT_NUMBER,
-             SystemConstants::General::DEFAULT_USERNAME,
-             SystemConstants::General::DEFAULT_PASSWORD)
-  {}
+  RWSClient(const std::string& ip_address);
 
   /**
    * \brief A constructor.
@@ -154,13 +148,7 @@ public:
    * 
    * \throw \a std::exception if something goes wrong.
    */
-  RWSClient(const std::string& ip_address, const std::string& username, const std::string& password)
-  :
-  POCOClient(ip_address,
-             SystemConstants::General::DEFAULT_PORT_NUMBER,
-             username,
-             password)
-  {}
+  RWSClient(const std::string& ip_address, const std::string& username, const std::string& password);
 
   /**
    * \brief A constructor.
@@ -170,13 +158,7 @@ public:
    * 
    * \throw \a std::exception if something goes wrong.
    */
-  RWSClient(const std::string& ip_address, const unsigned short port)
-  :
-  POCOClient(ip_address,
-             port,
-             SystemConstants::General::DEFAULT_USERNAME,
-             SystemConstants::General::DEFAULT_PASSWORD)
-  {}
+  RWSClient(const std::string& ip_address, const unsigned short port);
 
   /**
    * \brief A constructor.
@@ -191,13 +173,7 @@ public:
   RWSClient(const std::string& ip_address,
             const unsigned short port,
             const std::string& username,
-            const std::string& password)
-  :
-  POCOClient(ip_address,
-             port,
-             username,
-             password)
-  {}
+            const std::string& password);
 
   /**
    * \brief Logs out the currently active RWS session.
