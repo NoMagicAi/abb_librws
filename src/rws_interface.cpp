@@ -1021,10 +1021,12 @@ IOSignalInfo RWSInterface::getIOSignals()
     std::string const type = xmlFindTextContent(node, {"class", "type"});
     
     if (!name.empty() && !value.empty())
+    {
       if (type == "DI" || type == "DO")
         signals[name] = digitalSignalToBool(value);
       else if (type == "AI" || type == "AO")
         signals[name] = std::stof(value);
+    }
   }
 
   return signals;
