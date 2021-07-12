@@ -40,7 +40,7 @@
 #include <abb_librws/rws_poco_result.h>
 
 #include <Poco/Mutex.h>
-#include <Poco/Net/HTTPClientSession.h>
+#include <Poco/Net/HTTPSClientSession.h>
 #include <Poco/Net/HTTPCredentials.h>
 #include <Poco/Net/HTTPResponse.h>
 #include <Poco/Net/WebSocket.h>
@@ -135,7 +135,7 @@ namespace rws
 
     /**
      * \brief Get HTTP receive timeout.
-     * 
+     *
      * \return HTTP receive timeout.
      */
     Poco::Timespan getHTTPTimeout() const noexcept;
@@ -147,7 +147,7 @@ namespace rws
      * \param protocol for the WebSocket protocol.
      *
      * \return Newly created client WebSocket.
-     * 
+     *
      * \throw \a std::runtime_error if something goes wrong
      */
     Poco::Net::WebSocket webSocketConnect(const std::string& uri, const std::string& protocol);
@@ -321,7 +321,7 @@ namespace rws
     /**
      * \brief A HTTP client session.
      */
-    Poco::Net::HTTPClientSession http_client_session_;
+    Poco::Net::HTTPSClientSession http_client_session_;
 
     /**
      * \brief HTTP credentials for the remote server's access authentication process.
