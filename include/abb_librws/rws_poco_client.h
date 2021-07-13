@@ -43,6 +43,7 @@
 #include <Poco/Net/HTTPSClientSession.h>
 #include <Poco/Net/HTTPCredentials.h>
 #include <Poco/Net/HTTPResponse.h>
+#include <Poco/Net/Context.h>
 #include <Poco/Net/WebSocket.h>
 
 #include <memory>
@@ -72,7 +73,8 @@ namespace rws
               const std::string& username,
               const std::string& password)
     :
-    http_client_session_(ip_address, port),
+    https_context_(new Poco::Net::Context(Poco::Net::Context::CLIENT_USE, "", "", "", Poco::Net::Context::VERIFY_NONE, 9, false, "ALL:!ADH:!LOW:!EXP:!MD5:@STRENGTH")),
+    http_client_session_(ip_address, port, https_context_),
     http_credentials_(username, password)
     {
       http_client_session_.setKeepAlive(true);
@@ -317,6 +319,11 @@ namespace rws
      * \brief A mutex for protecting the clients's HTTP resources.
      */
     Poco::Mutex http_mutex_;
+
+     /**
+     * \brief An SSL context information (eg. verification mode) for HTTPS client session.
+     */
+    Poco::Net::Context::Ptr https_context_;
 
     /**
      * \brief A HTTP client session.
