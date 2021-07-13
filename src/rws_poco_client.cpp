@@ -69,9 +69,9 @@ POCOResult POCOClient::httpPost(const std::string& uri, const std::string& conte
   return makeHTTPRequest(HTTPRequest::HTTP_POST, uri, content);
 }
 
-POCOResult POCOClient::httpPut(const std::string& uri, const std::string& content)
+POCOResult POCOClient::httpPut(const std::string& uri, const std::string& content, const std::string& contentType)
 {
-  return makeHTTPRequest(HTTPRequest::HTTP_PUT, uri, content);
+  return makeHTTPRequest(HTTPRequest::HTTP_PUT, uri, content, contentType);
 }
 
 POCOResult POCOClient::httpDelete(const std::string& uri)
@@ -81,7 +81,8 @@ POCOResult POCOClient::httpDelete(const std::string& uri)
 
 POCOResult POCOClient::makeHTTPRequest(const std::string& method,
                                                    const std::string& uri,
-                                                   const std::string& content)
+                                                   const std::string& content,
+                                                   const std::string& contentType)
 {
   // Lock the object's mutex. It is released when the method goes out of scope.
   ScopedLock<Mutex> lock(http_mutex_);
@@ -91,10 +92,14 @@ POCOResult POCOClient::makeHTTPRequest(const std::string& method,
   std::string response_content;
 
   HTTPRequest request(method, uri, HTTPRequest::HTTP_1_1);
+  request.add("accept", "application/xhtml+xml;v=2.0");
   request.setCookies(cookies_);
   request.setContentLength(content.length());
 
-  if (method == HTTPRequest::HTTP_POST || !content.empty())
+  if (!contentType.empty())
+  {
+    request.setContentType(contentType);
+  } else if (method == HTTPRequest::HTTP_POST || !content.empty())
   {
     request.setContentType("application/x-www-form-urlencoded");
   }
@@ -161,7 +166,7 @@ Poco::Net::WebSocket POCOClient::webSocketConnect(const std::string& uri, const 
   try
   {
     Poco::Net::WebSocket websocket {http_client_session_, request, response};
-    
+
     if (response.getStatus() != HTTPResponse::HTTP_SWITCHING_PROTOCOLS)
       BOOST_THROW_EXCEPTION(
         ProtocolError {"webSocketConnect() failed"}
@@ -176,7 +181,7 @@ Poco::Net::WebSocket POCOClient::webSocketConnect(const std::string& uri, const 
   {
     // Should we really reset the session if creating the WebSocket failed?
     http_client_session_.reset();
-    
+
     BOOST_THROW_EXCEPTION(
       CommunicationError {"webSocketConnect() failed"}
         << HttpStatusErrorInfo {response.getStatus()}
@@ -232,7 +237,7 @@ void POCOClient::sendAndReceive(HTTPRequest& request,
   {
     log_.pop_back();
   }
-  
+
   log_.push_front(log_entry);
 }
 

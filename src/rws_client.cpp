@@ -402,7 +402,7 @@ void RWSClient::unloadModuleFromTask(const std::string& task, const FileResource
 
 std::string RWSClient::getFile(const FileResource& resource)
 {
-  std::string uri = generateFilePath(resource);  
+  std::string uri = generateFilePath(resource);
   return httpGet(uri).content();
 }
 
@@ -411,7 +411,7 @@ void RWSClient::uploadFile(const FileResource& resource, const std::string& file
   std::string uri = generateFilePath(resource);
   std::string content = file_content;
 
-  httpPut(uri, content);
+  httpPut(uri, content, "text/plain;v=2.0");
 }
 
 void RWSClient::deleteFile(const FileResource& resource)
@@ -504,9 +504,9 @@ std::string RWSClient::generateRAPIDTasksPath(const std::string& task)
 POCOResult RWSClient::httpGet(const std::string& uri)
 {
   POCOResult const result = POCOClient::httpGet(uri);
-  
+
   if (result.httpStatus() != HTTPResponse::HTTP_OK)
-    BOOST_THROW_EXCEPTION(ProtocolError {"HTTP response status not accepted"} 
+    BOOST_THROW_EXCEPTION(ProtocolError {"HTTP response status not accepted"}
       << HttpMethodErrorInfo {"GET"}
       << UriErrorInfo {uri}
       << HttpStatusErrorInfo {result.httpStatus()}
@@ -521,9 +521,9 @@ POCOResult RWSClient::httpGet(const std::string& uri)
 POCOResult RWSClient::httpPost(const std::string& uri, const std::string& content)
 {
   POCOResult const result = POCOClient::httpPost(uri, content);
-  
+
   if (result.httpStatus() != HTTPResponse::HTTP_NO_CONTENT)
-    BOOST_THROW_EXCEPTION(ProtocolError {"HTTP response status not accepted"} 
+    BOOST_THROW_EXCEPTION(ProtocolError {"HTTP response status not accepted"}
       << HttpMethodErrorInfo {"POST"}
       << UriErrorInfo {uri}
       << HttpStatusErrorInfo {result.httpStatus()}
@@ -536,11 +536,11 @@ POCOResult RWSClient::httpPost(const std::string& uri, const std::string& conten
 }
 
 
-POCOResult RWSClient::httpPut(const std::string& uri, const std::string& content)
+POCOResult RWSClient::httpPut(const std::string& uri, const std::string& content, const std::string& contentType)
 {
-  POCOResult const result = POCOClient::httpPut(uri, content);
+  POCOResult const result = POCOClient::httpPut(uri, content, contentType);
   if (result.httpStatus() != HTTPResponse::HTTP_OK && result.httpStatus() != HTTPResponse::HTTP_CREATED)
-    BOOST_THROW_EXCEPTION(ProtocolError {"HTTP response status not accepted"} 
+    BOOST_THROW_EXCEPTION(ProtocolError {"HTTP response status not accepted"}
       << HttpMethodErrorInfo {"PUT"}
       << UriErrorInfo {uri}
       << HttpStatusErrorInfo {result.httpStatus()}
