@@ -108,6 +108,7 @@ POCOClient {ip_address,
 {
   // Make a request to the server to check connection and initiate authentification.
   getRobotWareSystem();
+  requestMastership();  // TODO(mwojcik): should be moved somewhere else?
 }
 
 
@@ -124,6 +125,12 @@ RWSClient::~RWSClient()
   }
 }
 
+
+void RWSClient::requestMastership()
+{
+  std::string uri = Resources::RW_MASTERSHIP + "/request";
+  httpPost(uri, "", "application/x-www-form-urlencoded;v=2.0");
+}
 
 RWSResult RWSClient::getContollerService()
 {
@@ -381,23 +388,25 @@ void RWSClient::setSpeedRatio(unsigned int ratio)
 
 void RWSClient::loadModuleIntoTask(const std::string& task, const FileResource& resource, const bool replace)
 {
-  std::string uri = generateRAPIDTasksPath(task) + "?" + Queries::ACTION_LOAD_MODULE;
+  std::string uri = generateRAPIDTasksPath(task) + "/" + Queries::ACTION_LOAD_MODULE;
 
   // Path to file should be a direct path, i.e. without "/fileservice/"
   std::string content =
       Identifiers::MODULEPATH + "=" + resource.directory + "/" + resource.filename +
       "&replace=" + ((replace) ? "true" : "false");
+  std::string content_type = "application/x-www-form-urlencoded;v=2.0";
 
-  httpPost(uri, content);
+  httpPost(uri, content, content_type);
 }
 
 
 void RWSClient::unloadModuleFromTask(const std::string& task, const FileResource& resource)
 {
-  std::string uri = generateRAPIDTasksPath(task) + "?" + Queries::ACTION_UNLOAD_MODULE;
+  std::string uri = generateRAPIDTasksPath(task) + "/" + Queries::ACTION_UNLOAD_MODULE;
   std::string content = Identifiers::MODULE + "=" + resource.filename;
+  std::string content_type = "application/x-www-form-urlencoded;v=2.0";
 
-  httpPost(uri, content);
+  httpPost(uri, content, content_type);
 }
 
 std::string RWSClient::getFile(const FileResource& resource)
@@ -410,8 +419,9 @@ void RWSClient::uploadFile(const FileResource& resource, const std::string& file
 {
   std::string uri = generateFilePath(resource);
   std::string content = file_content;
+  std::string content_type = "text/plain;v=2.0";
 
-  httpPut(uri, content, "text/plain;v=2.0");
+  httpPut(uri, content, content_type);
 }
 
 void RWSClient::deleteFile(const FileResource& resource)
@@ -518,11 +528,11 @@ POCOResult RWSClient::httpGet(const std::string& uri)
 }
 
 
-POCOResult RWSClient::httpPost(const std::string& uri, const std::string& content)
+POCOResult RWSClient::httpPost(const std::string& uri, const std::string& content, const std::string& content_type)
 {
-  POCOResult const result = POCOClient::httpPost(uri, content);
+  POCOResult const result = POCOClient::httpPost(uri, content, content_type);
 
-  if (result.httpStatus() != HTTPResponse::HTTP_NO_CONTENT)
+  if (result.httpStatus() != HTTPResponse::HTTP_NO_CONTENT && result.httpStatus() != HTTPResponse::HTTP_OK)
     BOOST_THROW_EXCEPTION(ProtocolError {"HTTP response status not accepted"}
       << HttpMethodErrorInfo {"POST"}
       << UriErrorInfo {uri}
@@ -536,9 +546,9 @@ POCOResult RWSClient::httpPost(const std::string& uri, const std::string& conten
 }
 
 
-POCOResult RWSClient::httpPut(const std::string& uri, const std::string& content, const std::string& contentType)
+POCOResult RWSClient::httpPut(const std::string& uri, const std::string& content, const std::string& content_type)
 {
-  POCOResult const result = POCOClient::httpPut(uri, content, contentType);
+  POCOResult const result = POCOClient::httpPut(uri, content, content_type);
   if (result.httpStatus() != HTTPResponse::HTTP_OK && result.httpStatus() != HTTPResponse::HTTP_CREATED)
     BOOST_THROW_EXCEPTION(ProtocolError {"HTTP response status not accepted"}
       << HttpMethodErrorInfo {"PUT"}

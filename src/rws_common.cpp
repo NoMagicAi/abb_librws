@@ -324,7 +324,7 @@ const std::string Identifiers::TYPE                           = "type";
 const std::string Identifiers::VALUE                          = "value";
 const std::string Identifiers::CLASS                          = "class";
 const std::string Identifiers::OPTION                         = "option";
-const std::string Queries::ACTION_LOAD_MODULE                 = "action=loadmod";
+const std::string Queries::ACTION_LOAD_MODULE                 = "loadmod";
 const std::string Queries::ACTION_RELEASE                     = "action=release";
 const std::string Queries::ACTION_REQUEST                     = "action=request";
 const std::string Queries::ACTION_RESETPP                     = "action=resetpp";
@@ -333,7 +333,7 @@ const std::string Queries::ACTION_SETCTRLSTATE                = "action=setctrls
 const std::string Queries::ACTION_SET_LOCALE                  = "action=set-locale";
 const std::string Queries::ACTION_START                       = "action=start";
 const std::string Queries::ACTION_STOP                        = "action=stop";
-const std::string Queries::ACTION_UNLOAD_MODULE               = "action=unloadmod";
+const std::string Queries::ACTION_UNLOAD_MODULE               = "unloadmod";
 const std::string Queries::TASK                               = "task=";
 const std::string Services::CTRL                              = "/ctrl";
 const std::string Services::FILESERVICE                       = "/fileservice";

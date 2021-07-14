@@ -136,6 +136,11 @@ public:
   ~RWSClient();
 
   /**
+   * TODO(mwojcik): documentation
+   */
+  void requestMastership();
+
+  /**
    * \brief Retrieves a list of controller resources (e.g. controller identity and clock information).
    *
    * \return RWSResult containing the result.
@@ -515,7 +520,7 @@ private:
    *
    * \return POCOResult containing the result.
    */
-  POCOResult httpPost(const std::string& uri, const std::string& content = "");
+  POCOResult httpPost(const std::string& uri, const std::string& content = "", const std::string& content_type = "");
 
   /**
    * \brief A method for sending a HTTP PUT request and checking response status.
@@ -525,7 +530,7 @@ private:
    *
    * \return POCOResult containing the result.
    */
-  POCOResult httpPut(const std::string& uri, const std::string& content = "", const std::string& contentType = "");
+  POCOResult httpPut(const std::string& uri, const std::string& content = "", const std::string& content_type = "");
 
   /**
    * \brief A method for sending a HTTP DELETE request and checking response status.

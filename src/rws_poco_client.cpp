@@ -64,14 +64,14 @@ POCOResult POCOClient::httpGet(const std::string& uri)
   return makeHTTPRequest(HTTPRequest::HTTP_GET, uri);
 }
 
-POCOResult POCOClient::httpPost(const std::string& uri, const std::string& content)
+POCOResult POCOClient::httpPost(const std::string& uri, const std::string& content, const std::string& content_type)
 {
-  return makeHTTPRequest(HTTPRequest::HTTP_POST, uri, content);
+  return makeHTTPRequest(HTTPRequest::HTTP_POST, uri, content, content_type);
 }
 
-POCOResult POCOClient::httpPut(const std::string& uri, const std::string& content, const std::string& contentType)
+POCOResult POCOClient::httpPut(const std::string& uri, const std::string& content, const std::string& content_type)
 {
-  return makeHTTPRequest(HTTPRequest::HTTP_PUT, uri, content, contentType);
+  return makeHTTPRequest(HTTPRequest::HTTP_PUT, uri, content, content_type);
 }
 
 POCOResult POCOClient::httpDelete(const std::string& uri)
@@ -82,7 +82,7 @@ POCOResult POCOClient::httpDelete(const std::string& uri)
 POCOResult POCOClient::makeHTTPRequest(const std::string& method,
                                                    const std::string& uri,
                                                    const std::string& content,
-                                                   const std::string& contentType)
+                                                   const std::string& content_type)
 {
   // Lock the object's mutex. It is released when the method goes out of scope.
   ScopedLock<Mutex> lock(http_mutex_);
@@ -96,9 +96,9 @@ POCOResult POCOClient::makeHTTPRequest(const std::string& method,
   request.setCookies(cookies_);
   request.setContentLength(content.length());
 
-  if (!contentType.empty())
+  if (!content_type.empty())
   {
-    request.setContentType(contentType);
+    request.setContentType(content_type);
   } else if (method == HTTPRequest::HTTP_POST || !content.empty())
   {
     request.setContentType("application/x-www-form-urlencoded");

@@ -103,7 +103,7 @@ namespace rws
      *
      * \return POCOResult containing the result.
      */
-    POCOResult httpPost(const std::string& uri, const std::string& content = "");
+    POCOResult httpPost(const std::string& uri, const std::string& content = "", const std::string& content_type = "");
 
     /**
      * \brief A method for sending a HTTP PUT request.
@@ -113,7 +113,7 @@ namespace rws
      *
      * \return POCOResult containing the result.
      */
-    POCOResult httpPut(const std::string& uri, const std::string& content = "", const std::string& contentType = "");
+    POCOResult httpPut(const std::string& uri, const std::string& content = "", const std::string& content_type = "");
 
     /**
      * \brief A method for sending a HTTP DELETE request.
@@ -275,7 +275,7 @@ namespace rws
     POCOResult makeHTTPRequest(const std::string& method,
                               const std::string& uri = "/",
                               const std::string& content = "",
-                              const std::string& contentType = "");
+                              const std::string& content_type = "");
 
     /**
      * \brief A method for sending and receiving HTTP messages.
