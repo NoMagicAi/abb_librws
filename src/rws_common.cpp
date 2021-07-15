@@ -327,11 +327,11 @@ const std::string Identifiers::OPTION                         = "option";
 const std::string Queries::ACTION_LOAD_MODULE                 = "loadmod";
 const std::string Queries::ACTION_RELEASE                     = "action=release";
 const std::string Queries::ACTION_REQUEST                     = "action=request";
-const std::string Queries::ACTION_RESETPP                     = "action=resetpp";
-const std::string Queries::ACTION_SET                         = "action=set";
-const std::string Queries::ACTION_SETCTRLSTATE                = "action=setctrlstate";
+const std::string Queries::ACTION_RESETPP                     = "resetpp";
+const std::string Queries::ACTION_SET                         = "set-value";
+const std::string Queries::ACTION_SETCTRLSTATE                = "action=setctrlstate";  // TODO remove
 const std::string Queries::ACTION_SET_LOCALE                  = "action=set-locale";
-const std::string Queries::ACTION_START                       = "action=start";
+const std::string Queries::ACTION_START                       = "start";
 const std::string Queries::ACTION_STOP                        = "action=stop";
 const std::string Queries::ACTION_UNLOAD_MODULE               = "unloadmod";
 const std::string Queries::TASK                               = "task=";
@@ -348,7 +348,7 @@ const std::string Resources::RW_CFG                           = Services::RW + "
 const std::string Resources::RW_IOSYSTEM_SIGNALS              = Services::RW + "/iosystem/signals";
 const std::string Resources::RW_MASTERSHIP                    = Services::RW + "/mastership";
 const std::string Resources::RW_MOTIONSYSTEM_MECHUNITS        = Services::RW + "/motionsystem/mechunits";
-const std::string Resources::RW_PANEL_CTRLSTATE               = Services::RW + "/panel/ctrlstate";
+const std::string Resources::RW_PANEL_CTRLSTATE               = Services::RW + "/panel/ctrl-state";
 const std::string Resources::RW_PANEL_OPMODE                  = Services::RW + "/panel/opmode";
 const std::string Resources::RW_RAPID_EXECUTION               = Services::RW + "/rapid/execution";
 const std::string Resources::RW_RAPID_MODULES                 = Services::RW + "/rapid/modules";

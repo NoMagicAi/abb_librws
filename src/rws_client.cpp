@@ -307,10 +307,11 @@ void RWSClient::setIOSignal(const std::string& iosignal, const std::string& valu
 {
   try
   {
-    std::string uri = generateIOSignalPath(iosignal) + "?" + Queries::ACTION_SET;
+    std::string uri = generateIOSignalPath(iosignal) + "/" + Queries::ACTION_SET;
     std::string content = Identifiers::LVALUE + "=" + value;
+    std::string content_type = "application/x-www-form-urlencoded;v=2.0";
 
-    httpPost(uri, content);
+    httpPost(uri, content, content_type);
   }
   catch (boost::exception& e)
   {
@@ -321,10 +322,11 @@ void RWSClient::setIOSignal(const std::string& iosignal, const std::string& valu
 
 void RWSClient::setRAPIDSymbolData(const RAPIDResource& resource, const std::string& data)
 {
-  std::string uri = generateRAPIDDataPath(resource) + "?" + Queries::ACTION_SET;
+  std::string uri = generateRAPIDDataPath(resource) + "/data";
   std::string content = Identifiers::VALUE + "=" + data;
+  std::string content_type = "application/x-www-form-urlencoded;v=2.0";
 
-  httpPost(uri, content);
+  httpPost(uri, content, content_type);
 }
 
 void RWSClient::setRAPIDSymbolData(const RAPIDResource& resource, const RAPIDSymbolDataAbstract& data)
@@ -334,10 +336,11 @@ void RWSClient::setRAPIDSymbolData(const RAPIDResource& resource, const RAPIDSym
 
 void RWSClient::startRAPIDExecution()
 {
-  std::string uri = Resources::RW_RAPID_EXECUTION + "?" + Queries::ACTION_START;
+  std::string uri = Resources::RW_RAPID_EXECUTION + "/" + Queries::ACTION_START;
   std::string content = "regain=continue&execmode=continue&cycle=forever&condition=none&stopatbp=disabled&alltaskbytsp=false";
+  std::string content_type = "application/x-www-form-urlencoded;v=2.0";
 
-  httpPost(uri, content);
+  httpPost(uri, content, content_type);
 }
 
 void RWSClient::stopRAPIDExecution()
@@ -350,25 +353,28 @@ void RWSClient::stopRAPIDExecution()
 
 void RWSClient::resetRAPIDProgramPointer()
 {
-  std::string uri = Resources::RW_RAPID_EXECUTION + "?" + Queries::ACTION_RESETPP;
+  std::string uri = Resources::RW_RAPID_EXECUTION + "/" + Queries::ACTION_RESETPP;
+  std::string content_type = "application/x-www-form-urlencoded;v=2.0";
 
-  httpPost(uri);
+  httpPost(uri, "", content_type);
 }
 
 void RWSClient::setMotorsOn()
 {
-  std::string uri = Resources::RW_PANEL_CTRLSTATE + "?" + Queries::ACTION_SETCTRLSTATE;
+  std::string uri = Resources::RW_PANEL_CTRLSTATE;
   std::string content = "ctrl-state=motoron";
+  std::string content_type = "application/x-www-form-urlencoded;v=2.0";
 
-  httpPost(uri, content);
+  httpPost(uri, content, content_type);
 }
 
 void RWSClient::setMotorsOff()
 {
-  std::string uri = Resources::RW_PANEL_CTRLSTATE + "?" + Queries::ACTION_SETCTRLSTATE;
+  std::string uri = Resources::RW_PANEL_CTRLSTATE;
   std::string content = "ctrl-state=motoroff";
+  std::string content_type = "application/x-www-form-urlencoded;v=2.0";
 
-  httpPost(uri, content);
+  httpPost(uri, content, content_type);
 }
 
 void RWSClient::setSpeedRatio(unsigned int ratio)
