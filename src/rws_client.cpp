@@ -108,7 +108,6 @@ POCOClient {ip_address,
 {
   // Make a request to the server to check connection and initiate authentification.
   getRobotWareSystem();
-  requestMastership();  // TODO(mwojcik): should be moved somewhere else?
 }
 
 
@@ -129,6 +128,12 @@ RWSClient::~RWSClient()
 void RWSClient::requestMastership()
 {
   std::string uri = Resources::RW_MASTERSHIP + "/request";
+  httpPost(uri, "", "application/x-www-form-urlencoded;v=2.0");
+}
+
+void RWSClient::releaseMastership()
+{
+  std::string uri = Resources::RW_MASTERSHIP + "/release";
   httpPost(uri, "", "application/x-www-form-urlencoded;v=2.0");
 }
 

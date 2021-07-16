@@ -141,6 +141,11 @@ public:
   void requestMastership();
 
   /**
+   * TODO(mwojcik): documentation
+   */
+  void releaseMastership();
+
+  /**
    * \brief Retrieves a list of controller resources (e.g. controller identity and clock information).
    *
    * \return RWSResult containing the result.

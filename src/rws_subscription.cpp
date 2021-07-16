@@ -72,9 +72,10 @@ namespace abb :: rws
                             << i << "-p=" << static_cast<int>(temp.at(i).priority)
                             << (i < temp.size() - 1 ? "&" : "");
     }
+    std::string content_type = "application/x-www-form-urlencoded;v=2.0";
 
     // Make a subscription request.
-    POCOResult const poco_result = client_.httpPost(Services::SUBSCRIPTION, subscription_content.str());
+    POCOResult const poco_result = client_.httpPost(Services::SUBSCRIPTION, subscription_content.str(), content_type);
 
     if (poco_result.httpStatus() != HTTPResponse::HTTP_CREATED)
       BOOST_THROW_EXCEPTION(
@@ -117,7 +118,7 @@ namespace abb :: rws
 
   SubscriptionReceiver SubscriptionGroup::receive() const
   {
-    return SubscriptionReceiver {client_.webSocketConnect("/poll/" + subscription_group_id_, "robapi2_subscription")};
+    return SubscriptionReceiver {client_.webSocketConnect("/poll/" + subscription_group_id_, "rws_subscription")};
   }
 
 

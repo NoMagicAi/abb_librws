@@ -42,6 +42,7 @@
 
 #include <abb_librws/rws_poco_client.h>
 #include <abb_librws/rws_error.h>
+#include <iostream>
 
 
 using namespace Poco;
@@ -160,12 +161,15 @@ Poco::Net::WebSocket POCOClient::webSocketConnect(const std::string& uri, const 
   HTTPResponse response;
   HTTPRequest request(HTTPRequest::HTTP_GET, uri, HTTPRequest::HTTP_1_1);
   request.set("Sec-WebSocket-Protocol", protocol);
+  request.add("accept", "application/xhtml+xml;v=2.0");
   request.setCookies(cookies_);
 
   // Attempt the communication.
   try
   {
+    std::cout << "Creating websocket!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
     Poco::Net::WebSocket websocket {http_client_session_, request, response};
+    std::cout << "Created websocket!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
 
     if (response.getStatus() != HTTPResponse::HTTP_SWITCHING_PROTOCOLS)
       BOOST_THROW_EXCEPTION(
