@@ -327,7 +327,7 @@ void RWSClient::setIOSignal(const std::string& iosignal, const std::string& valu
 
 void RWSClient::setRAPIDSymbolData(const RAPIDResource& resource, const std::string& data)
 {
-  std::string uri = generateRAPIDDataPath(resource) + "/data";
+  std::string uri = generateRAPIDDataPath(resource);
   std::string content = Identifiers::VALUE + "=" + data;
   std::string content_type = "application/x-www-form-urlencoded;v=2.0";
 
@@ -503,12 +503,12 @@ std::string RWSClient::generateMechanicalUnitPath(const std::string& mechunit)
 
 std::string RWSClient::generateRAPIDDataPath(const RAPIDResource& resource)
 {
-  return Resources::RW_RAPID_SYMBOL_DATA_RAPID + "/" + resource.task + "/" + resource.module + "/" + resource.name;
+  return Resources::RW_RAPID_SYMBOL_DATA_RAPID + "/" + resource.task + "/" + resource.module + "/" + resource.name + "/data";
 }
 
 std::string RWSClient::generateRAPIDPropertiesPath(const RAPIDResource& resource)
 {
-  return Resources::RW_RAPID_SYMBOL_PROPERTIES_RAPID + "/" + resource.task + "/" + resource.module + "/"+ resource.name;
+  return Resources::RW_RAPID_SYMBOL_PROPERTIES_RAPID + "/" + resource.task + "/" + resource.module + "/"+ resource.name + "/properties";
 }
 
 std::string RWSClient::generateFilePath(const FileResource& resource)
@@ -526,7 +526,7 @@ POCOResult RWSClient::httpGet(const std::string& uri)
 {
   POCOResult const result = POCOClient::httpGet(uri);
 
-  if (result.httpStatus() != HTTPResponse::HTTP_OK)
+  if (result.httpStatus() != HTTPResponse::HTTP_NO_CONTENT && result.httpStatus() != HTTPResponse::HTTP_OK)
     BOOST_THROW_EXCEPTION(ProtocolError {"HTTP response status not accepted"}
       << HttpMethodErrorInfo {"GET"}
       << UriErrorInfo {uri}
