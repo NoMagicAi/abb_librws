@@ -1,10 +1,10 @@
 #pragma once
 
 #include "rws_resource.h"
-#include "rws_poco_client.h"
 #include "rws_websocket.h"
 
 #include <Poco/DOM/DOMParser.h>
+#include <Poco/Net/WebSocket.h>
 
 #include <string>
 #include <iosfwd>
@@ -213,6 +213,9 @@ namespace abb :: rws
   };
 
 
+  class RWSClient;
+
+
   /**
    * \brief Manages an RWS subscription group.
    */
@@ -225,7 +228,7 @@ namespace abb :: rws
      * \param client a client to subscribe. The lifetime of the client must exceed the lifetime of the subscription group.
      * \param resources list of resources to subscribe
      */
-    SubscriptionGroup(POCOClient& client, SubscriptionResources const& resources);
+    SubscriptionGroup(RWSClient& client, SubscriptionResources const& resources);
 
 
     /**
@@ -259,7 +262,7 @@ namespace abb :: rws
 
 
   private:
-    POCOClient& client_;
+    RWSClient& client_;
 
     /**
      * \brief A subscription group id.

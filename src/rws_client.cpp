@@ -38,6 +38,7 @@
 #include <abb_librws/rws_error.h>
 
 #include <Poco/Net/HTTPSClientSession.h>
+#include <Poco/Net/HTTPRequest.h>
 
 #include <sstream>
 #include <stdexcept>
@@ -408,7 +409,7 @@ void RWSClient::unloadModuleFromTask(const std::string& task, const FileResource
 
 std::string RWSClient::getFile(const FileResource& resource)
 {
-  std::string uri = generateFilePath(resource);  
+  std::string uri = generateFilePath(resource);
   return httpGet(uri).content();
 }
 
@@ -510,9 +511,9 @@ std::string RWSClient::generateRAPIDTasksPath(const std::string& task)
 POCOResult RWSClient::httpGet(const std::string& uri)
 {
   POCOResult const result = POCOClient::httpGet(uri);
-  
+
   if (result.httpStatus() != HTTPResponse::HTTP_OK)
-    BOOST_THROW_EXCEPTION(ProtocolError {"HTTP response status not accepted"} 
+    BOOST_THROW_EXCEPTION(ProtocolError {"HTTP response status not accepted"}
       << HttpMethodErrorInfo {"GET"}
       << UriErrorInfo {uri}
       << HttpStatusErrorInfo {result.httpStatus()}
@@ -527,9 +528,9 @@ POCOResult RWSClient::httpGet(const std::string& uri)
 POCOResult RWSClient::httpPost(const std::string& uri, const std::string& content)
 {
   POCOResult const result = POCOClient::httpPost(uri, content);
-  
+
   if (result.httpStatus() != HTTPResponse::HTTP_NO_CONTENT)
-    BOOST_THROW_EXCEPTION(ProtocolError {"HTTP response status not accepted"} 
+    BOOST_THROW_EXCEPTION(ProtocolError {"HTTP response status not accepted"}
       << HttpMethodErrorInfo {"POST"}
       << UriErrorInfo {uri}
       << HttpStatusErrorInfo {result.httpStatus()}
@@ -546,7 +547,7 @@ POCOResult RWSClient::httpPut(const std::string& uri, const std::string& content
 {
   POCOResult const result = POCOClient::httpPut(uri, content);
   if (result.httpStatus() != HTTPResponse::HTTP_OK && result.httpStatus() != HTTPResponse::HTTP_CREATED)
-    BOOST_THROW_EXCEPTION(ProtocolError {"HTTP response status not accepted"} 
+    BOOST_THROW_EXCEPTION(ProtocolError {"HTTP response status not accepted"}
       << HttpMethodErrorInfo {"PUT"}
       << UriErrorInfo {uri}
       << HttpStatusErrorInfo {result.httpStatus()}
@@ -572,6 +573,74 @@ POCOResult RWSClient::httpDelete(const std::string& uri)
     );
 
   return result;
+}
+
+
+std::string RWSClient::openSubscription(SubscriptionResources const& resources)
+{
+  std::vector<SubscriptionResource> temp = resources.getResources();
+
+  // Generate content for a subscription HTTP post request.
+  std::stringstream subscription_content;
+  for (std::size_t i = 0; i < temp.size(); ++i)
+  {
+    subscription_content << "resources=" << i
+                          << "&"
+                          << i << "=" << temp.at(i).resource_uri
+                          << "&"
+                          << i << "-p=" << static_cast<int>(temp.at(i).priority)
+                          << (i < temp.size() - 1 ? "&" : "");
+  }
+
+  // Make a subscription request.
+  POCOResult const poco_result = httpPost(Services::SUBSCRIPTION, subscription_content.str());
+
+  if (poco_result.httpStatus() != HTTPResponse::HTTP_CREATED)
+    BOOST_THROW_EXCEPTION(
+      ProtocolError {"Unable to create Subscription"}
+      << HttpStatusErrorInfo {poco_result.httpStatus()}
+      << HttpReasonErrorInfo {poco_result.reason()}
+      << HttpMethodErrorInfo {HTTPRequest::HTTP_POST}
+      << HttpRequestContentErrorInfo {subscription_content.str()}
+      << HttpResponseContentErrorInfo {poco_result.content()}
+      << HttpResponseErrorInfo {poco_result}
+      << UriErrorInfo {Services::SUBSCRIPTION}
+    );
+
+  std::string subscription_group_id;
+
+  // Find "Location" header attribute
+  auto const h = std::find_if(
+    poco_result.headerInfo().begin(), poco_result.headerInfo().end(),
+    [] (auto const& p) { return p.first == "Location"; });
+
+  if (h != poco_result.headerInfo().end())
+  {
+    std::string const poll = "/poll/";
+    auto const start_postion = h->second.find(poll);
+
+    if (start_postion != std::string::npos)
+      subscription_group_id = h->second.substr(start_postion + poll.size());
+  }
+
+  if (subscription_group_id.empty())
+    BOOST_THROW_EXCEPTION(ProtocolError {"Cannot get subscription group from HTTP response"});
+
+  return subscription_group_id;
+}
+
+
+void RWSClient::closeSubscription(std::string const& subscription_group_id)
+{
+  // Unsubscribe from events
+  std::string const uri = Services::SUBSCRIPTION + "/" + subscription_group_id;
+  httpDelete(uri);
+}
+
+
+Poco::Net::WebSocket RWSClient::receiveSubscription(std::string const& subscription_group_id)
+{
+  return webSocketConnect("/poll/" + subscription_group_id, "rws_subscription");
 }
 
 

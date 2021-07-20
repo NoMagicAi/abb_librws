@@ -1,5 +1,6 @@
 #include <abb_librws/rws_subscription.h>
 #include <abb_librws/rws_error.h>
+#include <abb_librws/rws_client.h>
 
 #include <Poco/Net/HTTPRequest.h>
 
@@ -56,68 +57,22 @@ namespace abb :: rws
   }
 
 
-  SubscriptionGroup::SubscriptionGroup(POCOClient& client, SubscriptionResources const& resources)
+  SubscriptionGroup::SubscriptionGroup(RWSClient& client, SubscriptionResources const& resources)
   : client_ {client}
+  , subscription_group_id_ {client.openSubscription(resources)}
   {
-    std::vector<SubscriptionResource> temp = resources.getResources();
-
-    // Generate content for a subscription HTTP post request.
-    std::stringstream subscription_content;
-    for (std::size_t i = 0; i < temp.size(); ++i)
-    {
-      subscription_content << "resources=" << i
-                            << "&"
-                            << i << "=" << temp.at(i).resource_uri
-                            << "&"
-                            << i << "-p=" << static_cast<int>(temp.at(i).priority)
-                            << (i < temp.size() - 1 ? "&" : "");
-    }
-
-    // Make a subscription request.
-    POCOResult const poco_result = client_.httpPost(Services::SUBSCRIPTION, subscription_content.str());
-
-    if (poco_result.httpStatus() != HTTPResponse::HTTP_CREATED)
-      BOOST_THROW_EXCEPTION(
-        ProtocolError {"Unable to create Subscription"}
-        << HttpStatusErrorInfo {poco_result.httpStatus()}
-        << HttpReasonErrorInfo {poco_result.reason()}
-        << HttpMethodErrorInfo {HTTPRequest::HTTP_POST}
-        << HttpRequestContentErrorInfo {subscription_content.str()}
-        << HttpResponseContentErrorInfo {poco_result.content()}
-        << HttpResponseErrorInfo {poco_result}
-        << UriErrorInfo {Services::SUBSCRIPTION}
-      );
-
-    // Find "Location" header attribute
-    auto const h = std::find_if(
-      poco_result.headerInfo().begin(), poco_result.headerInfo().end(),
-      [] (auto const& p) { return p.first == "Location"; });
-
-    if (h != poco_result.headerInfo().end())
-    {
-      std::string const poll = "/poll/";
-      auto const start_postion = h->second.find(poll);
-
-      if (start_postion != std::string::npos)
-        subscription_group_id_ = h->second.substr(start_postion + poll.size());
-    }
-
-    if (subscription_group_id_.empty())
-      BOOST_THROW_EXCEPTION(ProtocolError {"Cannot get subscription group from HTTP response"});
   }
 
 
   SubscriptionGroup::~SubscriptionGroup()
   {
-    // Unsubscribe from events
-    std::string const uri = Services::SUBSCRIPTION + "/" + subscription_group_id_;
-    client_.httpDelete(uri);
+    client_.closeSubscription(subscription_group_id_);
   }
 
 
   SubscriptionReceiver SubscriptionGroup::receive() const
   {
-    return SubscriptionReceiver {client_.webSocketConnect("/poll/" + subscription_group_id_, "robapi2_subscription")};
+    return SubscriptionReceiver {client_.receiveSubscription(subscription_group_id_)};
   }
 
 
