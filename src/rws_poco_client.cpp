@@ -55,6 +55,21 @@ namespace rws
  * Class definitions: POCOClient
  */
 
+POCOClient::POCOClient(
+  std::unique_ptr<Poco::Net::HTTPClientSession> session,
+  const std::string& username,
+  const std::string& password)
+: http_client_session_ {std::move(session)}
+, http_credentials_ {username, password}
+{
+  http_client_session_->setKeepAlive(true);
+  http_client_session_->setTimeout(Poco::Timespan(DEFAULT_HTTP_TIMEOUT));
+}
+
+POCOClient::~POCOClient()
+{
+}
+
 /************************************************************
  * Primary methods
  */
@@ -160,7 +175,7 @@ Poco::Net::WebSocket POCOClient::webSocketConnect(const std::string& uri, const 
   // Attempt the communication.
   try
   {
-    Poco::Net::WebSocket websocket {http_client_session_, request, response};
+    Poco::Net::WebSocket websocket {*http_client_session_, request, response};
     
     if (response.getStatus() != HTTPResponse::HTTP_SWITCHING_PROTOCOLS)
       BOOST_THROW_EXCEPTION(
@@ -205,10 +220,10 @@ void POCOClient::sendAndReceive(HTTPRequest& request,
   try
   {
     // Contact the server.
-    std::ostream& request_content_stream = http_client_session_.sendRequest(request);
+    std::ostream& request_content_stream = http_client_session_->sendRequest(request);
     request_content_stream << request_content;
 
-    std::istream& response_content_stream = http_client_session_.receiveResponse(response);
+    std::istream& response_content_stream = http_client_session_->receiveResponse(response);
 
     response_content.clear();
     StreamCopier::copyToString(response_content_stream, response_content);
@@ -351,14 +366,14 @@ std::string POCOClient::HTTPInfo::toString(bool verbose, size_t indent) const
 
 void POCOClient::setHTTPTimeout(Poco::Timespan timeout)
 {
-  http_client_session_.setTimeout(timeout);
-  http_client_session_.reset();
+  http_client_session_->setTimeout(timeout);
+  http_client_session_->reset();
 }
 
 
 Poco::Timespan POCOClient::getHTTPTimeout() const noexcept
 {
-  return http_client_session_.getTimeout();
+  return http_client_session_->getTimeout();
 }
 
 

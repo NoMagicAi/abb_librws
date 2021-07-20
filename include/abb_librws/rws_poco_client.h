@@ -62,27 +62,19 @@ namespace rws
     /**
      * \brief A constructor.
      *
-     * \param ip_address for the remote server's IP address.
-     * \param port for the remote server's port.
+     * \param session HTTP session. This can be either an HTTPClientSession or an HTTPSClientSession,
+     *  depending on which protocol should be used.
      * \param username for the username to the remote server's authentication process.
      * \param password for the password to the remote server's authentication process.
      */
-    POCOClient(const std::string& ip_address,
-              const Poco::UInt16 port,
+    POCOClient(std::unique_ptr<Poco::Net::HTTPClientSession> session,
               const std::string& username,
-              const std::string& password)
-    :
-    http_client_session_(ip_address, port),
-    http_credentials_(username, password)
-    {
-      http_client_session_.setKeepAlive(true);
-      http_client_session_.setTimeout(Poco::Timespan(DEFAULT_HTTP_TIMEOUT));
-    }
+              const std::string& password);
 
     /**
      * \brief A destructor.
      */
-    ~POCOClient() {}
+    ~POCOClient();
 
     /**
      * \brief A method for sending a HTTP GET request.
@@ -321,7 +313,7 @@ namespace rws
     /**
      * \brief A HTTP client session.
      */
-    Poco::Net::HTTPClientSession http_client_session_;
+    std::unique_ptr<Poco::Net::HTTPClientSession> http_client_session_;
 
     /**
      * \brief HTTP credentials for the remote server's access authentication process.

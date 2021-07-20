@@ -37,6 +37,8 @@
 #include <abb_librws/rws_client.h>
 #include <abb_librws/rws_error.h>
 
+#include <Poco/Net/HTTPSClientSession.h>
+
 #include <sstream>
 #include <stdexcept>
 
@@ -100,11 +102,15 @@ RWSClient::RWSClient(const std::string& ip_address,
           const unsigned short port,
           const std::string& username,
           const std::string& password)
-:
-POCOClient {ip_address,
-            port,
-            username,
-            password}
+: POCOClient {
+    std::make_unique<Poco::Net::HTTPSClientSession>(
+      ip_address,
+      port,
+      new Poco::Net::Context {Poco::Net::Context::CLIENT_USE, "", "", "", Poco::Net::Context::VERIFY_NONE, 9, false, "ALL:!ADH:!LOW:!EXP:!MD5:@STRENGTH"}
+    ),
+    username,
+    password
+}
 {
   // Make a request to the server to check connection and initiate authentification.
   getRobotWareSystem();
