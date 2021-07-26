@@ -578,18 +578,48 @@ POCOResult RWSClient::httpDelete(const std::string& uri)
 
 std::string RWSClient::openSubscription(SubscriptionResources const& resources)
 {
-  std::vector<SubscriptionResource> temp = resources.getResources();
+  class RWS1URIProvider
+  : public URIProvider
+  {
+  public:
+    std::string getResourceURI(IOSignalResource const& io_signal) const override
+    {
+      std::string resource_uri = Resources::RW_IOSYSTEM_SIGNALS;
+      resource_uri += "/";
+      resource_uri += io_signal.name;
+      resource_uri += ";";
+      resource_uri += Identifiers::STATE;
+      return resource_uri;
+    }
+
+
+    std::string getResourceURI(RAPIDResource const& resource) const override
+    {
+      std::string resource_uri = Resources::RW_RAPID_SYMBOL_DATA_RAPID;
+      resource_uri += "/";
+      resource_uri += resource.task;
+      resource_uri += "/";
+      resource_uri += resource.module;
+      resource_uri += "/";
+      resource_uri += resource.name;
+      resource_uri += ";";
+      resource_uri += Identifiers::VALUE;
+      return resource_uri;
+    }
+  };
+
+  RWS1URIProvider uri_provider;
 
   // Generate content for a subscription HTTP post request.
   std::stringstream subscription_content;
-  for (std::size_t i = 0; i < temp.size(); ++i)
+  for (std::size_t i = 0; i < resources.size(); ++i)
   {
     subscription_content << "resources=" << i
                           << "&"
-                          << i << "=" << temp.at(i).resource_uri
+                          << i << "=" << resources[i].getURI(uri_provider)
                           << "&"
-                          << i << "-p=" << static_cast<int>(temp.at(i).priority)
-                          << (i < temp.size() - 1 ? "&" : "");
+                          << i << "-p=" << static_cast<int>(resources[i].getPriority())
+                          << (i < resources.size() - 1 ? "&" : "");
   }
 
   // Make a subscription request.
