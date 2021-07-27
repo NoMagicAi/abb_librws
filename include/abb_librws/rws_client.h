@@ -41,6 +41,7 @@
 #include <vector>
 
 #include <Poco/DOM/DOMParser.h>
+#include <Poco/Net/HTTPClientSession.h>
 
 #include "rws_common.h"
 #include "rws_rapid.h"
@@ -83,7 +84,7 @@ enum class Coordinate
  * - Flesh out the subscription functionality. E.g. implement a "subscription manager".
  *
  */
-class RWSClient : private POCOClient
+class RWSClient
 {
 public:
   /**
@@ -517,8 +518,23 @@ public:
   Poco::Net::WebSocket receiveSubscription(std::string const& subscription_group_id);
 
 
-  using POCOClient::getHTTPTimeout;
-  using POCOClient::setHTTPTimeout;
+  /**
+   * \brief A method for setting the HTTP communication timeout.
+   *
+   * \note This method resets the internal HTTP client session, causing the
+   *       RWS server (robot controller) to send a new cookie. The RWS
+   *       session id is not changed.
+   *
+   * \param timeout for the HTTP communication timeout.
+   */
+  void setHTTPTimeout(Poco::Timespan timeout);
+
+  /**
+   * \brief Get HTTP receive timeout.
+   *
+   * \return HTTP receive timeout.
+   */
+  Poco::Timespan getHTTPTimeout() const noexcept;
 
 
 private:
@@ -572,7 +588,7 @@ private:
    */
   POCOResult httpDelete(const std::string& uri);
 
-  
+
   /**
    * \brief A method for logging out the currently active RWS session.
    */
@@ -641,6 +657,10 @@ private:
    * \return std::string containing the path.
    */
   std::string generateRAPIDTasksPath(const std::string& task);
+
+
+  Poco::Net::HTTPClientSession session_;
+  POCOClient http_client_;
 
   /**
    * \brief Static constant for the log's size.

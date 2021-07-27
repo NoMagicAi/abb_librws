@@ -37,7 +37,6 @@
 #include <abb_librws/rws_client.h>
 #include <abb_librws/rws_error.h>
 
-#include <Poco/Net/HTTPSClientSession.h>
 #include <Poco/Net/HTTPRequest.h>
 
 #include <sstream>
@@ -103,15 +102,8 @@ RWSClient::RWSClient(const std::string& ip_address,
           const unsigned short port,
           const std::string& username,
           const std::string& password)
-: POCOClient {
-    std::make_unique<Poco::Net::HTTPSClientSession>(
-      ip_address,
-      port,
-      new Poco::Net::Context {Poco::Net::Context::CLIENT_USE, "", "", "", Poco::Net::Context::VERIFY_NONE, 9, false, "ALL:!ADH:!LOW:!EXP:!MD5:@STRENGTH"}
-    ),
-    username,
-    password
-}
+: session_ {ip_address, port}
+, http_client_ {session_, username, password}
 {
   // Make a request to the server to check connection and initiate authentification.
   getRobotWareSystem();
@@ -510,7 +502,7 @@ std::string RWSClient::generateRAPIDTasksPath(const std::string& task)
 
 POCOResult RWSClient::httpGet(const std::string& uri)
 {
-  POCOResult const result = POCOClient::httpGet(uri);
+  POCOResult const result = http_client_.httpGet(uri);
 
   if (result.httpStatus() != HTTPResponse::HTTP_OK)
     BOOST_THROW_EXCEPTION(ProtocolError {"HTTP response status not accepted"}
@@ -527,7 +519,7 @@ POCOResult RWSClient::httpGet(const std::string& uri)
 
 POCOResult RWSClient::httpPost(const std::string& uri, const std::string& content)
 {
-  POCOResult const result = POCOClient::httpPost(uri, content);
+  POCOResult const result = http_client_.httpPost(uri, content);
 
   if (result.httpStatus() != HTTPResponse::HTTP_NO_CONTENT)
     BOOST_THROW_EXCEPTION(ProtocolError {"HTTP response status not accepted"}
@@ -545,7 +537,7 @@ POCOResult RWSClient::httpPost(const std::string& uri, const std::string& conten
 
 POCOResult RWSClient::httpPut(const std::string& uri, const std::string& content)
 {
-  POCOResult const result = POCOClient::httpPut(uri, content);
+  POCOResult const result = http_client_.httpPut(uri, content);
   if (result.httpStatus() != HTTPResponse::HTTP_OK && result.httpStatus() != HTTPResponse::HTTP_CREATED)
     BOOST_THROW_EXCEPTION(ProtocolError {"HTTP response status not accepted"}
       << HttpMethodErrorInfo {"PUT"}
@@ -562,7 +554,7 @@ POCOResult RWSClient::httpPut(const std::string& uri, const std::string& content
 
 POCOResult RWSClient::httpDelete(const std::string& uri)
 {
-  POCOResult const result = POCOClient::httpDelete(uri);
+  POCOResult const result = http_client_.httpDelete(uri);
   if (result.httpStatus() != HTTPResponse::HTTP_OK && result.httpStatus() != HTTPResponse::HTTP_NO_CONTENT)
     BOOST_THROW_EXCEPTION(ProtocolError {"HTTP response status not accepted"}
       << HttpMethodErrorInfo {"DELETE"}
@@ -670,7 +662,20 @@ void RWSClient::closeSubscription(std::string const& subscription_group_id)
 
 Poco::Net::WebSocket RWSClient::receiveSubscription(std::string const& subscription_group_id)
 {
-  return webSocketConnect("/poll/" + subscription_group_id, "rws_subscription");
+  return http_client_.webSocketConnect("/poll/" + subscription_group_id, "rws_subscription");
+}
+
+
+void RWSClient::setHTTPTimeout(Poco::Timespan timeout)
+{
+  session_.setTimeout(timeout);
+  session_.reset();
+}
+
+
+Poco::Timespan RWSClient::getHTTPTimeout() const noexcept
+{
+  return session_.getTimeout();
 }
 
 
