@@ -332,7 +332,7 @@ const std::string Queries::ACTION_SET                         = "set-value";
 const std::string Queries::ACTION_SETCTRLSTATE                = "action=setctrlstate";  // TODO remove
 const std::string Queries::ACTION_SET_LOCALE                  = "action=set-locale";
 const std::string Queries::ACTION_START                       = "start";
-const std::string Queries::ACTION_STOP                        = "action=stop";
+const std::string Queries::ACTION_STOP                        = "stop";
 const std::string Queries::ACTION_UNLOAD_MODULE               = "unloadmod";
 const std::string Queries::TASK                               = "task=";
 const std::string Services::CTRL                              = "/ctrl";
