@@ -1004,6 +1004,18 @@ IOSignalInfo RWSInterface2::getIOSignals()
 }
 
 
+void RWSInterface2::requestMastership()
+{
+  rws_client_.requestMastership();
+}
+
+
+void RWSInterface2::releaseMastership()
+{
+  rws_client_.releaseMastership();
+}
+
+
 void RWSInterface2::setHTTPTimeout(std::chrono::microseconds timeout)
 {
   rws_client_.setHTTPTimeout(Poco::Timespan {timeout.count()});
