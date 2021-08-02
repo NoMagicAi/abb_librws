@@ -497,9 +497,11 @@ public:
 
 
   // SubscriptionManager implementation
-  std::string openSubscription(SubscriptionResources const& resources) override;
+  std::string openSubscription(std::vector<std::pair<std::string, SubscriptionPriority>> const& resources) override;
   void closeSubscription(std::string const& subscription_group_id) override;
   Poco::Net::WebSocket receiveSubscription(std::string const& subscription_group_id) override;
+  std::string getResourceURI(IOSignalResource const& io_signal) const override;
+  std::string getResourceURI(RAPIDResource const& resource) const override;
 
 
 private:

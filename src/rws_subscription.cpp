@@ -17,7 +17,7 @@ namespace abb :: rws
 
   SubscriptionGroup::SubscriptionGroup(SubscriptionManager& subscription_manager, SubscriptionResources const& resources)
   : subscription_manager_ {subscription_manager}
-  , subscription_group_id_ {subscription_manager.openSubscription(resources)}
+  , subscription_group_id_ {subscription_manager.openSubscription(getURI(subscription_manager, resources))}
   {
   }
 
@@ -52,6 +52,19 @@ namespace abb :: rws
   SubscriptionReceiver SubscriptionGroup::receive() const
   {
     return SubscriptionReceiver {subscription_manager_.receiveSubscription(subscription_group_id_)};
+  }
+
+
+  std::vector<std::pair<std::string, SubscriptionPriority>> SubscriptionGroup::getURI(
+      SubscriptionManager& subscription_manager, SubscriptionResources const& resources)
+  {
+    std::vector<std::pair<std::string, SubscriptionPriority>> uri;
+    uri.reserve(resources.size());
+
+    for (auto&& r : resources)
+      uri.emplace_back(r.getURI(subscription_manager), r.getPriority());
+
+    return uri;
   }
 
 
