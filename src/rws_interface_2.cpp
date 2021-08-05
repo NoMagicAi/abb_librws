@@ -936,7 +936,7 @@ void RWSInterface2::deleteFile(const FileResource& resource)
 
 SubscriptionGroup RWSInterface2::openSubscription (const SubscriptionResources& resources)
 {
-  return {rws_client_, resources};
+  return SubscriptionGroup {rws_client_, resources};
 }
 
 void RWSInterface2::registerLocalUser(const std::string& username,
@@ -1001,6 +1001,12 @@ IOSignalInfo RWSInterface2::getIOSignals()
   }
 
   return signals;
+}
+
+
+Mastership RWSInterface2::getMastership()
+{
+  return Mastership {*this};
 }
 
 
