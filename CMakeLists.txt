@@ -52,6 +52,7 @@ set(
     src/rws.cpp
     src/rws_2.cpp
     src/parsing.cpp
+    src/mastership.cpp
 )
 
 add_library(${PROJECT_NAME} ${SRC_FILES})
