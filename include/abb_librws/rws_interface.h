@@ -42,6 +42,7 @@
 #include "rws_subscription.h"
 #include "rws_info.h"
 #include "xml_attribute.h"
+#include "mastership.h"
 
 #include <chrono>
 
@@ -57,6 +58,7 @@ namespace rws
  * See https://developercenter.robotstudio.com/api/rwsApi/ for details about RWS 1.0
  */
 class RWSInterface
+: private MastershipManager
 {
 public:
   /**
@@ -583,8 +585,17 @@ public:
    */
   std::chrono::microseconds getHTTPTimeout() const noexcept;
 
+  /**
+   * \brief Get RWS mastership
+   */
+  Mastership getMastership();
+
 private:
   using RWSResult = RWSClient::RWSResult;
+
+  // Implementation of MastershipManager
+  void requestMastership() override;
+  void releaseMastership() override;
 
 
   /**
