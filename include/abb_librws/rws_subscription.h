@@ -273,7 +273,7 @@ namespace abb :: rws
      * \param subscription_manager an interface to control the subscription
      * \param resources list of resources to subscribe
      */
-    SubscriptionGroup(SubscriptionManager& subscription_manager, SubscriptionResources const& resources);
+    explicit SubscriptionGroup(SubscriptionManager& subscription_manager, SubscriptionResources const& resources);
 
 
     /**

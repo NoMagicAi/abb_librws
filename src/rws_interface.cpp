@@ -946,7 +946,7 @@ void RWSInterface::deleteFile(const FileResource& resource)
 
 SubscriptionGroup RWSInterface::openSubscription (const SubscriptionResources& resources)
 {
-  return {rws_client_, resources};
+  return SubscriptionGroup {rws_client_, resources};
 }
 
 void RWSInterface::registerLocalUser(const std::string& username,
