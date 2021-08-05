@@ -696,15 +696,25 @@ Poco::Timespan RWSClient2::getHTTPTimeout() const noexcept
 
 void RWSClient2::requestMastership()
 {
-  std::string uri = Resources::RW_MASTERSHIP + "/request";
-  httpPost(uri, "", "application/x-www-form-urlencoded;v=2.0");
+  if (mastership_count_ == 0)
+  {
+    std::string uri = Resources::RW_MASTERSHIP + "/request";
+    httpPost(uri, "", "application/x-www-form-urlencoded;v=2.0");
+  }
+
+  ++mastership_count_;
 }
 
 
 void RWSClient2::releaseMastership()
 {
-  std::string uri = Resources::RW_MASTERSHIP + "/release";
-  httpPost(uri, "", "application/x-www-form-urlencoded;v=2.0");
+  if (mastership_count_ == 1)
+  {
+    std::string uri = Resources::RW_MASTERSHIP + "/release";
+    httpPost(uri, "", "application/x-www-form-urlencoded;v=2.0");
+  }
+
+  --mastership_count_;
 }
 
 
