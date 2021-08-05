@@ -165,7 +165,7 @@ POCOResult POCOClient::makeHTTPRequest(const std::string& method,
 }
 
 
-Poco::Net::WebSocket POCOClient::webSocketConnect(const std::string& uri, const std::string& protocol)
+Poco::Net::WebSocket POCOClient::webSocketConnect(const std::string& uri, const std::string& protocol, Poco::Net::HTTPClientSession& session)
 {
   // Lock the object's mutex. It is released when the method goes out of scope.
   ScopedLock<Mutex> lock(http_mutex_);
@@ -179,7 +179,7 @@ Poco::Net::WebSocket POCOClient::webSocketConnect(const std::string& uri, const 
   // Attempt the communication.
   try
   {
-    Poco::Net::WebSocket websocket {http_client_session_, request, response};
+    Poco::Net::WebSocket websocket {session, request, response};
 
     if (response.getStatus() != HTTPResponse::HTTP_SWITCHING_PROTOCOLS)
       BOOST_THROW_EXCEPTION(
@@ -193,9 +193,6 @@ Poco::Net::WebSocket POCOClient::webSocketConnect(const std::string& uri, const 
   }
   catch (Poco::Exception const& e)
   {
-    // Should we really reset the session if creating the WebSocket failed?
-    http_client_session_.reset();
-
     BOOST_THROW_EXCEPTION(
       CommunicationError {"webSocketConnect() failed"}
         << HttpStatusErrorInfo {response.getStatus()}

@@ -123,7 +123,7 @@ namespace rws
      *
      * \throw \a std::runtime_error if something goes wrong
      */
-    Poco::Net::WebSocket webSocketConnect(const std::string& uri, const std::string& protocol);
+    Poco::Net::WebSocket webSocketConnect(const std::string& uri, const std::string& protocol, Poco::Net::HTTPClientSession& session);
 
 
     /**

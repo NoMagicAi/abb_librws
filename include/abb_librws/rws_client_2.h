@@ -624,7 +624,7 @@ private:
    */
   std::string generateRAPIDTasksPath(const std::string& task);
 
-
+  Poco::Net::Context::Ptr context_;
   Poco::Net::HTTPSClientSession session_;
   POCOClient http_client_;
   Poco::XML::DOMParser parser_;

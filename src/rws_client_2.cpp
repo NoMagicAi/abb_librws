@@ -104,13 +104,12 @@ RWSClient2::RWSClient2(const std::string& ip_address,
           const unsigned short port,
           const std::string& username,
           const std::string& password)
-: session_ {
-    ip_address,
-    port,
+: context_ {
     new Poco::Net::Context {
       Poco::Net::Context::CLIENT_USE, "", "", "", Poco::Net::Context::VERIFY_NONE, 9, false, "ALL:!ADH:!LOW:!EXP:!MD5:@STRENGTH"
     }
   }
+, session_ {ip_address, port, context_}
 , http_client_ {session_, username, password}
 {
   // Make a request to the server to check connection and initiate authentification.
@@ -651,7 +650,8 @@ void RWSClient2::closeSubscription(std::string const& subscription_group_id)
 
 Poco::Net::WebSocket RWSClient2::receiveSubscription(std::string const& subscription_group_id)
 {
-  return http_client_.webSocketConnect("/poll/" + subscription_group_id, "rws_subscription");
+  Poco::Net::HTTPSClientSession session {session_.getHost(), session_.getPort(), context_};
+  return http_client_.webSocketConnect("/poll/" + subscription_group_id, "rws_subscription", session);
 }
 
 

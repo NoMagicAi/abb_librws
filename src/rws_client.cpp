@@ -632,7 +632,8 @@ void RWSClient::closeSubscription(std::string const& subscription_group_id)
 
 Poco::Net::WebSocket RWSClient::receiveSubscription(std::string const& subscription_group_id)
 {
-  return http_client_.webSocketConnect("/poll/" + subscription_group_id, "robapi2_subscription");
+  Poco::Net::HTTPClientSession session {session_.getHost(), session_.getPort()};
+  return http_client_.webSocketConnect("/poll/" + subscription_group_id, "robapi2_subscription", session);
 }
 
 
