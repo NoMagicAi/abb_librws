@@ -34,8 +34,7 @@
  ***********************************************************************************************************************
  */
 
-#ifndef RWS_CLIENT_2_H
-#define RWS_CLIENT_2_H
+#pragma once
 
 #include <Poco/DOM/DOMParser.h>
 #include <Poco/Net/HTTPSClientSession.h>
@@ -46,6 +45,9 @@
 #include "rws_resource.h"
 #include "rws_subscription.h"
 #include "coordinate.h"
+#include "mastership.h"
+
+#include <map>
 
 
 namespace abb
@@ -486,14 +488,18 @@ public:
   Poco::Timespan getHTTPTimeout() const noexcept;
 
   /**
-   * TODO(mwojcik): documentation
+   * @brief Request mastership of given type
+   *
+   * @param type type of requested mastership
    */
-  void requestMastership();
+  void requestMastership(std::string const& type);
 
   /**
-   * TODO(mwojcik): documentation
+   * @brief Release mastership of given type
+   *
+   * @param type type of mastership to be released
    */
-  void releaseMastership();
+  void releaseMastership(std::string const& type);
 
 
   // SubscriptionManager implementation
@@ -628,10 +634,8 @@ private:
   Poco::Net::HTTPSClientSession session_;
   POCOClient http_client_;
   Poco::XML::DOMParser parser_;
-  int mastership_count_ = 0;
+  std::map<std::string, int> mastership_count_;
 };
 
 } // end namespace rws
 } // end namespace abb
-
-#endif

@@ -694,27 +694,33 @@ Poco::Timespan RWSClient2::getHTTPTimeout() const noexcept
 }
 
 
-void RWSClient2::requestMastership()
+void RWSClient2::requestMastership(std::string const& type)
 {
-  if (mastership_count_ == 0)
+  // Count will be default-initialized to 0.
+  auto& count = mastership_count_[type];
+
+  if (count == 0)
   {
-    std::string uri = Resources::RW_MASTERSHIP + "/request";
+    std::string uri = Services::RW + "/mastership/" + type + "/request";
     httpPost(uri, "", "application/x-www-form-urlencoded;v=2.0");
   }
 
-  ++mastership_count_;
+  ++count;
 }
 
 
-void RWSClient2::releaseMastership()
+void RWSClient2::releaseMastership(std::string const& type)
 {
-  if (mastership_count_ == 1)
+  // Count will be default-initialized to 0.
+  auto& count = mastership_count_[type];
+
+  if (count == 1)
   {
-    std::string uri = Resources::RW_MASTERSHIP + "/release";
+    std::string uri = Services::RW + "/mastership/" + type + "/release";
     httpPost(uri, "", "application/x-www-form-urlencoded;v=2.0");
   }
 
-  --mastership_count_;
+  --count;
 }
 
 

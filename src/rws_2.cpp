@@ -66,7 +66,6 @@ namespace abb :: rws
   const std::string Resources::ROBTARGET                        = "/robtarget";
   const std::string Resources::RW_CFG                           = Services::RW + "/cfg";
   const std::string Resources::RW_IOSYSTEM_SIGNALS              = Services::RW + "/iosystem/signals";
-  const std::string Resources::RW_MASTERSHIP                    = Services::RW + "/mastership/edit";
   const std::string Resources::RW_MOTIONSYSTEM_MECHUNITS        = Services::RW + "/motionsystem/mechunits";
   const std::string Resources::RW_PANEL_CTRLSTATE               = Services::RW + "/panel/ctrl-state";
   const std::string Resources::RW_PANEL_OPMODE                  = Services::RW + "/panel/opmode";

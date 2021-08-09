@@ -580,15 +580,17 @@ public:
 
   /**
    * \brief Get RWS mastership
+   *
+   * \param type requested mastership type
    */
-  Mastership getMastership();
+  Mastership getMastership(std::string const& type);
 
 private:
   using RWSResult = RWSClient2::RWSResult;
 
   // Implementation of MastershipManager
-  void requestMastership() override;
-  void releaseMastership() override;
+  void requestMastership(std::string const& type) override;
+  void releaseMastership(std::string const& type) override;
 
 
   /**
