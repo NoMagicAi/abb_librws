@@ -27,7 +27,7 @@ namespace abb :: rws
 
 
   /**
-   * \brief Provides the mechanism to open, receive, and close and RWS event subscription.
+   * \brief Provides the mechanism to open, receive, and close RWS event subscription.
    */
   class SubscriptionManager
   {
