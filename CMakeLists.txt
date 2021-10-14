@@ -48,6 +48,7 @@ set(
     src/rws.cpp
     src/parsing.cpp
     src/connection_options.cpp
+    src/rapid_execution_state.cpp
 
     src/v1_0/rws.cpp
     src/v1_0/rws_client.cpp

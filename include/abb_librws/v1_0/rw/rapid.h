@@ -1,16 +1,67 @@
 #pragma once
 
+#include <abb_librws/rapid_execution_state.h>
 #include <abb_librws/v1_0/rws_client.h>
 
 #include <Poco/DOM/DOMParser.h>
 
+#include <string>
+
 
 namespace abb :: rws :: v1_0 :: rw
 {
+    /**
+     * \brief run mode of a RAPID program.
+     */
+    enum class RAPIDRunMode
+    {
+        forever,
+        asis,
+        once,
+        oncedone
+    };
+
+
+    /**
+     * \brief Create \a RAPIDRunMode from string.
+     *
+     * \param str source string
+     *
+     * \return \a RAPIDRunMode matching the value of \a str
+     *
+     * \throw \a std::invalid_argument if \a str is not from the set of valid strings.
+     */
+    RAPIDRunMode makeRAPIDRunMode(std::string const& str);
+
+
+    /**
+     * \brief Execution state and run mode of a RAPID program.
+     */
+    struct RAPIDExecutionInfo
+    {
+        /// \brief Rapid execution state
+        RAPIDExecutionState ctrlexecstate;
+
+        /// Current run mode
+        RAPIDRunMode cycle;
+    };
+
+
     class RAPIDService
     {
     public:
         explicit RAPIDService(RWSClient& client);
+
+        /**
+         * \brief A method for retrieving the execution state of RAPID.
+         *
+         * https://developercenter.robotstudio.com/api/rwsApi/rapid_execution_get_page.html
+         *
+         * \return Current RAPID execution state.
+         *
+         * \throw \a RWSError if something goes wrong.
+         */
+        RAPIDExecutionInfo getRAPIDExecution();
 
         /**
          * \brief A method for retrieving the data of a RAPID symbol.

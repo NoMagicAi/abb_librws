@@ -899,9 +899,7 @@ bool RWSInterface::isMotorsOn()
 
 bool RWSInterface::isRAPIDRunning()
 {
-  return compareSingleContent(rws_client_.getRAPIDExecution(),
-                              XMLAttributes::CLASS_CTRLEXECSTATE,
-                              ContollerStates::RAPID_EXECUTION_RUNNING);
+  return rapid_.getRAPIDExecution().ctrlexecstate == RAPIDExecutionState::running;
 }
 
 void RWSInterface::setIOSignal(const std::string& iosignal, const std::string& value)

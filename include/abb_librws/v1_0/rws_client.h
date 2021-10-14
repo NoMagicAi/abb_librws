@@ -175,15 +175,6 @@ public:
                                        const std::string& wobj = "");
 
   /**
-   * \brief A method for retrieving the execution state of RAPID.
-   *
-   * \return RWSResult containing the result.
-   *
-   * \throw \a RWSError if something goes wrong.
-   */
-  RWSResult getRAPIDExecution();
-
-  /**
    * \brief A method for retrieving information about the RAPID modules of a RAPID task.
    *
    * \param task specifying the RAPID task.
