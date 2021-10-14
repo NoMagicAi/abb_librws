@@ -74,8 +74,9 @@ static bool digitalSignalToBool(std::string const& value)
  * Primary methods
  */
 
-RWSInterface::RWSInterface(ConnectionOptions const& connection_options)
-: rws_client_ {connection_options}
+RWSInterface::RWSInterface(RWSClient& client)
+: rws_client_ {client}
+, rapid_ {rws_client_}
 {
 }
 
@@ -742,13 +743,13 @@ void RWSInterface::setRAPIDSymbolData(const std::string& task,
                                       const std::string& name,
                                       const std::string& data)
 {
-  rws_client_.setRAPIDSymbolData(RAPIDResource(task, module, name), data);
+  rapid_.setRAPIDSymbolData(RAPIDResource(task, module, name), data);
 }
 
 
 void RWSInterface::setRAPIDSymbolData(RAPIDResource const& resource, const RAPIDSymbolDataAbstract& data)
 {
-  rws_client_.setRAPIDSymbolData(resource, data);
+  rapid_.setRAPIDSymbolData(resource, data);
 }
 
 
@@ -912,14 +913,13 @@ std::string RWSInterface::getRAPIDSymbolData(const std::string& task,
                                              const std::string& module,
                                              const std::string& name)
 {
-  return xmlFindTextContent(rws_client_.getRAPIDSymbolData(RAPIDResource(task, module, name)),
-                            XMLAttributes::CLASS_VALUE);
+  return rapid_.getRAPIDSymbolData(RAPIDResource(task, module, name));
 }
 
 
 void RWSInterface::getRAPIDSymbolData(RAPIDResource const& resource, RAPIDSymbolDataAbstract& data)
 {
-  rws_client_.getRAPIDSymbolData(resource, data);
+  rapid_.getRAPIDSymbolData(resource, data);
 }
 
 

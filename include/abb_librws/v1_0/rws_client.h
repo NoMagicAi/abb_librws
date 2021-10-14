@@ -53,6 +53,12 @@
 namespace abb :: rws :: v1_0
 {
 /**
+ * \brief A struct for containing an evaluated communication result.
+ */
+using RWSResult = Poco::AutoPtr<Poco::XML::Document>;
+
+
+/**
  * \brief A class for a Robot Web Services (RWS) 1.0 client.
  *
  * Note: Only a subset of the features available in RWS are implemented here.
@@ -63,11 +69,6 @@ class RWSClient
 : public SubscriptionManager
 {
 public:
-  /**
-   * \brief A struct for containing an evaluated communication result.
-   */
-  using RWSResult = Poco::AutoPtr<Poco::XML::Document>;
-
   /**
    * \brief A constructor.
    *
@@ -174,38 +175,6 @@ public:
                                        const std::string& wobj = "");
 
   /**
-   * \brief A method for retrieving the data of a RAPID symbol.
-   *
-   * \param resource specifying the RAPID task, module and symbol names for the RAPID resource.
-   *
-   * \return RWSResult containing the result.
-   *
-   * \throw \a RWSError if something goes wrong.
-   */
-  RWSResult getRAPIDSymbolData(const RAPIDResource& resource);
-
-  /**
-   * \brief A method for retrieving the data of a RAPID symbol (parsed into a struct representing the RAPID data).
-   *
-   * \param resource specifying the RAPID task, module and symbol names for the RAPID resource.
-   * \param data for containing the retrieved data.
-   *
-   * \throw \a RWSError if something goes wrong.
-   */
-  void getRAPIDSymbolData(const RAPIDResource& resource, RAPIDSymbolDataAbstract& data);
-
-  /**
-   * \brief A method for retrieving the properties of a RAPID symbol.
-   *
-   * \param resource specifying the RAPID task, module and symbol names for the RAPID resource.
-   *
-   * \return RWSResult containing the result.
-   *
-   * \throw \a RWSError if something goes wrong.
-   */
-  RWSResult getRAPIDSymbolProperties(const RAPIDResource& resource);
-
-  /**
    * \brief A method for retrieving the execution state of RAPID.
    *
    * \return RWSResult containing the result.
@@ -279,26 +248,6 @@ public:
    * \throw \a RWSError if something goes wrong.
    */
   void setIOSignal(const std::string& iosignal, const std::string& value);
-
-  /**
-   * \brief A method for setting the data of a RAPID symbol.
-   *
-   * \param resource specifying the RAPID task, module and symbol names for the RAPID resource.
-   * \param data for the RAPID symbol's new data.
-   *
-   * \throw \a RWSError if something goes wrong.
-   */
-  void setRAPIDSymbolData(const RAPIDResource& resource, const std::string& data);
-
-  /**
-   * \brief A method for setting the data of a RAPID symbol (based on the provided struct representing the RAPID data).
-   *
-   * \param resource specifying the RAPID task, module and symbol names for the RAPID resource.
-   * \param data for the RAPID symbol's new data.
-   *
-   * \throw \a RWSError if something goes wrong.
-   */
-  void setRAPIDSymbolData(const RAPIDResource& resource, const RAPIDSymbolDataAbstract& data);
 
   /**
    * \brief A method for starting RAPID execution in the robot controller.
@@ -520,24 +469,6 @@ private:
    * \return std::string containing the path.
    */
   static std::string generateMechanicalUnitPath(const std::string& mechunit);
-
-  /**
-   * \brief Method for generating a RAPID data resource URI path.
-   *
-   * \param resource specifying the RAPID task, module and symbol names for the RAPID resource.
-   *
-   * \return std::string containing the path.
-   */
-  static std::string generateRAPIDDataPath(const RAPIDResource& resource);
-
-  /**
-   * \brief Method for generating a RAPID properties resource URI path.
-   *
-   * \param resource specifying the RAPID task, module and symbol names for the RAPID resource.
-   *
-   * \return std::string containing the path.
-   */
-  static std::string generateRAPIDPropertiesPath(const RAPIDResource& resource);
 
   /**
    * \brief Method for generating a file resource URI path.
