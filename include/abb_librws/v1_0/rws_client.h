@@ -241,20 +241,6 @@ public:
   void setIOSignal(const std::string& iosignal, const std::string& value);
 
   /**
-   * \brief A method for starting RAPID execution in the robot controller.
-   *
-   * \throw \a RWSError if something goes wrong.
-   */
-  void startRAPIDExecution();
-
-  /**
-   * \brief A method for reseting the RAPID program pointer in the robot controller.
-   *
-   * \throw \a RWSError if something goes wrong.
-   */
-  void resetRAPIDProgramPointer();
-
-  /**
    * \brief A method for turning on the robot controller's motors.
    *
    * \throw \a RWSError if something goes wrong.

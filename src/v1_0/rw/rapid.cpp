@@ -11,6 +11,54 @@ namespace abb :: rws :: v1_0 :: rw
     }
 
 
+    RAPIDExecutionInfo RAPIDService::getRAPIDExecution()
+    {
+        RAPIDExecutionInfo result;
+
+        std::string const uri = Resources::RW_RAPID_EXECUTION;
+        RWSResult xml_content = parser_.parseString(client_.httpGet(uri).content());
+
+        Poco::XML::Node const * li_node = xml_content->getNodeByPath("html/body/div/ul/li");
+        if (!li_node)
+            BOOST_THROW_EXCEPTION(ProtocolError {"Cannot parse RWS response: can't find XML path html/body/div/ul/li"});
+
+        std::string const ctrlexecstate = xmlFindTextContent(li_node, XMLAttributes::CLASS_CTRLEXECSTATE);
+        if (ctrlexecstate.empty())
+            BOOST_THROW_EXCEPTION(ProtocolError {"Can't find a node with class=\"ctrlexecstate\""});
+
+        std::string const cycle = xmlFindTextContent(li_node, XMLAttribute {"class", "cycle"});
+        if (cycle.empty())
+            BOOST_THROW_EXCEPTION(ProtocolError {"Can't find a node with class=\"cycle\""});
+
+        return RAPIDExecutionInfo {
+            makeRAPIDExecutionState(ctrlexecstate),
+            makeRAPIDRunMode(cycle)
+        };
+    }
+
+
+    void RAPIDService::startRAPIDExecution()
+    {
+        std::string const uri = Resources::RW_RAPID_EXECUTION + "?" + Queries::ACTION_START;
+        std::string const content = "regain=continue&execmode=continue&cycle=forever&condition=none&stopatbp=disabled&alltaskbytsp=false";
+        client_.httpPost(uri, content);
+    }
+
+
+    void RAPIDService::stopRAPIDExecution(StopMode stopmode, UseTsp usetsp)
+    {
+        std::stringstream content;
+        content << "stopmode=" << stopmode << "&usetsp=" << usetsp;
+        client_.httpPost("/rw/rapid/execution?action=stop", content.str());
+    }
+
+
+    void RAPIDService::resetRAPIDProgramPointer()
+    {
+        client_.httpPost(Resources::RW_RAPID_EXECUTION + "?" + Queries::ACTION_RESETPP);
+    }
+
+
     void RAPIDService::getRAPIDSymbolData(RAPIDResource const& resource, RAPIDSymbolDataAbstract& data)
     {
         RWSResult const temp_result = getRAPIDSymbolProperties(resource);
@@ -48,32 +96,6 @@ namespace abb :: rws :: v1_0 :: rw
         std::string content = Identifiers::VALUE + "=" + data;
 
         client_.httpPost(uri, content);
-    }
-
-
-    RAPIDExecutionInfo RAPIDService::getRAPIDExecution()
-    {
-        RAPIDExecutionInfo result;
-
-        std::string const uri = Resources::RW_RAPID_EXECUTION;
-        RWSResult xml_content = parser_.parseString(client_.httpGet(uri).content());
-
-        Poco::XML::Node const * li_node = xml_content->getNodeByPath("html/body/div/ul/li");
-        if (!li_node)
-            BOOST_THROW_EXCEPTION(ProtocolError {"Cannot parse RWS response: can't find XML path html/body/div/ul/li"});
-
-        std::string const ctrlexecstate = xmlFindTextContent(li_node, XMLAttributes::CLASS_CTRLEXECSTATE);
-        if (ctrlexecstate.empty())
-            BOOST_THROW_EXCEPTION(ProtocolError {"Can't find a node with class=\"ctrlexecstate\""});
-
-        std::string const cycle = xmlFindTextContent(li_node, XMLAttribute {"class", "cycle"});
-        if (cycle.empty())
-            BOOST_THROW_EXCEPTION(ProtocolError {"Can't find a node with class=\"cycle\""});
-
-        return RAPIDExecutionInfo {
-            makeRAPIDExecutionState(ctrlexecstate),
-            makeRAPIDRunMode(cycle)
-        };
     }
 
 

@@ -238,21 +238,6 @@ void RWSClient::setIOSignal(const std::string& iosignal, const std::string& valu
   }
 }
 
-void RWSClient::startRAPIDExecution()
-{
-  std::string uri = Resources::RW_RAPID_EXECUTION + "?" + Queries::ACTION_START;
-  std::string content = "regain=continue&execmode=continue&cycle=forever&condition=none&stopatbp=disabled&alltaskbytsp=false";
-
-  httpPost(uri, content);
-}
-
-void RWSClient::resetRAPIDProgramPointer()
-{
-  std::string uri = Resources::RW_RAPID_EXECUTION + "?" + Queries::ACTION_RESETPP;
-
-  httpPost(uri);
-}
-
 void RWSClient::setMotorsOn()
 {
   std::string uri = Resources::RW_PANEL_CTRLSTATE + "?" + Queries::ACTION_SETCTRLSTATE;

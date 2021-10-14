@@ -755,20 +755,17 @@ void RWSInterface::setRAPIDSymbolData(RAPIDResource const& resource, const RAPID
 
 void RWSInterface::startRAPIDExecution()
 {
-  rws_client_.startRAPIDExecution();
+  rapid_.startRAPIDExecution();
 }
 
 void RWSInterface::stopRAPIDExecution(StopMode stopmode, UseTsp usetsp)
 {
-  std::stringstream content;
-  content << "stopmode=" << stopmode << "&usetsp=" << usetsp;
-
-  rws_client_.httpPost("/rw/rapid/execution?action=stop", content.str());
+  rapid_.stopRAPIDExecution(stopmode, usetsp);
 }
 
 void RWSInterface::resetRAPIDProgramPointer()
 {
-  rws_client_.resetRAPIDProgramPointer();
+  rapid_.resetRAPIDProgramPointer();
 }
 
 void RWSInterface::setMotorsOn()

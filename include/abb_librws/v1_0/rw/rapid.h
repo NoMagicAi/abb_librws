@@ -1,5 +1,6 @@
 #pragma once
 
+#include <abb_librws/rws.h>
 #include <abb_librws/rapid_execution_state.h>
 #include <abb_librws/v1_0/rws_client.h>
 
@@ -62,6 +63,37 @@ namespace abb :: rws :: v1_0 :: rw
          * \throw \a RWSError if something goes wrong.
          */
         RAPIDExecutionInfo getRAPIDExecution();
+
+        /**
+         * \brief A method for starting RAPID execution in the robot controller.
+         *
+         * There can be a delay between the function returns and when the RAPID program enters the "running" state.
+         *
+         * \throw \a std::runtime_error if something goes wrong.
+         */
+        void startRAPIDExecution();
+
+        /**
+         * \brief A method for stopping RAPID execution in the robot controller.
+         *
+         * https://developercenter.robotstudio.com/api/rwsApi/rapid_execution_stop_page.html
+         *
+         * There can be a delay between the function returns and when the RAPID program enters the "stopped" state.
+         *
+         * \param stopmode stop mode
+         * \param usetsp which tasks to stop (?)
+         *
+         * \throw \a std::runtime_error if something goes wrong.
+         */
+        void stopRAPIDExecution(StopMode stopmode = StopMode::stop, UseTsp usetsp = UseTsp::normal);
+
+
+        /**
+         * \brief A method for reseting the RAPID program pointer in the robot controller.
+         *
+         * \throw \a std::runtime_error if something goes wrong.
+         */
+        void resetRAPIDProgramPointer();
 
         /**
          * \brief A method for retrieving the data of a RAPID symbol.
