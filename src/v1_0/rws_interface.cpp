@@ -783,63 +783,14 @@ void RWSInterface::setSpeedRatio(unsigned int ratio)
   rws_client_.setSpeedRatio(ratio);
 }
 
-std::vector<RAPIDModuleInfo> RWSInterface::getRAPIDModulesInfo(const std::string& task)
+std::vector<rw::RAPIDModuleInfo> RWSInterface::getRAPIDModulesInfo(const std::string& task)
 {
-  std::vector<RAPIDModuleInfo> result;
-
-  RWSResult rws_result = rws_client_.getRAPIDModulesInfo(task);
-  std::vector<Poco::XML::Node*> node_list = xmlFindNodes(rws_result,
-                                                         XMLAttributes::CLASS_RAP_MODULE_INFO_LI);
-
-  for (size_t i = 0; i < node_list.size(); ++i)
-  {
-    std::string name = xmlFindTextContent(node_list.at(i), XMLAttributes::CLASS_NAME);
-    std::string type = xmlFindTextContent(node_list.at(i), XMLAttributes::CLASS_TYPE);
-
-    result.push_back(RAPIDModuleInfo(name, type));
-  }
-
-  return result;
+  return rapid_.getRAPIDModulesInfo(task);
 }
 
-std::vector<RAPIDTaskInfo> RWSInterface::getRAPIDTasks()
+std::vector<rw::RAPIDTaskInfo> RWSInterface::getRAPIDTasks()
 {
-  std::vector<RAPIDTaskInfo> result;
-
-  RWSResult rws_result = rws_client_.getRAPIDTasks();
-  std::vector<Poco::XML::Node*> node_list = xmlFindNodes(rws_result, XMLAttributes::CLASS_RAP_TASK_LI);
-
-  for (size_t i = 0; i < node_list.size(); ++i)
-  {
-    std::string name = xmlFindTextContent(node_list.at(i), XMLAttributes::CLASS_NAME);
-    bool is_motion_task = xmlFindTextContent(node_list.at(i), XMLAttributes::CLASS_MOTIONTASK) == RAPID::RAPID_TRUE;
-    bool is_active = xmlFindTextContent(node_list.at(i), XMLAttributes::CLASS_ACTIVE) == "On";
-    std::string temp = xmlFindTextContent(node_list.at(i), XMLAttributes::CLASS_EXCSTATE);
-
-    // Assume task state is unknown, update based on contents of 'temp'.
-    RAPIDTaskExecutionState execution_state = RAPIDTaskExecutionState::UNKNOWN;
-
-    if(temp == "read")
-    {
-      execution_state = RAPIDTaskExecutionState::READY;
-    }
-    else if(temp == "stop")
-    {
-      execution_state = RAPIDTaskExecutionState::STOPPED;
-    }
-    else if(temp == "star")
-    {
-      execution_state = RAPIDTaskExecutionState::STARTED;
-    }
-    else if(temp == "unin")
-    {
-      execution_state = RAPIDTaskExecutionState::UNINITIALIZED;
-    }
-
-    result.push_back(RAPIDTaskInfo(name, is_motion_task, is_active, execution_state));
-  }
-
-  return result;
+  return rapid_.getRAPIDTasks();
 }
 
 unsigned int RWSInterface::getSpeedRatio()
@@ -896,7 +847,7 @@ bool RWSInterface::isMotorsOn()
 
 bool RWSInterface::isRAPIDRunning()
 {
-  return rapid_.getRAPIDExecution().ctrlexecstate == RAPIDExecutionState::running;
+  return rapid_.getRAPIDExecution().ctrlexecstate == rw::RAPIDExecutionState::running;
 }
 
 void RWSInterface::setIOSignal(const std::string& iosignal, const std::string& value)

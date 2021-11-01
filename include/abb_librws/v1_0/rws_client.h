@@ -175,26 +175,6 @@ public:
                                        const std::string& wobj = "");
 
   /**
-   * \brief A method for retrieving information about the RAPID modules of a RAPID task.
-   *
-   * \param task specifying the RAPID task.
-   *
-   * \return RWSResult containing the result.
-   *
-   * \throw \a RWSError if something goes wrong.
-   */
-  RWSResult getRAPIDModulesInfo(const std::string& task);
-
-  /**
-   * \brief A method for retrieving the RAPID tasks that are defined in the robot controller system.
-   *
-   * \return RWSResult containing the result.
-   *
-   * \throw \a RWSError if something goes wrong.
-   */
-  RWSResult getRAPIDTasks();
-
-  /**
    * \brief A method for retrieving info about the current robot controller system.
    *
    * \return RWSResult containing the result.

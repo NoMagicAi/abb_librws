@@ -186,18 +186,6 @@ RWSResult RWSClient::getMechanicalUnitRobTarget(const std::string& mechunit,
   return parseContent(httpGet(uri));
 }
 
-RWSResult RWSClient::getRAPIDModulesInfo(const std::string& task)
-{
-  std::string uri = Resources::RW_RAPID_MODULES + "?" + Queries::TASK + task;
-  return parseContent(httpGet(uri));
-}
-
-RWSResult RWSClient::getRAPIDTasks()
-{
-  std::string uri = Resources::RW_RAPID_TASKS;
-  return parseContent(httpGet(uri));
-}
-
 RWSResult RWSClient::getRobotWareSystem()
 {
   std::string uri = Resources::RW_SYSTEM;
@@ -580,7 +568,7 @@ void RWSClient::processEvent(Poco::AutoPtr<Poco::XML::Document> doc, Subscriptio
   else if (class_attribute_value == "rap-ctrlexecstate-ev")
   {
     RAPIDExecutionStateEvent event;
-    event.state = makeRAPIDExecutionState(xmlFindTextContent(li_node, XMLAttribute {"class", "ctrlexecstate"}));
+    event.state = rw::makeRAPIDExecutionState(xmlFindTextContent(li_node, XMLAttribute {"class", "ctrlexecstate"}));
     callback.processEvent(event);
   }
   else

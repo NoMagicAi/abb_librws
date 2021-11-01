@@ -1,8 +1,9 @@
 #pragma once
 
-#include <abb_librws/rws.h>
-#include <abb_librws/rapid_execution_state.h>
 #include <abb_librws/v1_0/rws_client.h>
+
+#include <abb_librws/rws.h>
+#include <abb_librws/common/rw/rapid.h>
 
 #include <Poco/DOM/DOMParser.h>
 
@@ -11,41 +12,7 @@
 
 namespace abb :: rws :: v1_0 :: rw
 {
-    /**
-     * \brief run mode of a RAPID program.
-     */
-    enum class RAPIDRunMode
-    {
-        forever,
-        asis,
-        once,
-        oncedone
-    };
-
-
-    /**
-     * \brief Create \a RAPIDRunMode from string.
-     *
-     * \param str source string
-     *
-     * \return \a RAPIDRunMode matching the value of \a str
-     *
-     * \throw \a std::invalid_argument if \a str is not from the set of valid strings.
-     */
-    RAPIDRunMode makeRAPIDRunMode(std::string const& str);
-
-
-    /**
-     * \brief Execution state and run mode of a RAPID program.
-     */
-    struct RAPIDExecutionInfo
-    {
-        /// \brief Rapid execution state
-        RAPIDExecutionState ctrlexecstate;
-
-        /// Current run mode
-        RAPIDRunMode cycle;
-    };
+    using namespace rws::rw;
 
 
     class RAPIDService
@@ -87,13 +54,30 @@ namespace abb :: rws :: v1_0 :: rw
          */
         void stopRAPIDExecution(StopMode stopmode = StopMode::stop, UseTsp usetsp = UseTsp::normal);
 
-
         /**
          * \brief A method for reseting the RAPID program pointer in the robot controller.
          *
          * \throw \a std::runtime_error if something goes wrong.
          */
         void resetRAPIDProgramPointer();
+
+        /**
+         * \brief A method for retrieving information about the RAPID modules of a RAPID task defined in the robot controller.
+         *
+         * \return \a std::vector<RAPIDModuleInfo> containing the RAPID modules information.
+         *
+         * \throw \a std::runtime_error if something goes wrong.
+         */
+        std::vector<RAPIDModuleInfo> getRAPIDModulesInfo(const std::string& task);
+
+        /**
+         * \brief A method for retrieving information about the RAPID tasks defined in the robot controller.
+         *
+         * \return \a std::vector<RAPIDTaskInfo> containing the RAPID tasks information.
+         *
+         * \throw \a std::runtime_error if something goes wrong.
+         */
+        std::vector<RAPIDTaskInfo> getRAPIDTasks();
 
         /**
          * \brief A method for retrieving the data of a RAPID symbol.

@@ -1,6 +1,7 @@
 #include <abb_librws/v1_0/rw/rapid.h>
 
 #include <abb_librws/parsing.h>
+#include <abb_librws/system_constants.h>
 
 
 namespace abb :: rws :: v1_0 :: rw
@@ -118,17 +119,63 @@ namespace abb :: rws :: v1_0 :: rw
     }
 
 
-    RAPIDRunMode makeRAPIDRunMode(std::string const& str)
+    std::vector<RAPIDModuleInfo> RAPIDService::getRAPIDModulesInfo(const std::string& task)
     {
-        if (str == "forever")
-            return RAPIDRunMode::forever;
-        else if (str == "asis")
-            return RAPIDRunMode::asis;
-        else if (str == "once")
-            return RAPIDRunMode::once;
-        else if (str == "oncedone")
-            return RAPIDRunMode::oncedone;
-        else
-            BOOST_THROW_EXCEPTION(std::invalid_argument {"Unexpected string representation of RAPID run mode: \"" + str + "\""});
+        std::vector<RAPIDModuleInfo> result;
+
+        std::string const uri = Resources::RW_RAPID_MODULES + "?" + Queries::TASK + task;
+        RWSResult const rws_result = parser_.parseString(client_.httpGet(uri).content());
+        std::vector<Poco::XML::Node*> node_list = xmlFindNodes(rws_result,
+                                                                XMLAttributes::CLASS_RAP_MODULE_INFO_LI);
+
+        for (size_t i = 0; i < node_list.size(); ++i)
+        {
+            std::string name = xmlFindTextContent(node_list.at(i), XMLAttributes::CLASS_NAME);
+            std::string type = xmlFindTextContent(node_list.at(i), XMLAttributes::CLASS_TYPE);
+
+            result.push_back(RAPIDModuleInfo(name, type));
+        }
+
+        return result;
+    }
+
+    std::vector<RAPIDTaskInfo> RAPIDService::getRAPIDTasks()
+    {
+        std::vector<RAPIDTaskInfo> result;
+
+        RWSResult const rws_result = parser_.parseString(client_.httpGet(Resources::RW_RAPID_TASKS).content());
+        std::vector<Poco::XML::Node*> node_list = xmlFindNodes(rws_result, XMLAttributes::CLASS_RAP_TASK_LI);
+
+        for (size_t i = 0; i < node_list.size(); ++i)
+        {
+            std::string name = xmlFindTextContent(node_list.at(i), XMLAttributes::CLASS_NAME);
+            bool is_motion_task = xmlFindTextContent(node_list.at(i), XMLAttributes::CLASS_MOTIONTASK) == SystemConstants::RAPID::RAPID_TRUE;
+            bool is_active = xmlFindTextContent(node_list.at(i), XMLAttributes::CLASS_ACTIVE) == "On";
+            std::string temp = xmlFindTextContent(node_list.at(i), XMLAttributes::CLASS_EXCSTATE);
+
+            // Assume task state is unknown, update based on contents of 'temp'.
+            RAPIDTaskExecutionState execution_state = RAPIDTaskExecutionState::UNKNOWN;
+
+            if(temp == "read")
+            {
+                execution_state = RAPIDTaskExecutionState::READY;
+            }
+            else if(temp == "stop")
+            {
+                execution_state = RAPIDTaskExecutionState::STOPPED;
+            }
+            else if(temp == "star")
+            {
+                execution_state = RAPIDTaskExecutionState::STARTED;
+            }
+            else if(temp == "unin")
+            {
+                execution_state = RAPIDTaskExecutionState::UNINITIALIZED;
+            }
+
+            result.push_back(RAPIDTaskInfo(name, is_motion_task, is_active, execution_state));
+        }
+
+        return result;
     }
 }
