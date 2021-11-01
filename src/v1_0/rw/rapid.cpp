@@ -178,4 +178,32 @@ namespace abb :: rws :: v1_0 :: rw
 
         return result;
     }
+
+
+    void RAPIDService::loadModuleIntoTask(const std::string& task, const FileResource& resource, const bool replace)
+    {
+        std::string uri = generateRAPIDTasksPath(task) + "?" + Queries::ACTION_LOAD_MODULE;
+
+        // Path to file should be a direct path, i.e. without "/fileservice/"
+        std::string content =
+            Identifiers::MODULEPATH + "=" + resource.directory + "/" + resource.filename +
+            "&replace=" + ((replace) ? "true" : "false");
+
+        client_.httpPost(uri, content);
+    }
+
+
+    void RAPIDService::unloadModuleFromTask(const std::string& task, const FileResource& resource)
+    {
+        std::string uri = generateRAPIDTasksPath(task) + "?" + Queries::ACTION_UNLOAD_MODULE;
+        std::string content = Identifiers::MODULE + "=" + resource.filename;
+
+        client_.httpPost(uri, content);
+    }
+
+
+    std::string RAPIDService::generateRAPIDTasksPath(const std::string& task)
+    {
+        return Resources::RW_RAPID_TASKS + "/" + task;
+    }
 }

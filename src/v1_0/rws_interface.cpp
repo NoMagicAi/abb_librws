@@ -871,12 +871,12 @@ void RWSInterface::getRAPIDSymbolData(RAPIDResource const& resource, RAPIDSymbol
 
 void RWSInterface::loadModuleIntoTask(const std::string& task, const FileResource& resource, const bool replace)
 {
-  rws_client_.loadModuleIntoTask(task, resource, replace);
+  rapid_.loadModuleIntoTask(task, resource, replace);
 }
 
 void RWSInterface::unloadModuleFromTask(const std::string& task, const FileResource& resource)
 {
-  rws_client_.unloadModuleFromTask(task, resource);
+  rapid_.unloadModuleFromTask(task, resource);
 }
 
 std::string RWSInterface::getFile(const FileResource& resource)

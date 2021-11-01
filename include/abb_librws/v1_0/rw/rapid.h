@@ -125,6 +125,27 @@ namespace abb :: rws :: v1_0 :: rw
          */
         void setRAPIDSymbolData(const RAPIDResource& resource, const std::string& data);
 
+        /**
+         * \brief A method for loading a module to the robot controller.
+         *
+         * \param task specifying the RAPID task.
+         * \param resource specifying the file's directory and name.
+         * \param replace indicating if the actual module into the controller must be replaced by the new one or not.
+         *
+         * \throw \a std::exception if something goes wrong.
+         */
+        void loadModuleIntoTask(const std::string& task, const FileResource& resource, const bool replace = false);
+
+        /**
+         * \brief A method for unloading a module to the robot controller.
+         *
+         * \param task specifying the RAPID task.
+         * \param resource specifying the file's directory and name.
+         *
+         * \throw \a std::exception if something goes wrong.
+         */
+        void unloadModuleFromTask(const std::string& task, const FileResource& resource);
+
     private:
         /**
          * \brief A method for retrieving the properties of a RAPID symbol.
@@ -154,6 +175,15 @@ namespace abb :: rws :: v1_0 :: rw
          * \return std::string containing the path.
          */
         static std::string generateRAPIDPropertiesPath(const RAPIDResource& resource);
+
+        /**
+         * \brief Method for generating a task resource URI path.
+         *
+         * \param task for the task name.
+         *
+         * \return std::string containing the path.
+         */
+        static std::string generateRAPIDTasksPath(const std::string& task);
 
         RWSClient& client_;
         Poco::XML::DOMParser parser_;
