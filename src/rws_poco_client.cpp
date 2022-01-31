@@ -43,7 +43,6 @@
 #include <abb_librws/rws_poco_client.h>
 #include <abb_librws/rws_error.h>
 
-
 using namespace Poco;
 using namespace Poco::Net;
 
@@ -55,12 +54,8 @@ namespace rws
  * Class definitions: POCOClient
  */
 
-POCOClient::POCOClient(
-  Poco::Net::HTTPClientSession& session,
-  const std::string& username,
-  const std::string& password)
-: http_client_session_ {session}
-, http_credentials_ {username, password}
+POCOClient::POCOClient(Poco::Net::HTTPClientSession& session, const std::string& username, const std::string& password)
+  : http_client_session_{ session }, http_credentials_{ username, password }
 {
   http_client_session_.setKeepAlive(true);
 }
@@ -93,10 +88,8 @@ POCOResult POCOClient::httpDelete(const std::string& uri)
   return makeHTTPRequest(HTTPRequest::HTTP_DELETE, uri);
 }
 
-POCOResult POCOClient::makeHTTPRequest(const std::string& method,
-                                                   const std::string& uri,
-                                                   const std::string& content,
-                                                   const std::string& content_type)
+POCOResult POCOClient::makeHTTPRequest(const std::string& method, const std::string& uri, const std::string& content,
+                                       const std::string& content_type)
 {
   // The response and the request.
   HTTPResponse response;
@@ -110,7 +103,8 @@ POCOResult POCOClient::makeHTTPRequest(const std::string& method,
   if (!content_type.empty())
   {
     request.setContentType(content_type);
-  } else if (method == HTTPRequest::HTTP_POST || !content.empty())
+  }
+  else if (method == HTTPRequest::HTTP_POST || !content.empty())
   {
     request.setContentType("application/x-www-form-urlencoded");
   }
@@ -149,8 +143,7 @@ POCOResult POCOClient::makeHTTPRequest(const std::string& method,
       authenticate(request, response, content, response_content);
     }
 
-
-    return POCOResult {response.getStatus(), response.getReason(), response, response_content};
+    return POCOResult{ response.getStatus(), response.getReason(), response, response_content };
   }
   catch (CommunicationError const&)
   {
@@ -161,8 +154,8 @@ POCOResult POCOClient::makeHTTPRequest(const std::string& method,
   }
 }
 
-
-Poco::Net::WebSocket POCOClient::webSocketConnect(const std::string& uri, const std::string& protocol, Poco::Net::HTTPClientSession&& session)
+Poco::Net::WebSocket POCOClient::webSocketConnect(const std::string& uri, const std::string& protocol,
+                                                  Poco::Net::HTTPClientSession&& session)
 {
   // The response and the request.
   HTTPResponse response;
@@ -173,40 +166,30 @@ Poco::Net::WebSocket POCOClient::webSocketConnect(const std::string& uri, const 
   // Attempt the communication.
   try
   {
-    Poco::Net::WebSocket websocket {session, request, response};
+    Poco::Net::WebSocket websocket{ session, request, response };
 
     if (response.getStatus() != HTTPResponse::HTTP_SWITCHING_PROTOCOLS)
-      BOOST_THROW_EXCEPTION(
-        ProtocolError {"webSocketConnect() failed"}
-          << HttpStatusErrorInfo {response.getStatus()}
-          << HttpReasonErrorInfo {response.getReason()}
-          << HttpMethodErrorInfo {request.getMethod()}
-          << UriErrorInfo {uri}
-      );
+      BOOST_THROW_EXCEPTION(ProtocolError{ "webSocketConnect() failed" } << HttpStatusErrorInfo{ response.getStatus() }
+                                                                         << HttpReasonErrorInfo{ response.getReason() }
+                                                                         << HttpMethodErrorInfo{ request.getMethod() }
+                                                                         << UriErrorInfo{ uri });
 
     return websocket;
   }
   catch (Poco::Exception const& e)
   {
-    BOOST_THROW_EXCEPTION(
-      CommunicationError {"webSocketConnect() failed: " + e.displayText()}
-        << HttpStatusErrorInfo {response.getStatus()}
-        << HttpReasonErrorInfo {response.getReason()}
-        << HttpMethodErrorInfo {request.getMethod()}
-        << UriErrorInfo {uri}
-        << boost::errinfo_nested_exception {boost::current_exception()}
-    );
+    BOOST_THROW_EXCEPTION(CommunicationError{ "webSocketConnect() failed: " + e.displayText() }
+                          << HttpStatusErrorInfo{ response.getStatus() } << HttpReasonErrorInfo{ response.getReason() }
+                          << HttpMethodErrorInfo{ request.getMethod() } << UriErrorInfo{ uri }
+                          << boost::errinfo_nested_exception{ boost::current_exception() });
   }
 }
-
 
 /************************************************************
  * Auxiliary methods
  */
 
-void POCOClient::sendAndReceive(HTTPRequest& request,
-                                HTTPResponse& response,
-                                const std::string& request_content,
+void POCOClient::sendAndReceive(HTTPRequest& request, HTTPResponse& response, const std::string& request_content,
                                 std::string& response_content)
 {
   HTTPInfo log_entry;
@@ -223,13 +206,10 @@ void POCOClient::sendAndReceive(HTTPRequest& request,
   }
   catch (Poco::Exception const& e)
   {
-    BOOST_THROW_EXCEPTION(
-      CommunicationError {"HTTP send error: " + e.displayText()}
-        << HttpMethodErrorInfo {request.getMethod()}
-        << UriErrorInfo {request.getURI()}
-        << HttpRequestContentErrorInfo {request_content}
-        << boost::errinfo_nested_exception {boost::current_exception()}
-    );
+    BOOST_THROW_EXCEPTION(CommunicationError{ "HTTP send error: " + e.displayText() }
+                          << HttpMethodErrorInfo{ request.getMethod() } << UriErrorInfo{ request.getURI() }
+                          << HttpRequestContentErrorInfo{ request_content }
+                          << boost::errinfo_nested_exception{ boost::current_exception() });
   }
 
   try
@@ -241,13 +221,10 @@ void POCOClient::sendAndReceive(HTTPRequest& request,
   }
   catch (Poco::Exception const& e)
   {
-    BOOST_THROW_EXCEPTION(
-      CommunicationError {"HTTP receive error: " + e.displayText()}
-        << HttpMethodErrorInfo {request.getMethod()}
-        << UriErrorInfo {request.getURI()}
-        << HttpRequestContentErrorInfo {request_content}
-        << boost::errinfo_nested_exception {boost::current_exception()}
-    );
+    BOOST_THROW_EXCEPTION(CommunicationError{ "HTTP receive error: " + e.displayText() }
+                          << HttpMethodErrorInfo{ request.getMethod() } << UriErrorInfo{ request.getURI() }
+                          << HttpRequestContentErrorInfo{ request_content }
+                          << boost::errinfo_nested_exception{ boost::current_exception() });
   }
 
   // Add response info to the log entry.
@@ -262,10 +239,7 @@ void POCOClient::sendAndReceive(HTTPRequest& request,
   log_.push_front(log_entry);
 }
 
-
-void POCOClient::authenticate(HTTPRequest& request,
-                              HTTPResponse& response,
-                              const std::string& request_content,
+void POCOClient::authenticate(HTTPRequest& request, HTTPResponse& response, const std::string& request_content,
                               std::string& response_content)
 {
   // Remove any old cookies.
@@ -301,7 +275,6 @@ void POCOClient::extractAndStoreCookie(const std::string& cookie_string)
   }
 }
 
-
 std::string POCOClient::getLogText(bool verbose) const
 {
   if (log_.size() == 0)
@@ -321,22 +294,18 @@ std::string POCOClient::getLogText(bool verbose) const
   return ss.str();
 }
 
-
 std::string POCOClient::getLogTextLatestEvent(bool verbose) const
 {
   return (log_.size() == 0 ? "" : log_[0].toString(verbose, 0));
 }
 
-
-void POCOClient::HTTPInfo::addHTTPRequestInfo(const Poco::Net::HTTPRequest& request,
-                                                const std::string& request_content)
+void POCOClient::HTTPInfo::addHTTPRequestInfo(const Poco::Net::HTTPRequest& request, const std::string& request_content)
 {
-  this->request = {request.getMethod(), request.getURI(), request_content};
+  this->request = { request.getMethod(), request.getURI(), request_content };
 }
 
-
 void POCOClient::HTTPInfo::addHTTPResponseInfo(const Poco::Net::HTTPResponse& response,
-                                                const std::string& response_content)
+                                               const std::string& response_content)
 {
   std::string header_info;
 
@@ -345,9 +314,8 @@ void POCOClient::HTTPInfo::addHTTPResponseInfo(const Poco::Net::HTTPResponse& re
     header_info += i->first + "=" + i->second + "\n";
   }
 
-  this->response = HTTPInfo::ResponseInfo {response.getStatus(), header_info, response_content};
+  this->response = HTTPInfo::ResponseInfo{ response.getStatus(), header_info, response_content };
 }
-
 
 std::string POCOClient::HTTPInfo::toString(bool verbose, size_t indent) const
 {
@@ -363,7 +331,7 @@ std::string POCOClient::HTTPInfo::toString(bool verbose, size_t indent) const
   if (response)
   {
     ss << seperator << "HTTP Response: " << response->status << " - "
-      << HTTPResponse::getReasonForStatus(response->status);
+       << HTTPResponse::getReasonForStatus(response->status);
 
     if (verbose)
     {
@@ -374,5 +342,5 @@ std::string POCOClient::HTTPInfo::toString(bool verbose, size_t indent) const
   return ss.str();
 }
 
-} // end namespace rws
-} // end namespace abb
+}  // end namespace rws
+}  // end namespace abb

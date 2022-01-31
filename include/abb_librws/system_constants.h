@@ -292,7 +292,7 @@ struct SystemConstants
   };
 };
 
-} // end namespace rws
-} // end namespace abb
+}  // end namespace rws
+}  // end namespace abb
 
 #endif

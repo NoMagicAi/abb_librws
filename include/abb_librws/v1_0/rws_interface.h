@@ -48,8 +48,7 @@
 #include <chrono>
 #include <cstdint>
 
-
-namespace abb :: rws :: v1_0
+namespace abb ::rws ::v1_0
 {
 /**
  * \brief User-friendly interface to Robot Web Services (RWS) 1.0.
@@ -155,14 +154,12 @@ public:
    */
   ABB_LIBRWS_DEPRECATED std::vector<RobotWareOptionInfo> getPresentRobotWareOptions();
 
-
   /// @brief Get value of a digital signal
   ///
   /// @param signal_name Name of the signal
   /// @return Value of the requested digital signal
   ///
   bool getDigitalSignal(std::string const& signal_name);
-
 
   /// @brief Get value of an analog signal
   ///
@@ -171,7 +168,6 @@ public:
   ///
   float getAnalogSignal(std::string const& signal_name);
 
-
   /// @brief Get value of a group signal
   ///
   /// @param signal_name Name of the signal
@@ -179,14 +175,12 @@ public:
   ///
   std::uint32_t getGroupSignal(std::string const& signal_name);
 
-
   /**
    * \brief Get values of all IO signals.
    *
    * \return Mapping from IO signal names to values.
    */
   rw::io::IOSignalInfo getIOSignals();
-
 
   /**
    * \brief A method for retrieving static information about a mechanical unit.
@@ -233,10 +227,8 @@ public:
    *
    * \return robtarget data.
    */
-  RobTarget getMechanicalUnitRobTarget(const std::string& mechunit,
-                                  Coordinate coordinate = Coordinate::ACTIVE,
-                                  const std::string& tool = "",
-                                  const std::string& wobj = "");
+  RobTarget getMechanicalUnitRobTarget(const std::string& mechunit, Coordinate coordinate = Coordinate::ACTIVE,
+                                       const std::string& tool = "", const std::string& wobj = "");
 
   /**
    * \brief A method for retrieving the data of a RAPID symbol in raw text format.
@@ -253,7 +245,6 @@ public:
    */
   std::string getRAPIDSymbolData(const std::string& task, const std::string& module, const std::string& name);
 
-
   /**
    * \brief Retrieves the data of a RAPID symbol (parsed into a struct representing the RAPID data).
    *
@@ -263,7 +254,6 @@ public:
    * \throw \a std::runtime_error if something goes wrong.
    */
   void getRAPIDSymbolData(RAPIDResource const& resource, RAPIDSymbolDataAbstract& data);
-
 
   /**
    * \brief A method for retrieving information about the RAPID modules of a RAPID task defined in the robot controller.
@@ -328,14 +318,12 @@ public:
    */
   bool isRAPIDRunning();
 
-
   /// @brief Set value of a digital signal
   ///
   /// @param signal_name Name of the signal
   /// @param value New value of the signal
   ///
   void setDigitalSignal(std::string const& signal_name, bool value);
-
 
   /// @brief Set value of an analog signal
   ///
@@ -344,14 +332,12 @@ public:
   ///
   void setAnalogSignal(std::string const& signal_name, float value);
 
-
   /// @brief Set value of a group signal
   ///
   /// @param signal_name Name of the signal
   /// @param value New value of the signal
   ///
   void setGroupSignal(std::string const& signal_name, std::uint32_t value);
-
 
   /**
    * \brief A method for setting the data of a RAPID symbol via raw text format.
@@ -378,11 +364,8 @@ public:
    *
    * \throw \a std::runtime_error if something goes wrong.
    */
-  void setRAPIDSymbolData(const std::string& task,
-                          const std::string& module,
-                          const std::string& name,
+  void setRAPIDSymbolData(const std::string& task, const std::string& module, const std::string& name,
                           const std::string& data);
-
 
   /**
    * \brief A method for setting the data of a RAPID symbol.
@@ -392,9 +375,7 @@ public:
    *
    * \throw \a std::runtime_error if something goes wrong.
    */
-  void setRAPIDSymbolData(RAPIDResource const& resource,
-                          const RAPIDSymbolDataAbstract& data);
-
+  void setRAPIDSymbolData(RAPIDResource const& resource, const RAPIDSymbolDataAbstract& data);
 
   /**
    * \brief A method for starting RAPID execution in the robot controller.
@@ -558,11 +539,11 @@ public:
    */
   void requestMastership(MastershipDomain domain);
 
-
   /**
    * \brief Release mastership of a given domain.
    *
-   * \param domain domain for which mastership is to be requested. If empty, mastership for all domains will be released.
+   * \param domain domain for which mastership is to be requested. If empty, mastership for all domains will be
+   * released.
    */
   void releaseMastership(MastershipDomain domain);
 
@@ -586,9 +567,8 @@ private:
    *
    * \return The result of the comparison.
    */
-  static bool compareSingleContent(const RWSResult& rws_result,
-                               const XMLAttribute& attribute,
-                               const std::string& compare_string);
+  static bool compareSingleContent(const RWSResult& rws_result, const XMLAttribute& attribute,
+                                   const std::string& compare_string);
 
   /**
    * \brief A method for retrieving the value of an IO signal.
@@ -598,7 +578,6 @@ private:
    * \return std::string containing the IO signal's value (empty if not found).
    */
   std::string getIOSignal(const std::string& iosignal);
-
 
   /**
    * \brief A method for setting the value of an IO signal.
@@ -610,11 +589,10 @@ private:
    */
   void setIOSignal(const std::string& iosignal, const std::string& value);
 
-
   /**
    * \brief The RWS client used to communicate with the robot controller.
    */
   RWSClient& rws_client_;
 };
 
-} // end namespace rws
+}  // namespace abb::rws::v1_0

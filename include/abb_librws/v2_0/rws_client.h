@@ -49,14 +49,12 @@
 
 #include <map>
 
-
-namespace abb :: rws :: v2_0
+namespace abb ::rws ::v2_0
 {
 /**
  * \brief A struct for containing an evaluated communication result.
  */
 using RWSResult = Poco::AutoPtr<Poco::XML::Document>;
-
 
 /**
  * \brief A class for a Robot Web Services (RWS) 2.0 client.
@@ -65,8 +63,7 @@ using RWSResult = Poco::AutoPtr<Poco::XML::Document>;
  *
  * See https://developercenter.robotstudio.com/api/RWS for details about RWS 2.0
  */
-class RWSClient
-: public SubscriptionManager
+class RWSClient : public SubscriptionManager
 {
 public:
   /**
@@ -174,10 +171,8 @@ public:
    *
    * \throw \a RWSError if something goes wrong.
    */
-  RWSResult getMechanicalUnitRobTarget(const std::string& mechunit,
-                                       Coordinate coordinate = Coordinate::ACTIVE,
-                                       const std::string& tool = "",
-                                       const std::string& wobj = "");
+  RWSResult getMechanicalUnitRobTarget(const std::string& mechunit, Coordinate coordinate = Coordinate::ACTIVE,
+                                       const std::string& tool = "", const std::string& wobj = "");
 
   /**
    * \brief A method for retrieving info about the current robot controller system.
@@ -230,7 +225,6 @@ public:
    */
   void deleteFile(const FileResource& resource);
 
-
   /**
    * \brief A method for registering a user as local.
    *
@@ -241,8 +235,8 @@ public:
    * \throw \a RWSError if something goes wrong.
    */
   void registerLocalUser(const std::string& username = SystemConstants::General::DEFAULT_USERNAME,
-                              const std::string& application = SystemConstants::General::EXTERNAL_APPLICATION,
-                              const std::string& location = SystemConstants::General::EXTERNAL_LOCATION);
+                         const std::string& application = SystemConstants::General::EXTERNAL_APPLICATION,
+                         const std::string& location = SystemConstants::General::EXTERNAL_LOCATION);
 
   /**
    * \brief A method for registering a user as remote.
@@ -254,8 +248,8 @@ public:
    * \throw \a RWSError if something goes wrong.
    */
   void registerRemoteUser(const std::string& username = SystemConstants::General::DEFAULT_USERNAME,
-                               const std::string& application = SystemConstants::General::EXTERNAL_APPLICATION,
-                               const std::string& location = SystemConstants::General::EXTERNAL_LOCATION);
+                          const std::string& application = SystemConstants::General::EXTERNAL_APPLICATION,
+                          const std::string& location = SystemConstants::General::EXTERNAL_LOCATION);
 
   // SubscriptionManager implementation
   std::string openSubscription(std::vector<std::pair<std::string, SubscriptionPriority>> const& resources) override;
@@ -305,7 +299,6 @@ public:
    * \return POCOResult containing the result.
    */
   POCOResult httpDelete(const std::string& uri);
-
 
 private:
   /**
@@ -368,4 +361,4 @@ private:
   Poco::XML::DOMParser parser_;
   std::map<std::string, int> mastership_count_;
 };
-}
+}  // namespace abb::rws::v2_0

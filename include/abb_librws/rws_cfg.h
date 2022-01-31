@@ -59,7 +59,6 @@ namespace rws
  */
 namespace cfg
 {
-
 /**
  * \brief Namespace for types belonging to the motion (MOC) domain.
  */
@@ -220,7 +219,7 @@ struct Transmission
    */
   bool rotating_move;
 };
-} // end namespace moc
+}  // end namespace moc
 
 /**
  * \brief Namespace for types belonging to the controller (SYS) domain.
@@ -263,10 +262,10 @@ struct PresentOption
    */
   std::string description;
 };
-} // end namespace sys
+}  // end namespace sys
 
-} // end namespace cfg
-} // end namespace rws
-} // end namespace abb
+}  // end namespace cfg
+}  // end namespace rws
+}  // end namespace abb
 
 #endif

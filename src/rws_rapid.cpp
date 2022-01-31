@@ -135,9 +135,6 @@ void RAPIDAtomic<RAPID_STRING>::parseString(const std::string& value_string)
   value = temp;
 }
 
-
-
-
 /***********************************************************************************************************************
  * Class definitions: RAPIDRecord
  */
@@ -146,10 +143,9 @@ void RAPIDAtomic<RAPID_STRING>::parseString(const std::string& value_string)
  * Primary methods
  */
 
-RAPIDRecord::RAPIDRecord(const std::string& record_type_name)
-:
-record_type_name_(record_type_name)
-{}
+RAPIDRecord::RAPIDRecord(const std::string& record_type_name) : record_type_name_(record_type_name)
+{
+}
 
 std::string RAPIDRecord::getType() const
 {
@@ -209,5 +205,5 @@ RAPIDRecord& RAPIDRecord::operator=(const RAPIDRecord& other)
   return *this;
 }
 
-} // end namespace rws
-} // end namespace abb
+}  // end namespace rws
+}  // end namespace abb
