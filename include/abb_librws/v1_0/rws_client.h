@@ -224,8 +224,6 @@ public:
                                const std::string& location = SystemConstants::General::EXTERNAL_LOCATION);
 
   // SubscriptionManager implementation
-  std::string openSubscription(std::vector<std::pair<std::string, SubscriptionPriority>> const& resources) override;
-  void closeSubscription(std::string const& subscription_group_id) override;
   Poco::Net::WebSocket receiveSubscription(std::string const& subscription_group_id) override;
   std::string getResourceURI(IOSignalResource const& io_signal) const override;
   std::string getResourceURI(RAPIDResource const& resource) const override;
@@ -233,7 +231,6 @@ public:
   std::string getResourceURI(ControllerStateResource const&) const override;
   std::string getResourceURI(OperationModeResource const&) const override;
   void processEvent(Poco::AutoPtr<Poco::XML::Document> content, SubscriptionCallback& callback) const override;
-
 
   /**
    * \brief A method for sending a HTTP GET request and checking response status.

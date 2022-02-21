@@ -14,70 +14,13 @@ namespace abb :: rws
   using namespace Poco::Net;
 
 
-  SubscriptionGroup::SubscriptionGroup(SubscriptionManager& subscription_manager, SubscriptionResources const& resources)
-  : subscription_manager_ {subscription_manager}
-  , subscription_group_id_ {subscription_manager.openSubscription(getURI(subscription_manager, resources))}
-  {
-  }
-
-
-  SubscriptionGroup::SubscriptionGroup(SubscriptionGroup&& rhs)
-  : subscription_manager_ {rhs.subscription_manager_}
-  , subscription_group_id_ {rhs.subscription_group_id_}
-  {
-    // Clear subscription_group_id_ of the SubscriptionGroup that has been moved from,
-    // s.t. its destructor does not close the subscription.
-    rhs.subscription_group_id_.clear();
-  }
-
-
-  SubscriptionGroup::~SubscriptionGroup()
-  {
-    close();
-  }
-
-
-  void SubscriptionGroup::close()
-  {
-    if (!subscription_group_id_.empty())
-    {
-      subscription_manager_.closeSubscription(subscription_group_id_);
-      subscription_group_id_.clear();
-    }
-  }
-
-
-  void SubscriptionGroup::detach() noexcept
-  {
-    subscription_group_id_.clear();
-  }
-
-
-  SubscriptionReceiver SubscriptionGroup::receive() const
-  {
-    return SubscriptionReceiver {subscription_manager_, subscription_group_id_};
-  }
-
-
-  std::vector<std::pair<std::string, SubscriptionPriority>> SubscriptionGroup::getURI(
-      SubscriptionManager& subscription_manager, SubscriptionResources const& resources)
-  {
-    std::vector<std::pair<std::string, SubscriptionPriority>> uri;
-    uri.reserve(resources.size());
-
-    for (auto&& r : resources)
-      uri.emplace_back(r.getURI(subscription_manager), r.getPriority());
-
-    return uri;
-  }
-
-
   const std::chrono::microseconds SubscriptionReceiver::DEFAULT_SUBSCRIPTION_TIMEOUT {40000000000};
 
 
-  SubscriptionReceiver::SubscriptionReceiver(SubscriptionManager& subscription_manager, std::string const& subscription_group_id)
-  : subscription_manager_ {subscription_manager}
-  , webSocket_ {subscription_manager_.receiveSubscription(subscription_group_id)}
+  SubscriptionReceiver::SubscriptionReceiver(SubscriptionManager& subscription_manager, AbstractSubscriptionGroup const& group)
+  : group_ {group}
+  , subscription_manager_ {subscription_manager}
+  , webSocket_ {subscription_manager_.receiveSubscription(group.id())}
   {
   }
 

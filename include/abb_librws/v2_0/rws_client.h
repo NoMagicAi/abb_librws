@@ -38,6 +38,7 @@
 
 #include <Poco/DOM/DOMParser.h>
 #include <Poco/Net/HTTPSClientSession.h>
+#include <Poco/Net/HTTPResponse.h>
 
 #include <abb_librws/system_constants.h>
 #include <abb_librws/rws_rapid.h>
@@ -259,8 +260,6 @@ public:
                                const std::string& location = SystemConstants::General::EXTERNAL_LOCATION);
 
   // SubscriptionManager implementation
-  std::string openSubscription(std::vector<std::pair<std::string, SubscriptionPriority>> const& resources) override;
-  void closeSubscription(std::string const& subscription_group_id) override;
   Poco::Net::WebSocket receiveSubscription(std::string const& subscription_group_id) override;
   std::string getResourceURI(IOSignalResource const& io_signal) const override;
   std::string getResourceURI(RAPIDResource const& resource) const override;
