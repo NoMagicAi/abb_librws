@@ -81,28 +81,11 @@ namespace abb :: rws
     virtual std::string getResourceURI(IOSignalResource const& io_signal) const = 0;
 
     /**
-     * \brief Get URI for subscribing to a RAPID variable
-     *
-     * \param resource RAPID variable resource
-     *
-     * \return Subscription URI for \a resource
-     */
-    virtual std::string getResourceURI(RAPIDResource const& resource) const = 0;
-
-    /**
-     * \brief Get URI for subscribing to RAPID execution state
-     *
-     * \return Subscription URI
-     */
-    virtual std::string getResourceURI(RAPIDExecutionStateResource const&) const = 0;
-
-    /**
      * \brief Get URI for subscribing to controller state
      *
      * \return Subscription URI
      */
     virtual std::string getResourceURI(ControllerStateResource const&) const = 0;
-
 
     /**
      * \brief Get URI for subscribing to operation mode
@@ -136,9 +119,9 @@ namespace abb :: rws
     {
     }
 
-    std::string getURI(SubscriptionManager const& subscription_manager) const
+    std::string getURI() const
     {
-      return resource_->getURI(subscription_manager);
+      return resource_->getURI();
     }
 
     SubscriptionPriority getPriority() const noexcept
@@ -149,7 +132,7 @@ namespace abb :: rws
   private:
     struct ResourceInterface
     {
-      virtual std::string getURI(SubscriptionManager const& subscription_manager) const = 0;
+      virtual std::string getURI() const = 0;
       virtual ~ResourceInterface() {};
     };
 
@@ -163,9 +146,9 @@ namespace abb :: rws
       {
       }
 
-      std::string getURI(SubscriptionManager const& subscription_manager) const override
+      std::string getURI() const override
       {
-        return subscription_manager.getResourceURI(resource_);
+        return resource_.getURI();
       }
 
     private:
@@ -407,8 +390,7 @@ namespace abb :: rws
 
 
   private:
-    static std::vector<std::pair<std::string, SubscriptionPriority>> getURI(
-      SubscriptionManager& subscription_manager, SubscriptionResources const& resources);
+    static std::vector<std::pair<std::string, SubscriptionPriority>> getURI(SubscriptionResources const& resources);
 
 
     SubscriptionManager& subscription_manager_;

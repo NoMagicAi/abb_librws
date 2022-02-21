@@ -77,23 +77,23 @@ const std::string Procedures::RUN_MOVE_ABS_J                   = "runMoveAbsJ";
 const std::string Procedures::RUN_MOVE_J                       = "runMoveJ";
 const std::string Procedures::RUN_MOVE_TO_CALIBRATION_POSITION = "runMoveToCalibrationPosition";
 
-const RAPIDSymbolResource Symbols::EGM_CURRENT_ACTION(Modules::T_ROB_EGM, "current_action");
-const RAPIDSymbolResource Symbols::EGM_SETTINGS(Modules::T_ROB_EGM, "settings");
-const RAPIDSymbolResource Symbols::MAIN_CURRENT_STATE(Modules::T_ROB_MAIN, "current_state");
-const RAPIDSymbolResource Symbols::RAPID_CALL_BY_VAR_NAME_INPUT(Modules::T_ROB_RAPID, "callbyvar_name_input");
-const RAPIDSymbolResource Symbols::RAPID_CALL_BY_VAR_NUM_INPUT(Modules::T_ROB_RAPID, "callbyvar_num_input");
-const RAPIDSymbolResource Symbols::RAPID_MODULE_FILE_PATH_INPUT(Modules::T_ROB_RAPID, "module_file_path_input");
-const RAPIDSymbolResource Symbols::RAPID_MOVE_JOINT_TARGET_INPUT(Modules::T_ROB_RAPID, "move_jointtarget_input");
-const RAPIDSymbolResource Symbols::RAPID_MOVE_ROB_TARGET_INPUT(Modules::T_ROB_RAPID, "move_robtarget_input");
-const RAPIDSymbolResource Symbols::RAPID_MOVE_SPEED_INPUT(Modules::T_ROB_RAPID, "move_speed_input");
-const RAPIDSymbolResource Symbols::RAPID_ROUTINE_NAME_INPUT(Modules::T_ROB_RAPID, "routine_name_input");
-const RAPIDSymbolResource Symbols::SG_COMMAND_INPUT(Modules::T_ROB_SG, "command_input");
-const RAPIDSymbolResource Symbols::SG_SETTINGS(Modules::T_ROB_SG, "settings");
-const RAPIDSymbolResource Symbols::SG_TARGET_POSTION_INPUT(Modules::T_ROB_SG, "target_position_input");
-const RAPIDSymbolResource Symbols::UTILITY_BASE_FRAME(Modules::T_ROB_UTILITY, "base_frame");
-const RAPIDSymbolResource Symbols::UTILITY_CALIBRATION_TARGET(Modules::T_ROB_UTILITY, "calibration_target");
-const RAPIDSymbolResource Symbols::WATCHDOG_ACTIVE(Modules::T_ROB_WATCHDOG, "active");
-const RAPIDSymbolResource Symbols::WATCHDOG_CHECK_EXTERNAL_STATUS(Modules::T_ROB_WATCHDOG, "check_external_status");
+const Symbols::RAPIDSymbolResource Symbols::EGM_CURRENT_ACTION(Modules::T_ROB_EGM, "current_action");
+const Symbols::RAPIDSymbolResource Symbols::EGM_SETTINGS(Modules::T_ROB_EGM, "settings");
+const Symbols::RAPIDSymbolResource Symbols::MAIN_CURRENT_STATE(Modules::T_ROB_MAIN, "current_state");
+const Symbols::RAPIDSymbolResource Symbols::RAPID_CALL_BY_VAR_NAME_INPUT(Modules::T_ROB_RAPID, "callbyvar_name_input");
+const Symbols::RAPIDSymbolResource Symbols::RAPID_CALL_BY_VAR_NUM_INPUT(Modules::T_ROB_RAPID, "callbyvar_num_input");
+const Symbols::RAPIDSymbolResource Symbols::RAPID_MODULE_FILE_PATH_INPUT(Modules::T_ROB_RAPID, "module_file_path_input");
+const Symbols::RAPIDSymbolResource Symbols::RAPID_MOVE_JOINT_TARGET_INPUT(Modules::T_ROB_RAPID, "move_jointtarget_input");
+const Symbols::RAPIDSymbolResource Symbols::RAPID_MOVE_ROB_TARGET_INPUT(Modules::T_ROB_RAPID, "move_robtarget_input");
+const Symbols::RAPIDSymbolResource Symbols::RAPID_MOVE_SPEED_INPUT(Modules::T_ROB_RAPID, "move_speed_input");
+const Symbols::RAPIDSymbolResource Symbols::RAPID_ROUTINE_NAME_INPUT(Modules::T_ROB_RAPID, "routine_name_input");
+const Symbols::RAPIDSymbolResource Symbols::SG_COMMAND_INPUT(Modules::T_ROB_SG, "command_input");
+const Symbols::RAPIDSymbolResource Symbols::SG_SETTINGS(Modules::T_ROB_SG, "settings");
+const Symbols::RAPIDSymbolResource Symbols::SG_TARGET_POSTION_INPUT(Modules::T_ROB_SG, "target_position_input");
+const Symbols::RAPIDSymbolResource Symbols::UTILITY_BASE_FRAME(Modules::T_ROB_UTILITY, "base_frame");
+const Symbols::RAPIDSymbolResource Symbols::UTILITY_CALIBRATION_TARGET(Modules::T_ROB_UTILITY, "calibration_target");
+const Symbols::RAPIDSymbolResource Symbols::WATCHDOG_ACTIVE(Modules::T_ROB_WATCHDOG, "active");
+const Symbols::RAPIDSymbolResource Symbols::WATCHDOG_CHECK_EXTERNAL_STATUS(Modules::T_ROB_WATCHDOG, "check_external_status");
 
 
 
@@ -112,7 +112,7 @@ EGMActions RWSStateMachineInterface::Services::EGM::getCurrentAction(const std::
   RAPIDNum temp_current_action;
 
   p_rws_interface_->getRAPIDSymbolData({task, Symbols::EGM_CURRENT_ACTION}, temp_current_action);
-  
+
   switch ((int) temp_current_action.value)
   {
     case EGM_ACTION_STOP:

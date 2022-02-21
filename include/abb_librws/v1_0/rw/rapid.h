@@ -17,6 +17,94 @@ namespace abb :: rws :: v1_0 :: rw
 namespace abb :: rws :: v1_0 :: rw :: rapid
 {
     /**
+     * \brief A class for representing a RAPID symbol resource.
+     */
+    struct RAPIDSymbolResource
+    {
+        /**
+         * \brief A constructor.
+         *
+         * \param module specifying the name of the RAPID module containing the symbol.
+         * \param name specifying the name of the RAPID symbol.
+         */
+        RAPIDSymbolResource(const std::string& module, const std::string& name)
+        :   module(module)
+        ,   name(name)
+        {}
+
+        /**
+         * \brief The RAPID module name.
+         */
+        std::string module;
+
+        /**
+         * \brief The RAPID symbol name.
+         */
+        std::string name;
+    };
+
+
+    /**
+     * \brief A class for representing a RAPID resource.
+     */
+    struct RAPIDResource
+    {
+        /**
+         * \brief A constructor.
+         *
+         * \param task specifying the name of the RAPID task containing the symbol.
+         * \param module specifying the name of the RAPID module containing the symbol.
+         * \param name specifying the name of the RAPID symbol.
+         */
+        RAPIDResource(const std::string& task, const std::string& module, const std::string& name)
+        :   task(task)
+        ,   module(module)
+        ,   name(name)
+        {}
+
+        /**
+         * \brief A constructor.
+         *
+         * \param task specifying the name of the RAPID task containing the symbol.
+         * \param symbol specifying the names of the RAPID module and the the symbol.
+         */
+        RAPIDResource(const std::string& task, const RAPIDSymbolResource& symbol)
+        :   task(task)
+        ,   module(symbol.module)
+        ,   name(symbol.name)
+        {}
+
+
+        /**
+         * \brief The RAPID task name.
+         */
+        std::string task;
+
+        /**
+         * \brief The RAPID module name.
+         */
+        std::string module;
+
+        /**
+         * \brief The RAPID symbol name.
+         */
+        std::string name;
+
+
+        std::string getURI() const;
+    };
+
+
+    /**
+     * \brief RAPID execution state subscription resource
+     */
+    struct RAPIDExecutionStateResource
+    {
+        std::string getURI() const;
+    };
+
+
+    /**
      * \brief A function for retrieving the execution state of RAPID.
      *
      * https://developercenter.robotstudio.com/api/rwsApi/rapid_execution_get_page.html

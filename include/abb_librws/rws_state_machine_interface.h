@@ -277,6 +277,8 @@ public:
        */
       struct ABB_LIBRWS_EXPORT Symbols
       {
+        using RAPIDSymbolResource = v1_0::rw::rapid::RAPIDSymbolResource;
+
         /**
          * \brief RAPID symbol indicating the current EGM action of a RAPID motion task.
          *

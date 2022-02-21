@@ -734,11 +734,11 @@ void RWSInterface::setRAPIDSymbolData(const std::string& task,
                                       const std::string& name,
                                       const std::string& data)
 {
-  rw::rapid::setRAPIDSymbolData(rws_client_, RAPIDResource(task, module, name), data);
+  rw::rapid::setRAPIDSymbolData(rws_client_, rw::rapid::RAPIDResource(task, module, name), data);
 }
 
 
-void RWSInterface::setRAPIDSymbolData(RAPIDResource const& resource, const RAPIDSymbolDataAbstract& data)
+void RWSInterface::setRAPIDSymbolData(rw::rapid::RAPIDResource const& resource, const RAPIDSymbolDataAbstract& data)
 {
   rw::rapid::setRAPIDSymbolData(rws_client_, resource, data);
 }
@@ -838,11 +838,11 @@ std::string RWSInterface::getRAPIDSymbolData(const std::string& task,
                                              const std::string& module,
                                              const std::string& name)
 {
-  return rw::rapid::getRAPIDSymbolData(rws_client_, RAPIDResource(task, module, name));
+  return rw::rapid::getRAPIDSymbolData(rws_client_, rw::rapid::RAPIDResource(task, module, name));
 }
 
 
-void RWSInterface::getRAPIDSymbolData(RAPIDResource const& resource, RAPIDSymbolDataAbstract& data)
+void RWSInterface::getRAPIDSymbolData(rw::rapid::RAPIDResource const& resource, RAPIDSymbolDataAbstract& data)
 {
   rw::rapid::getRAPIDSymbolData(rws_client_, resource, data);
 }

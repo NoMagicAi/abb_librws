@@ -449,30 +449,9 @@ std::string RWSClient::getResourceURI(IOSignalResource const& io_signal) const
 }
 
 
-std::string RWSClient::getResourceURI(RAPIDResource const& resource) const
-{
-  std::string resource_uri = Resources::RW_RAPID_SYMBOL_DATA_RAPID;
-  resource_uri += "/";
-  resource_uri += resource.task;
-  resource_uri += "/";
-  resource_uri += resource.module;
-  resource_uri += "/";
-  resource_uri += resource.name;
-  resource_uri += ";";
-  resource_uri += Identifiers::VALUE;
-  return resource_uri;
-}
-
-
 std::string RWSClient::getResourceURI(ControllerStateResource const& resource) const
 {
   return "/rw/panel/ctrl-state";
-}
-
-
-std::string RWSClient::getResourceURI(RAPIDExecutionStateResource const&) const
-{
-  return "/rw/rapid/execution;ctrlexecstate";
 }
 
 

@@ -263,8 +263,6 @@ public:
   void closeSubscription(std::string const& subscription_group_id) override;
   Poco::Net::WebSocket receiveSubscription(std::string const& subscription_group_id) override;
   std::string getResourceURI(IOSignalResource const& io_signal) const override;
-  std::string getResourceURI(RAPIDResource const& resource) const override;
-  std::string getResourceURI(RAPIDExecutionStateResource const&) const override;
   std::string getResourceURI(ControllerStateResource const&) const override;
   std::string getResourceURI(OperationModeResource const&) const override;
   void processEvent(Poco::AutoPtr<Poco::XML::Document> content, SubscriptionCallback& callback) const override;

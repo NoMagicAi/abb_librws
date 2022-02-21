@@ -38,6 +38,7 @@
 
 #include <abb_librws/v1_0/rws_client.h>
 #include <abb_librws/v1_0/rws.h>
+#include <abb_librws/v1_0/rw/rapid.h>
 #include <abb_librws/common/rw/io.h>
 #include <abb_librws/rws.h>
 #include <abb_librws/rws_cfg.h>
@@ -262,7 +263,7 @@ public:
    *
    * \throw \a std::runtime_error if something goes wrong.
    */
-  void getRAPIDSymbolData(RAPIDResource const& resource, RAPIDSymbolDataAbstract& data);
+  void getRAPIDSymbolData(rw::rapid::RAPIDResource const& resource, RAPIDSymbolDataAbstract& data);
 
 
   /**
@@ -392,7 +393,7 @@ public:
    *
    * \throw \a std::runtime_error if something goes wrong.
    */
-  void setRAPIDSymbolData(RAPIDResource const& resource,
+  void setRAPIDSymbolData(rw::rapid::RAPIDResource const& resource,
                           const RAPIDSymbolDataAbstract& data);
 
 
