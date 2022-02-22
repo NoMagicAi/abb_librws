@@ -438,29 +438,6 @@ Poco::Net::WebSocket RWSClient::receiveSubscription(std::string const& subscript
 }
 
 
-std::string RWSClient::getResourceURI(IOSignalResource const& io_signal) const
-{
-  std::string resource_uri = Resources::RW_IOSYSTEM_SIGNALS;
-  resource_uri += "/";
-  resource_uri += io_signal.name;
-  resource_uri += ";";
-  resource_uri += Identifiers::STATE;
-  return resource_uri;
-}
-
-
-std::string RWSClient::getResourceURI(ControllerStateResource const& resource) const
-{
-  return "/rw/panel/ctrl-state";
-}
-
-
-std::string RWSClient::getResourceURI(OperationModeResource const&) const
-{
-  return "/rw/panel/opmode";
-}
-
-
 void RWSClient::processEvent(Poco::AutoPtr<Poco::XML::Document> doc, SubscriptionCallback& callback) const
 {
   // IMPORTANT: don't use AutoPtr<XML::Element> here! Otherwise you will get memory corruption.

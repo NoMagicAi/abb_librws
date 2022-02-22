@@ -72,29 +72,6 @@ namespace abb :: rws
     virtual Poco::Net::WebSocket receiveSubscription(std::string const& subscription_group_id) = 0;
 
     /**
-     * \brief Get URI for subscribing to an IO signal
-     *
-     * \param io_signal IO signal to subscribe
-     *
-     * \return Subscription URI for \a io_signal
-     */
-    virtual std::string getResourceURI(IOSignalResource const& io_signal) const = 0;
-
-    /**
-     * \brief Get URI for subscribing to controller state
-     *
-     * \return Subscription URI
-     */
-    virtual std::string getResourceURI(ControllerStateResource const&) const = 0;
-
-    /**
-     * \brief Get URI for subscribing to operation mode
-     *
-     * \return Subscription URI
-     */
-    virtual std::string getResourceURI(OperationModeResource const&) const = 0;
-
-    /**
      * \brief Process subscription event.
      *
      * Parses the event content \a content, determines event type, and calls the appropriate function in \a callback.

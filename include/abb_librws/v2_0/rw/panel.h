@@ -17,6 +17,24 @@ namespace abb :: rws :: v2_0 :: rw
 namespace abb :: rws :: v2_0 :: rw :: panel
 {
     /**
+     * \brief Controller operation mode subscription resource
+     */
+    struct OperationModeResource
+    {
+        std::string getURI() const;
+    };
+
+
+    /**
+     * \brief Controller state subscription resource
+     */
+    struct ControllerStateResource
+    {
+        std::string getURI() const;
+    };
+
+
+    /**
      * \brief A function for retrieving the controller state.
      *
      * \param client RWS client

@@ -64,6 +64,7 @@ set(
     src/v2_0/rws_interface.cpp
     src/v2_0/rw/rapid.cpp
     src/v2_0/rw/panel.cpp
+    src/v2_0/rw/io.cpp
 )
 
 add_library(${PROJECT_NAME} ${SRC_FILES})

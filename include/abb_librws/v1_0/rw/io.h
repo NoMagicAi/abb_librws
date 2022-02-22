@@ -10,6 +10,31 @@ namespace abb :: rws :: v1_0 :: rw :: io
 
 
     /**
+     * \brief IO signal subscription resource.
+     */
+    struct IOSignalResource
+    {
+        /**
+         * \brief A constructor.
+         *
+         * \param name name of the IO signal.
+         */
+        explicit IOSignalResource(std::string const& name)
+        : name(name)
+        {
+        }
+
+        /**
+         * \brief IO signal name.
+         */
+        std::string name;
+
+
+        std::string getURI() const;
+    };
+
+
+    /**
      * \brief Get values of all IO signals.
      *
      * \param client RWS client.
