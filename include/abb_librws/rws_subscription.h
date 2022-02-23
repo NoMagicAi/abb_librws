@@ -42,25 +42,6 @@ namespace abb :: rws
   class SubscriptionManager
   {
   public:
-    /**
-     * \brief Subscribe to specified resources.
-     *
-     * \param resources list of pairs (resource URIs, priority) to subscribe
-     *
-     * \return Id of the created subscription group.
-     *
-     * \throw \a RWSError if something goes wrong.
-     */
-    virtual std::string openSubscription(std::vector<std::pair<std::string, SubscriptionPriority>> const& resources) = 0;
-
-    /**
-     * \brief End subscription to a specified group.
-     *
-     * \param subscription_group_id id of the subscription group to unsubscribe from.
-     *
-     * \throw \a RWSError if something goes wrong.
-     */
-    virtual void closeSubscription(std::string const& subscription_group_id) = 0;
 
     /**
      * \brief Open a WebSocket and start receiving subscription events.

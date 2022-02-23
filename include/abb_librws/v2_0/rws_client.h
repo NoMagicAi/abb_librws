@@ -38,6 +38,7 @@
 
 #include <Poco/DOM/DOMParser.h>
 #include <Poco/Net/HTTPSClientSession.h>
+#include <Poco/Net/HTTPResponse.h>
 
 #include <abb_librws/system_constants.h>
 #include <abb_librws/rws_rapid.h>
@@ -259,8 +260,6 @@ public:
                                const std::string& location = SystemConstants::General::EXTERNAL_LOCATION);
 
   // SubscriptionManager implementation
-  std::string openSubscription(std::vector<std::pair<std::string, SubscriptionPriority>> const& resources) override;
-  void closeSubscription(std::string const& subscription_group_id) override;
   Poco::Net::WebSocket receiveSubscription(std::string const& subscription_group_id) override;
 
   /**
@@ -280,7 +279,8 @@ public:
    *
    * \return POCOResult containing the result.
    */
-  POCOResult httpPost(const std::string& uri, const std::string& content = "", const std::string& content_type = "");
+  POCOResult httpPost(const std::string& uri, const std::string& content = "", const std::string& content_type = "",
+    std::set<Poco::Net::HTTPResponse::HTTPStatus> const& accepted_status = {Poco::Net::HTTPResponse::HTTP_NO_CONTENT, Poco::Net::HTTPResponse::HTTP_OK});
 
   /**
    * \brief A method for sending a HTTP PUT request and checking response status.

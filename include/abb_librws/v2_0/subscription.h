@@ -87,8 +87,6 @@ namespace abb :: rws :: v2_0 :: subscription
 
 
   private:
-    static std::vector<std::pair<std::string, SubscriptionPriority>> getURI(SubscriptionResources const& resources);
-
     RWSClient& client_;
     SubscriptionResources resources_;
 
@@ -96,5 +94,28 @@ namespace abb :: rws :: v2_0 :: subscription
      * \brief The subscription group id.
      */
     std::string subscription_group_id_;
+
+
+    /**
+     * \brief Subscribe to specified resources.
+     *
+     * \param client RWS client
+     * \param resources list of resources to subscribe
+     *
+     * \return Id of the created subscription group.
+     *
+     * \throw \a RWSError if something goes wrong.
+     */
+    static std::string openSubscription(RWSClient& client, SubscriptionResources const& resources);
+
+    /**
+     * \brief End subscription to a specified group.
+     *
+     * \param client RWS client
+     * \param subscription_group_id id of the subscription group to unsubscribe from.
+     *
+     * \throw \a RWSError if something goes wrong.
+     */
+    static void closeSubscription(RWSClient& client, std::string const& subscription_group_id);
   };
 }

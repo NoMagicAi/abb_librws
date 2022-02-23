@@ -9,7 +9,7 @@ namespace abb :: rws :: v1_0 :: subscription
   SubscriptionGroup::SubscriptionGroup(RWSClient& client, SubscriptionResources const& resources)
   : client_ {client}
   , resources_ {resources}
-  , subscription_group_id_ {client_.openSubscription(getURI(resources))}
+  , subscription_group_id_ {openSubscription(client_, resources)}
   {
   }
 
@@ -35,7 +35,7 @@ namespace abb :: rws :: v1_0 :: subscription
   {
     if (!subscription_group_id_.empty())
     {
-      client_.closeSubscription(subscription_group_id_);
+      closeSubscription(client_, subscription_group_id_);
       subscription_group_id_.clear();
     }
   }
@@ -53,14 +53,50 @@ namespace abb :: rws :: v1_0 :: subscription
   }
 
 
-  std::vector<std::pair<std::string, SubscriptionPriority>> SubscriptionGroup::getURI(SubscriptionResources const& resources)
+  std::string SubscriptionGroup::openSubscription(RWSClient& client, SubscriptionResources const& resources)
   {
-    std::vector<std::pair<std::string, SubscriptionPriority>> uri;
-    uri.reserve(resources.size());
+    // Generate content for a subscription HTTP post request.
+    std::stringstream subscription_content;
+    for (std::size_t i = 0; i < resources.size(); ++i)
+    {
+      subscription_content << "resources=" << i
+                            << "&"
+                            << i << "=" << resources[i].getURI()
+                            << "&"
+                            << i << "-p=" << static_cast<int>(resources[i].getPriority())
+                            << (i < resources.size() - 1 ? "&" : "");
+    }
 
-    for (auto&& r : resources)
-      uri.emplace_back(r.getURI(), r.getPriority());
+    // Make a subscription request.
+    POCOResult const poco_result = client.httpPost(Services::SUBSCRIPTION, subscription_content.str(), {HTTPResponse::HTTP_CREATED});
 
-    return uri;
+    std::string subscription_group_id;
+
+    // Find "Location" header attribute
+    auto const h = std::find_if(
+      poco_result.headerInfo().begin(), poco_result.headerInfo().end(),
+      [] (auto const& p) { return p.first == "Location"; });
+
+    if (h != poco_result.headerInfo().end())
+    {
+      std::string const poll = "/poll/";
+      auto const start_postion = h->second.find(poll);
+
+      if (start_postion != std::string::npos)
+        subscription_group_id = h->second.substr(start_postion + poll.size());
+    }
+
+    if (subscription_group_id.empty())
+      BOOST_THROW_EXCEPTION(ProtocolError {"Cannot get subscription group from HTTP response"});
+
+    return subscription_group_id;
+  }
+
+
+  void SubscriptionGroup::closeSubscription(RWSClient& client, std::string const& subscription_group_id)
+  {
+    // Unsubscribe from events
+    std::string const uri = Services::SUBSCRIPTION + "/" + subscription_group_id;
+    client.httpDelete(uri);
   }
 }

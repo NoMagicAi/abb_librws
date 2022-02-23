@@ -317,11 +317,12 @@ POCOResult RWSClient::httpGet(const std::string& uri)
 }
 
 
-POCOResult RWSClient::httpPost(const std::string& uri, const std::string& content, const std::string& content_type)
+POCOResult RWSClient::httpPost(const std::string& uri, const std::string& content, const std::string& content_type,
+  std::set<Poco::Net::HTTPResponse::HTTPStatus> const& accepted_status)
 {
   POCOResult const result = http_client_.httpPost(uri, content, content_type);
 
-  if (result.httpStatus() != HTTPResponse::HTTP_NO_CONTENT && result.httpStatus() != HTTPResponse::HTTP_OK)
+  if (accepted_status.find(result.httpStatus()) == accepted_status.end())
     BOOST_THROW_EXCEPTION(ProtocolError {"HTTP response status not accepted"}
       << HttpMethodErrorInfo {"POST"}
       << UriErrorInfo {uri}
@@ -366,68 +367,6 @@ POCOResult RWSClient::httpDelete(const std::string& uri)
     );
 
   return result;
-}
-
-
-std::string RWSClient::openSubscription(std::vector<std::pair<std::string, SubscriptionPriority>> const& resources)
-{
-  // Generate content for a subscription HTTP post request.
-  std::stringstream subscription_content;
-  for (std::size_t i = 0; i < resources.size(); ++i)
-  {
-    subscription_content << "resources=" << i
-                          << "&"
-                          << i << "=" << resources[i].first
-                          << "&"
-                          << i << "-p=" << static_cast<int>(resources[i].second)
-                          << (i < resources.size() - 1 ? "&" : "");
-  }
-
-  std::string content_type = "application/x-www-form-urlencoded;v=2.0";
-
-  // Make a subscription request.
-  POCOResult const poco_result = http_client_.httpPost(Services::SUBSCRIPTION, subscription_content.str(), content_type);
-
-  if (poco_result.httpStatus() != HTTPResponse::HTTP_CREATED)
-    BOOST_THROW_EXCEPTION(
-      ProtocolError {"Unable to create Subscription"}
-      << HttpStatusErrorInfo {poco_result.httpStatus()}
-      << HttpReasonErrorInfo {poco_result.reason()}
-      << HttpMethodErrorInfo {HTTPRequest::HTTP_POST}
-      << HttpRequestContentErrorInfo {subscription_content.str()}
-      << HttpResponseContentErrorInfo {poco_result.content()}
-      << HttpResponseErrorInfo {poco_result}
-      << UriErrorInfo {Services::SUBSCRIPTION}
-    );
-
-  std::string subscription_group_id;
-
-  // Find "Location" header attribute
-  auto const h = std::find_if(
-    poco_result.headerInfo().begin(), poco_result.headerInfo().end(),
-    [] (auto const& p) { return p.first == "Location"; });
-
-  if (h != poco_result.headerInfo().end())
-  {
-    std::string const poll = "/poll/";
-    auto const start_postion = h->second.find(poll);
-
-    if (start_postion != std::string::npos)
-      subscription_group_id = h->second.substr(start_postion + poll.size());
-  }
-
-  if (subscription_group_id.empty())
-    BOOST_THROW_EXCEPTION(ProtocolError {"Cannot get subscription group from HTTP response"});
-
-  return subscription_group_id;
-}
-
-
-void RWSClient::closeSubscription(std::string const& subscription_group_id)
-{
-  // Unsubscribe from events
-  std::string const uri = Services::SUBSCRIPTION + "/" + subscription_group_id;
-  httpDelete(uri);
 }
 
 
