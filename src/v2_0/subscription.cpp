@@ -93,6 +93,9 @@ namespace abb :: rws :: v2_0 :: subscription
     if (subscription_group_id.empty())
       BOOST_THROW_EXCEPTION(ProtocolError {"Cannot get subscription group from HTTP response"});
 
+    SubscriptionCallback empty_callback {};
+    processAllEvents(parseXml(poco_result.content()), resources, empty_callback);
+
     return subscription_group_id;
   }
 

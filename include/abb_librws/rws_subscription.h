@@ -260,16 +260,6 @@ namespace abb :: rws
 
 
     bool webSocketReceiveFrame(WebSocketFrame& frame, std::chrono::microseconds timeout);
-
-    /**
-     * \brief Process subscription event.
-     *
-     * Parses the event content \a content, determines event type, and calls the appropriate function in \a callback.
-     *
-     * \param content XML content of the event
-     * \param callback event callback
-     */
-    void processEvent(Poco::AutoPtr<Poco::XML::Document> doc, SubscriptionCallback& callback) const;
   };
 
 
@@ -384,4 +374,15 @@ namespace abb :: rws
         }
     );
   }
+
+
+  /**
+   * \brief Process all events in a subscription package.
+   *
+   * Parses all events in \a content, determines event type, and calls the appropriate functions in \a callback.
+   *
+   * \param content XML content of the event
+   * \param callback event callback
+   */
+  void processAllEvents(Poco::AutoPtr<Poco::XML::Document> doc, SubscriptionResources const& resources, SubscriptionCallback& callback);
 }

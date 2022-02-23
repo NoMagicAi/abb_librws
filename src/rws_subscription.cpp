@@ -36,7 +36,7 @@ namespace abb :: rws
     if (webSocketReceiveFrame(frame, timeout))
     {
       Poco::AutoPtr<Poco::XML::Document> doc = parser_.parseString(frame.frame_content);
-      processEvent(doc, callback);
+      processAllEvents(doc, group_.resources(), callback);
       return true;
     }
 
@@ -113,7 +113,7 @@ namespace abb :: rws
   }
 
 
-  void AbstractSubscriptionReceiver::processEvent(Poco::AutoPtr<Poco::XML::Document> doc, SubscriptionCallback& callback) const
+  void processAllEvents(Poco::AutoPtr<Poco::XML::Document> doc, SubscriptionResources const& resources, SubscriptionCallback& callback)
   {
     // IMPORTANT: don't use AutoPtr<XML::Element> here! Otherwise you will get memory corruption.
     Poco::XML::Element const * ul_element = dynamic_cast<Poco::XML::Element const *>(doc->getNodeByPath("html/body/div/ul"));
@@ -129,7 +129,7 @@ namespace abb :: rws
         BOOST_THROW_EXCEPTION(std::logic_error {"An item of the list returned by getElementsByTagName() is not an XML::Element"});
 
       // Cycle throught all subscription resources
-      for (auto const& resource : group_.resources())
+      for (auto const& resource : resources)
         resource.processEvent(*li_element, callback);
     }
   }
