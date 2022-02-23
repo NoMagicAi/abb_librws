@@ -49,9 +49,9 @@ namespace abb :: rws :: v2_0 :: subscription
   }
 
 
-  SubscriptionReceiver SubscriptionGroup::receive() const
+  std::unique_ptr<AbstractSubscriptionReceiver> SubscriptionGroup::receive() const
   {
-    return SubscriptionReceiver {client_, *this};
+    return std::make_unique<SubscriptionReceiver>(client_, *this);
   }
 
 
@@ -102,5 +102,11 @@ namespace abb :: rws :: v2_0 :: subscription
     // Unsubscribe from events
     std::string const uri = Services::SUBSCRIPTION + "/" + subscription_group_id;
     client.httpDelete(uri);
+  }
+
+
+  SubscriptionReceiver::SubscriptionReceiver(RWSClient& client, AbstractSubscriptionGroup const& group)
+  : AbstractSubscriptionReceiver {client.webSocketConnect("/poll/" + group.id(), "rws_subscription"), group}
+  {
   }
 }

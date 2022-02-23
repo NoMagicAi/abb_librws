@@ -68,7 +68,6 @@ using RWSResult = Poco::AutoPtr<Poco::XML::Document>;
  * See https://developercenter.robotstudio.com/api/RWS for details about RWS 2.0
  */
 class RWSClient
-: public SubscriptionManager
 {
 public:
   /**
@@ -259,9 +258,6 @@ public:
                                const std::string& application = SystemConstants::General::EXTERNAL_APPLICATION,
                                const std::string& location = SystemConstants::General::EXTERNAL_LOCATION);
 
-  // SubscriptionManager implementation
-  Poco::Net::WebSocket receiveSubscription(std::string const& subscription_group_id) override;
-
   /**
    * \brief A method for sending a HTTP GET request and checking response status.
    *
@@ -300,6 +296,18 @@ public:
    * \return POCOResult containing the result.
    */
   POCOResult httpDelete(const std::string& uri);
+
+  /**
+   * \brief A method for connecting a WebSocket.
+   *
+   * \param uri for the URI (path and query).
+   * \param protocol for the WebSocket protocol.
+   *
+   * \return Newly created client WebSocket.
+   *
+   * \throw \a std::runtime_error if something goes wrong
+   */
+  Poco::Net::WebSocket webSocketConnect(const std::string& uri, const std::string& protocol);
 
 
 private:

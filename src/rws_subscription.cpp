@@ -15,23 +15,22 @@ namespace abb :: rws
   using namespace Poco::Net;
 
 
-  const std::chrono::microseconds SubscriptionReceiver::DEFAULT_SUBSCRIPTION_TIMEOUT {40000000000};
+  const std::chrono::microseconds AbstractSubscriptionReceiver::DEFAULT_SUBSCRIPTION_TIMEOUT {40000000000};
 
 
-  SubscriptionReceiver::SubscriptionReceiver(SubscriptionManager& subscription_manager, AbstractSubscriptionGroup const& group)
+  AbstractSubscriptionReceiver::AbstractSubscriptionReceiver(Poco::Net::WebSocket&& web_socket, AbstractSubscriptionGroup const& group)
   : group_ {group}
-  , subscription_manager_ {subscription_manager}
-  , webSocket_ {subscription_manager_.receiveSubscription(group.id())}
+  , webSocket_ {std::move(web_socket)}
   {
   }
 
 
-  SubscriptionReceiver::~SubscriptionReceiver()
+  AbstractSubscriptionReceiver::~AbstractSubscriptionReceiver()
   {
   }
 
 
-  bool SubscriptionReceiver::waitForEvent(SubscriptionCallback& callback, std::chrono::microseconds timeout)
+  bool AbstractSubscriptionReceiver::waitForEvent(SubscriptionCallback& callback, std::chrono::microseconds timeout)
   {
     WebSocketFrame frame;
     if (webSocketReceiveFrame(frame, timeout))
@@ -45,7 +44,7 @@ namespace abb :: rws
   }
 
 
-  bool SubscriptionReceiver::webSocketReceiveFrame(WebSocketFrame& frame, std::chrono::microseconds timeout)
+  bool AbstractSubscriptionReceiver::webSocketReceiveFrame(WebSocketFrame& frame, std::chrono::microseconds timeout)
   {
     auto now = std::chrono::steady_clock::now();
     auto deadline = std::chrono::steady_clock::now() + timeout;
@@ -107,14 +106,14 @@ namespace abb :: rws
   }
 
 
-  void SubscriptionReceiver::shutdown()
+  void AbstractSubscriptionReceiver::shutdown()
   {
     // Shut down the socket. This should make webSocketReceiveFrame() return as soon as possible.
     webSocket_.shutdown();
   }
 
 
-  void SubscriptionReceiver::processEvent(Poco::AutoPtr<Poco::XML::Document> doc, SubscriptionCallback& callback) const
+  void AbstractSubscriptionReceiver::processEvent(Poco::AutoPtr<Poco::XML::Document> doc, SubscriptionCallback& callback) const
   {
     // IMPORTANT: don't use AutoPtr<XML::Element> here! Otherwise you will get memory corruption.
     Poco::XML::Element const * ul_element = dynamic_cast<Poco::XML::Element const *>(doc->getNodeByPath("html/body/div/ul"));

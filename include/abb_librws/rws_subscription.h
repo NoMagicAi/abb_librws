@@ -37,26 +37,6 @@ namespace abb :: rws
 
 
   /**
-   * \brief Provides the mechanism to open, receive, and close RWS event subscription.
-   */
-  class SubscriptionManager
-  {
-  public:
-
-    /**
-     * \brief Open a WebSocket and start receiving subscription events.
-     *
-     * \param subscription_group_id subscription group id for which to receive event.
-     *
-     * \return WebSocket created to receive the events.
-     *
-     * \throw \a RWSError if something goes wrong.
-     */
-    virtual Poco::Net::WebSocket receiveSubscription(std::string const& subscription_group_id) = 0;
-  };
-
-
-  /**
    * \brief Subscription resource that has URI and priority.
    */
   class SubscriptionResource
@@ -194,30 +174,31 @@ namespace abb :: rws
 
 
   /**
-   * \brief Receives RWS subscription events.
+   * \brief Abstract RWS subscription receiver.
    */
-  class SubscriptionReceiver
+  class AbstractSubscriptionReceiver
   {
-  public:
+  protected:
     /**
      * \brief Prepares to receive events from a specified subscription WebSocket.
      *
-     * \param subscription_manager used to initiate WebSocket connection and parse incomoing message content
+     * \param web_socket an open WebSocket to receive RWS events
      * \param group subscription group for which to receive events
      */
-    explicit SubscriptionReceiver(SubscriptionManager& subscription_manager, AbstractSubscriptionGroup const& group);
+    explicit AbstractSubscriptionReceiver(Poco::Net::WebSocket&& web_socket, AbstractSubscriptionGroup const& group);
 
 
     /**
      * \brief \a SubscriptionReceiver objects are moveable, but not copyable.
      */
-    SubscriptionReceiver(SubscriptionReceiver&&) = default;
+    AbstractSubscriptionReceiver(AbstractSubscriptionReceiver&&) = default;
 
 
+  public:
     /**
      * \brief Closes the WebSocket connection but does not delete the subscription.
      */
-    ~SubscriptionReceiver();
+    virtual ~AbstractSubscriptionReceiver();
 
 
     /**
@@ -267,8 +248,6 @@ namespace abb :: rws
      * \brief A buffer for a Subscription.
      */
     char websocket_buffer_[BUFFER_SIZE];
-
-    SubscriptionManager& subscription_manager_;
 
     /**
      * \brief WebSocket for receiving events.
@@ -320,9 +299,9 @@ namespace abb :: rws
     /**
      * \brief Establish WebSocket connection ans start receiving subscription events.
      *
-     * \return \a SubscriptionReceiver object that can be used to receive events.
+     * \return pointer to \a AbstractSubscriptionReceiver that can be used to receive events.
      */
-    virtual SubscriptionReceiver receive() const = 0;
+    virtual std::unique_ptr<AbstractSubscriptionReceiver> receive() const = 0;
 
     /**
      * \brief Close the subscription.
@@ -361,7 +340,7 @@ namespace abb :: rws
    * \throw \a TimeoutError if waiting time exceeds \a timeout.
    */
   template <typename T>
-  inline std::future<T> waitForEvent(SubscriptionReceiver& receiver, std::chrono::microseconds timeout)
+  inline std::future<T> waitForEvent(AbstractSubscriptionReceiver& receiver, std::chrono::microseconds timeout)
   {
     struct Callback : rws::SubscriptionCallback
     {

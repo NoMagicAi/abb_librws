@@ -60,7 +60,7 @@ namespace abb :: rws :: v2_0 :: subscription
     }
 
 
-    SubscriptionReceiver receive() const override;
+    std::unique_ptr<AbstractSubscriptionReceiver> receive() const override;
 
 
     /**
@@ -117,5 +117,22 @@ namespace abb :: rws :: v2_0 :: subscription
      * \throw \a RWSError if something goes wrong.
      */
     static void closeSubscription(RWSClient& client, std::string const& subscription_group_id);
+  };
+
+
+  /**
+   * \brief Receives RWS subscription events.
+   */
+  class SubscriptionReceiver
+  : public AbstractSubscriptionReceiver
+  {
+  public:
+    /**
+     * \brief Prepares to receive events from a specified subscription WebSocket.
+     *
+     * \param client used to initiate WebSocket connection
+     * \param group subscription group for which to receive events
+     */
+    explicit SubscriptionReceiver(RWSClient& client, AbstractSubscriptionGroup const& group);
   };
 }
