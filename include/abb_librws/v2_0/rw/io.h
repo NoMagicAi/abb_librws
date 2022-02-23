@@ -31,5 +31,6 @@ namespace abb :: rws :: v2_0 :: rw :: io
 
 
         std::string getURI() const;
+        void processEvent(Poco::XML::Element const& li_element, SubscriptionCallback& callback) const;
     };
 }

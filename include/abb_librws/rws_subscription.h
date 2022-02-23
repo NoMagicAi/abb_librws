@@ -8,6 +8,7 @@
 #include <abb_librws/common/rw/panel.h>
 
 #include <Poco/DOM/DOMParser.h>
+#include <Poco/DOM/Element.h>
 #include <Poco/Net/WebSocket.h>
 
 #include <string>
@@ -32,6 +33,7 @@ namespace abb :: rws
 
 
   class SubscriptionCallback;
+  class SubscriptionGroup;
 
 
   /**
@@ -70,16 +72,6 @@ namespace abb :: rws
      * \throw \a RWSError if something goes wrong.
      */
     virtual Poco::Net::WebSocket receiveSubscription(std::string const& subscription_group_id) = 0;
-
-    /**
-     * \brief Process subscription event.
-     *
-     * Parses the event content \a content, determines event type, and calls the appropriate function in \a callback.
-     *
-     * \param content XML content of the event
-     * \param callback event callback
-     */
-    virtual void processEvent(Poco::AutoPtr<Poco::XML::Document> content, SubscriptionCallback& callback) const = 0;
   };
 
 
@@ -101,6 +93,11 @@ namespace abb :: rws
       return resource_->getURI();
     }
 
+    void processEvent(Poco::XML::Element const& li_element, SubscriptionCallback& callback) const
+    {
+      resource_->processEvent(li_element, callback);
+    }
+
     SubscriptionPriority getPriority() const noexcept
     {
       return priority_;
@@ -110,6 +107,7 @@ namespace abb :: rws
     struct ResourceInterface
     {
       virtual std::string getURI() const = 0;
+      virtual void processEvent(Poco::XML::Element const& li_element, SubscriptionCallback& callback) const = 0;
       virtual ~ResourceInterface() {};
     };
 
@@ -126,6 +124,11 @@ namespace abb :: rws
       std::string getURI() const override
       {
         return resource_.getURI();
+      }
+
+      void processEvent(Poco::XML::Element const& li_element, SubscriptionCallback& callback) const override
+      {
+        resource_.processEvent(li_element, callback);
       }
 
     private:
@@ -219,9 +222,9 @@ namespace abb :: rws
      * \brief Prepares to receive events from a specified subscription WebSocket.
      *
      * \param subscription_manager used to initiate WebSocket connection and parse incomoing message content
-     * \param subscription_group_id id of the subscription group for which to receive events
+     * \param group subscription group for which to receive events
      */
-    explicit SubscriptionReceiver(SubscriptionManager& subscription_manager, std::string const& subscription_group_id);
+    explicit SubscriptionReceiver(SubscriptionManager& subscription_manager, SubscriptionGroup const& group);
 
 
     /**
@@ -276,6 +279,9 @@ namespace abb :: rws
      */
     static const size_t BUFFER_SIZE = 1024;
 
+    // Subscription group to which the SubscriptionReceiver is bound.
+    SubscriptionGroup const& group_;
+
     /**
      * \brief A buffer for a Subscription.
      */
@@ -295,6 +301,16 @@ namespace abb :: rws
 
 
     bool webSocketReceiveFrame(WebSocketFrame& frame, std::chrono::microseconds timeout);
+
+    /**
+     * \brief Process subscription event.
+     *
+     * Parses the event content \a content, determines event type, and calls the appropriate function in \a callback.
+     *
+     * \param content XML content of the event
+     * \param callback event callback
+     */
+    void processEvent(Poco::AutoPtr<Poco::XML::Document> doc, SubscriptionCallback& callback) const;
   };
 
 
@@ -336,6 +352,17 @@ namespace abb :: rws
 
 
     /**
+     * @brief Get subscribed resources.
+     *
+     * @return list of subscribed resources.
+     */
+    SubscriptionResources const& resources() const noexcept
+    {
+      return resources_;
+    }
+
+
+    /**
      * \brief Establish WebSocket connection ans start receiving subscription events.
      *
      * \return \a SubscriptionReceiver object that can be used to receive events.
@@ -369,11 +396,11 @@ namespace abb :: rws
   private:
     static std::vector<std::pair<std::string, SubscriptionPriority>> getURI(SubscriptionResources const& resources);
 
-
+    SubscriptionResources resources_;
     SubscriptionManager& subscription_manager_;
 
     /**
-     * \brief A subscription group id.
+     * \brief The subscription group id.
      */
     std::string subscription_group_id_;
   };

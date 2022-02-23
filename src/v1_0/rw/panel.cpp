@@ -78,8 +78,31 @@ namespace abb :: rws :: v1_0 :: rw :: panel
     }
 
 
+    void OperationModeResource::processEvent(Poco::XML::Element const& li_element, SubscriptionCallback& callback) const
+    {
+        if (li_element.getAttribute("class") == "pnl-opmode-ev")
+        {
+            OperationModeEvent event;
+            event.mode = rw::makeOperationMode(xmlFindTextContent(&li_element, XMLAttribute {"class", "opmode"}));
+
+            callback.processEvent(event);
+        }
+    }
+
+
     std::string ControllerStateResource::getURI() const
     {
         return "/rw/panel/ctrlstate";
+    }
+
+
+    void ControllerStateResource::processEvent(Poco::XML::Element const& li_element, SubscriptionCallback& callback) const
+    {
+        if (li_element.getAttribute("class") == "pnl-ctrlstate-ev")
+        {
+            ControllerStateEvent event;
+            event.state = rw::makeControllerState(xmlFindTextContent(&li_element, XMLAttribute {"class", "ctrlstate"}));
+            callback.processEvent(event);
+        }
     }
 }

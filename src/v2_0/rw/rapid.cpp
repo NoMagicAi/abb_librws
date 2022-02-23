@@ -278,4 +278,16 @@ namespace abb :: rws :: v2_0 :: rw :: rapid
     {
         return "/rw/rapid/execution;ctrlexecstate";
     }
+
+
+    void RAPIDExecutionStateResource::processEvent(Poco::XML::Element const& li_element, SubscriptionCallback& callback) const
+    {
+        if (li_element.getAttribute("class") == "rap-ctrlexecstate-ev")
+        {
+            RAPIDExecutionStateEvent event;
+            event.state = rw::makeRAPIDExecutionState(xmlFindTextContent(&li_element, XMLAttribute {"class", "ctrlexecstate"}));
+
+            callback.processEvent(event);
+        }
+    }
 }

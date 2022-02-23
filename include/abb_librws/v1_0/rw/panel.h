@@ -22,6 +22,7 @@ namespace abb :: rws :: v1_0 :: rw :: panel
     struct OperationModeResource
     {
         std::string getURI() const;
+        void processEvent(Poco::XML::Element const& li_element, SubscriptionCallback& callback) const;
     };
 
 
@@ -31,6 +32,7 @@ namespace abb :: rws :: v1_0 :: rw :: panel
     struct ControllerStateResource
     {
         std::string getURI() const;
+        void processEvent(Poco::XML::Element const& li_element, SubscriptionCallback& callback) const;
     };
 
 

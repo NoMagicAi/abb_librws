@@ -3,6 +3,7 @@
 #include <abb_librws/parsing.h>
 
 #include <Poco/Net/HTTPRequest.h>
+#include <Poco/DOM/NodeList.h>
 
 #include <boost/exception/diagnostic_information.hpp>
 
@@ -15,15 +16,17 @@ namespace abb :: rws
 
 
   SubscriptionGroup::SubscriptionGroup(SubscriptionManager& subscription_manager, SubscriptionResources const& resources)
-  : subscription_manager_ {subscription_manager}
+  : resources_ {resources}
+  , subscription_manager_ {subscription_manager}
   , subscription_group_id_ {subscription_manager.openSubscription(getURI(resources))}
   {
   }
 
 
   SubscriptionGroup::SubscriptionGroup(SubscriptionGroup&& rhs)
-  : subscription_manager_ {rhs.subscription_manager_}
-  , subscription_group_id_ {rhs.subscription_group_id_}
+  : resources_ {std::move(rhs.resources_)}
+  , subscription_manager_ {rhs.subscription_manager_}
+  , subscription_group_id_ {std::move(rhs.subscription_group_id_)}
   {
     // Clear subscription_group_id_ of the SubscriptionGroup that has been moved from,
     // s.t. its destructor does not close the subscription.
@@ -55,7 +58,7 @@ namespace abb :: rws
 
   SubscriptionReceiver SubscriptionGroup::receive() const
   {
-    return SubscriptionReceiver {subscription_manager_, subscription_group_id_};
+    return SubscriptionReceiver {subscription_manager_, *this};
   }
 
 
@@ -74,9 +77,10 @@ namespace abb :: rws
   const std::chrono::microseconds SubscriptionReceiver::DEFAULT_SUBSCRIPTION_TIMEOUT {40000000000};
 
 
-  SubscriptionReceiver::SubscriptionReceiver(SubscriptionManager& subscription_manager, std::string const& subscription_group_id)
-  : subscription_manager_ {subscription_manager}
-  , webSocket_ {subscription_manager_.receiveSubscription(subscription_group_id)}
+  SubscriptionReceiver::SubscriptionReceiver(SubscriptionManager& subscription_manager, SubscriptionGroup const& group)
+  : group_ {group}
+  , subscription_manager_ {subscription_manager}
+  , webSocket_ {subscription_manager_.receiveSubscription(group.id())}
   {
   }
 
@@ -92,7 +96,7 @@ namespace abb :: rws
     if (webSocketReceiveFrame(frame, timeout))
     {
       Poco::AutoPtr<Poco::XML::Document> doc = parser_.parseString(frame.frame_content);
-      subscription_manager_.processEvent(doc, callback);
+      processEvent(doc, callback);
       return true;
     }
 
@@ -166,6 +170,28 @@ namespace abb :: rws
   {
     // Shut down the socket. This should make webSocketReceiveFrame() return as soon as possible.
     webSocket_.shutdown();
+  }
+
+
+  void SubscriptionReceiver::processEvent(Poco::AutoPtr<Poco::XML::Document> doc, SubscriptionCallback& callback) const
+  {
+    // IMPORTANT: don't use AutoPtr<XML::Element> here! Otherwise you will get memory corruption.
+    Poco::XML::Element const * ul_element = dynamic_cast<Poco::XML::Element const *>(doc->getNodeByPath("html/body/div/ul"));
+    if (!ul_element)
+      BOOST_THROW_EXCEPTION(ProtocolError {"Cannot parse RWS event message: can't find XML element at path html/body/div/ul"});
+
+    // Cycle through all <li> elements
+    Poco::AutoPtr<Poco::XML::NodeList> li_elements = ul_element->getElementsByTagName("li");
+    for (unsigned long index = 0; index < li_elements->length(); ++index)
+    {
+      Poco::XML::Element const * li_element = dynamic_cast<Poco::XML::Element const *>(li_elements->item(index));
+      if (!li_element)
+        BOOST_THROW_EXCEPTION(std::logic_error {"An item of the list returned by getElementsByTagName() is not an XML::Element"});
+
+      // Cycle throught all subscription resources
+      for (auto const& resource : group_.resources())
+        resource.processEvent(*li_element, callback);
+    }
   }
 
 
