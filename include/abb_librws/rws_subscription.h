@@ -33,7 +33,7 @@ namespace abb :: rws
 
 
   class SubscriptionCallback;
-  class SubscriptionGroup;
+  class AbstractSubscriptionGroup;
 
 
   /**
@@ -224,7 +224,7 @@ namespace abb :: rws
      * \param subscription_manager used to initiate WebSocket connection and parse incomoing message content
      * \param group subscription group for which to receive events
      */
-    explicit SubscriptionReceiver(SubscriptionManager& subscription_manager, SubscriptionGroup const& group);
+    explicit SubscriptionReceiver(SubscriptionManager& subscription_manager, AbstractSubscriptionGroup const& group);
 
 
     /**
@@ -280,7 +280,7 @@ namespace abb :: rws
     static const size_t BUFFER_SIZE = 1024;
 
     // Subscription group to which the SubscriptionReceiver is bound.
-    SubscriptionGroup const& group_;
+    AbstractSubscriptionGroup const& group_;
 
     /**
      * \brief A buffer for a Subscription.
@@ -315,60 +315,33 @@ namespace abb :: rws
 
 
   /**
-   * \brief Manages an RWS subscription group.
+   * \brief Abstract RWS subscription group.
    */
-  class SubscriptionGroup
+  class AbstractSubscriptionGroup
   {
   public:
-    /**
-     * \brief Registers a subscription at the server.
-     *
-     * \param subscription_manager an interface to control the subscription
-     * \param resources list of resources to subscribe
-     */
-    explicit SubscriptionGroup(SubscriptionManager& subscription_manager, SubscriptionResources const& resources);
-
-
-    /**
-     * \a SubscriptionGroup objects are moveable, but not copyable.
-     */
-    SubscriptionGroup(SubscriptionGroup&&);
-
-
-    /**
-     * \brief Ends an active subscription.
-     */
-    ~SubscriptionGroup();
+    virtual ~AbstractSubscriptionGroup() = default;
 
     /**
      * \brief Get ID of the subscription group.
      *
      * \return ID of the subscription group.
      */
-    std::string const& id() const noexcept
-    {
-      return subscription_group_id_;
-    }
-
+    virtual std::string const& id() const noexcept = 0;
 
     /**
      * @brief Get subscribed resources.
      *
      * @return list of subscribed resources.
      */
-    SubscriptionResources const& resources() const noexcept
-    {
-      return resources_;
-    }
-
+    virtual SubscriptionResources const& resources() const noexcept = 0;
 
     /**
      * \brief Establish WebSocket connection ans start receiving subscription events.
      *
      * \return \a SubscriptionReceiver object that can be used to receive events.
      */
-    SubscriptionReceiver receive() const;
-
+    virtual SubscriptionReceiver receive() const = 0;
 
     /**
      * \brief Close the subscription.
@@ -380,8 +353,7 @@ namespace abb :: rws
      *
      * \throw \a RWSError if something goes wrong.
      */
-    void close();
-
+    virtual void close() = 0;
 
     /**
      * \brief Detach the object from the subscription group.
@@ -390,19 +362,7 @@ namespace abb :: rws
      * The \a id() will become empty and the subsequent calls to \a receive() will fail.
      * This is useful if closing the subscription group fails, but you want to continue.
      */
-    void detach() noexcept;
-
-
-  private:
-    static std::vector<std::pair<std::string, SubscriptionPriority>> getURI(SubscriptionResources const& resources);
-
-    SubscriptionResources resources_;
-    SubscriptionManager& subscription_manager_;
-
-    /**
-     * \brief The subscription group id.
-     */
-    std::string subscription_group_id_;
+    virtual void detach() noexcept = 0;
   };
 
 
