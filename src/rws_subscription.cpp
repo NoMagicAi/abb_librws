@@ -135,11 +135,6 @@ namespace abb :: rws
   }
 
 
-  void SubscriptionCallback::processEvent(IOSignalStateEvent const& event)
-  {
-  }
-
-
   void SubscriptionCallback::processEvent(RAPIDExecutionStateEvent const& event)
   {
   }

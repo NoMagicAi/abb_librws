@@ -166,7 +166,6 @@ namespace abb :: rws
   class SubscriptionCallback
   {
   public:
-    virtual void processEvent(IOSignalStateEvent const& event);
     virtual void processEvent(RAPIDExecutionStateEvent const& event);
     virtual void processEvent(ControllerStateEvent const& event);
     virtual void processEvent(OperationModeEvent const& event);
@@ -359,6 +358,29 @@ namespace abb :: rws
             if (!receiver.waitForEvent(callback, timeout))
               BOOST_THROW_EXCEPTION(CommunicationError {"WebSocket connection shut down when waiting for a subscription event"});
             return callback.event_;
+        }
+    );
+  }
+
+
+  /**
+   * \brief Wait for a subscription event of any type.
+   *
+   * \param receiver RWS subscription receiver
+   * \param timeout wait timeout
+   *
+   * \return \a std::future with the received event.
+   *
+   * \throw \a CommunicationError if the subscription WebSocket connection is closed while waiting for the event.
+   * \throw \a TimeoutError if waiting time exceeds \a timeout.
+   */
+  inline std::future<void> waitForEvent(AbstractSubscriptionReceiver& receiver, std::chrono::microseconds timeout)
+  {
+    return std::async(std::launch::async,
+        [&receiver, timeout] {
+            rws::SubscriptionCallback callback;
+            if (!receiver.waitForEvent(callback, timeout))
+              BOOST_THROW_EXCEPTION(CommunicationError {"WebSocket connection shut down when waiting for a subscription event"});
         }
     );
   }

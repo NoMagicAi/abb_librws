@@ -147,7 +147,7 @@ namespace abb :: rws :: v1_0 :: rw :: io
                 event.signal = name;
                 event.value = xmlFindTextContent(&li_element, XMLAttribute {"class", "lvalue"});
 
-                callback.processEvent(event);
+                callback_(event);
             }
         }
     }
