@@ -287,7 +287,7 @@ namespace abb :: rws :: v2_0 :: rw :: rapid
             RAPIDExecutionStateEvent event;
             event.state = rw::makeRAPIDExecutionState(xmlFindTextContent(&li_element, XMLAttribute {"class", "ctrlexecstate"}));
 
-            callback.processEvent(event);
+            callback_(event);
         }
     }
 }

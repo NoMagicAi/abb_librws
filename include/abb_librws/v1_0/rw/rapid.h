@@ -100,8 +100,18 @@ namespace abb :: rws :: v1_0 :: rw :: rapid
      */
     struct RAPIDExecutionStateResource
     {
+        using Callback = std::function<void (RAPIDExecutionStateEvent const&)>;
+
+        explicit RAPIDExecutionStateResource(Callback callback)
+        :   callback_ {std::move(callback)}
+        {
+        }
+
         std::string getURI() const;
         void processEvent(Poco::XML::Element const& li_element, SubscriptionCallback& callback) const;
+
+    private:
+        Callback callback_;
     };
 
 
