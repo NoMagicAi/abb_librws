@@ -269,7 +269,7 @@ namespace abb :: rws
   class AbstractSubscriptionGroup
   {
   public:
-    virtual ~AbstractSubscriptionGroup() = default;
+    virtual ~AbstractSubscriptionGroup() noexcept = default;
 
     /**
      * \brief Get ID of the subscription group.
@@ -284,6 +284,13 @@ namespace abb :: rws
      * @return list of subscribed resources.
      */
     virtual SubscriptionResources const& resources() const noexcept = 0;
+
+    /**
+     * @brief Update subscribed resources.
+     *
+     * @param res list of new subscribed resources.
+     */
+    virtual void resources(SubscriptionResources const& res) = 0;
 
     /**
      * \brief Establish WebSocket connection ans start receiving subscription events.

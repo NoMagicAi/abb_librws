@@ -36,7 +36,7 @@ namespace abb :: rws :: v1_0 :: subscription
     /**
      * \brief Ends an active subscription.
      */
-    ~SubscriptionGroup();
+    ~SubscriptionGroup() noexcept;
 
     /**
      * \brief Get ID of the subscription group.
@@ -60,6 +60,7 @@ namespace abb :: rws :: v1_0 :: subscription
     }
 
 
+    void resources(SubscriptionResources const& res) override;
     std::unique_ptr<AbstractSubscriptionReceiver> receive() const override;
 
 
@@ -118,6 +119,8 @@ namespace abb :: rws :: v1_0 :: subscription
      * \throw \a RWSError if something goes wrong.
      */
     static void closeSubscription(RWSClient& client, std::string const& subscription_group_id);
+
+    static std::string resourcesString(SubscriptionResources const& resources);
   };
 
 

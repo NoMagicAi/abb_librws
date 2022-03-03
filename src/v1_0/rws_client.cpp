@@ -307,7 +307,8 @@ POCOResult RWSClient::httpPut(const std::string& uri, const std::string& content
 POCOResult RWSClient::httpDelete(const std::string& uri)
 {
   POCOResult const result = http_client_.httpDelete(uri);
-  if (result.httpStatus() != HTTPResponse::HTTP_OK && result.httpStatus() != HTTPResponse::HTTP_NO_CONTENT)
+  if (result.httpStatus() != HTTPResponse::HTTP_OK)
+  {
     BOOST_THROW_EXCEPTION(ProtocolError {"HTTP response status not accepted"}
       << HttpMethodErrorInfo {"DELETE"}
       << HttpStatusErrorInfo {result.httpStatus()}
@@ -315,6 +316,7 @@ POCOResult RWSClient::httpDelete(const std::string& uri)
       << UriErrorInfo {uri}
       << HttpReasonErrorInfo {result.reason()}
     );
+  }
 
   return result;
 }

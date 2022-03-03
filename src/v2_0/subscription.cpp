@@ -55,13 +55,15 @@ namespace abb :: rws :: v2_0 :: subscription
   }
 
 
-  std::string SubscriptionGroup::openSubscription(RWSClient& client, SubscriptionResources const& resources)
+  std::string SubscriptionGroup::resourcesString(SubscriptionResources const& resources)
   {
-    // Generate content for a subscription HTTP post request.
+    // Generate content for a subscription HTTP post/put request.
     std::stringstream subscription_content;
+    subscription_content << "resources=";
+
     for (std::size_t i = 0; i < resources.size(); ++i)
     {
-      subscription_content << "resources=" << i
+      subscription_content << i
                             << "&"
                             << i << "=" << resources[i].getURI()
                             << "&"
@@ -69,10 +71,16 @@ namespace abb :: rws :: v2_0 :: subscription
                             << (i < resources.size() - 1 ? "&" : "");
     }
 
+    return subscription_content.str();
+  }
+
+
+  std::string SubscriptionGroup::openSubscription(RWSClient& client, SubscriptionResources const& resources)
+  {
     std::string content_type = "application/x-www-form-urlencoded;v=2.0";
 
     // Make a subscription request.
-    POCOResult const poco_result = client.httpPost(Services::SUBSCRIPTION, subscription_content.str(), content_type, {HTTPResponse::HTTP_CREATED});
+    POCOResult const poco_result = client.httpPost(Services::SUBSCRIPTION, resourcesString(resources), content_type, {HTTPResponse::HTTP_CREATED});
 
     std::string subscription_group_id;
 
@@ -97,6 +105,13 @@ namespace abb :: rws :: v2_0 :: subscription
     processAllEvents(parseXml(poco_result.content()), resources, empty_callback);
 
     return subscription_group_id;
+  }
+
+
+  void SubscriptionGroup::resources(SubscriptionResources const& res)
+  {
+    client_.httpPut(Services::SUBSCRIPTION + "/" + subscription_group_id_, resourcesString(res), "application/x-www-form-urlencoded;v=2.0");
+    resources_ = res;
   }
 
 

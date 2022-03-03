@@ -59,7 +59,7 @@ namespace abb :: rws :: v2_0 :: subscription
       return resources_;
     }
 
-
+    void resources(SubscriptionResources const& res) override;
     std::unique_ptr<AbstractSubscriptionReceiver> receive() const override;
 
 
@@ -117,6 +117,8 @@ namespace abb :: rws :: v2_0 :: subscription
      * \throw \a RWSError if something goes wrong.
      */
     static void closeSubscription(RWSClient& client, std::string const& subscription_group_id);
+
+    static std::string resourcesString(SubscriptionResources const& resources);
   };
 
 

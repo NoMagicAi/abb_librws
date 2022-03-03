@@ -1,5 +1,7 @@
 #include <abb_librws/v1_0/subscription.h>
 
+#include <iostream>
+
 
 namespace abb :: rws :: v1_0 :: subscription
 {
@@ -25,7 +27,7 @@ namespace abb :: rws :: v1_0 :: subscription
   }
 
 
-  SubscriptionGroup::~SubscriptionGroup()
+  SubscriptionGroup::~SubscriptionGroup() noexcept
   {
     close();
   }
@@ -53,13 +55,15 @@ namespace abb :: rws :: v1_0 :: subscription
   }
 
 
-  std::string SubscriptionGroup::openSubscription(RWSClient& client, SubscriptionResources const& resources)
+  std::string SubscriptionGroup::resourcesString(SubscriptionResources const& resources)
   {
-    // Generate content for a subscription HTTP post request.
+    // Generate content for a subscription HTTP post/put request.
     std::stringstream subscription_content;
+    subscription_content << "resources=";
+
     for (std::size_t i = 0; i < resources.size(); ++i)
     {
-      subscription_content << "resources=" << i
+      subscription_content << i
                             << "&"
                             << i << "=" << resources[i].getURI()
                             << "&"
@@ -67,8 +71,14 @@ namespace abb :: rws :: v1_0 :: subscription
                             << (i < resources.size() - 1 ? "&" : "");
     }
 
+    return subscription_content.str();
+  }
+
+
+  std::string SubscriptionGroup::openSubscription(RWSClient& client, SubscriptionResources const& resources)
+  {
     // Make a subscription request.
-    POCOResult const poco_result = client.httpPost(Services::SUBSCRIPTION, subscription_content.str(), {HTTPResponse::HTTP_CREATED});
+    POCOResult const poco_result = client.httpPost(Services::SUBSCRIPTION, resourcesString(resources), {HTTPResponse::HTTP_CREATED});
 
     std::string subscription_group_id;
 
@@ -96,11 +106,22 @@ namespace abb :: rws :: v1_0 :: subscription
   }
 
 
+  void SubscriptionGroup::resources(SubscriptionResources const& res)
+  {
+    POCOResult result = client_.httpPut(Services::SUBSCRIPTION + "/" + subscription_group_id_, resourcesString(res));
+    resources_ = res;
+
+    std::clog << "Content:\n" << result.content();
+  }
+
+
   void SubscriptionGroup::closeSubscription(RWSClient& client, std::string const& subscription_group_id)
   {
     // Unsubscribe from events
     std::string const uri = Services::SUBSCRIPTION + "/" + subscription_group_id;
+    std::clog << "Closing subscription\n";
     client.httpDelete(uri);
+    std::clog << "Subscription closed!\n";
   }
 
 
