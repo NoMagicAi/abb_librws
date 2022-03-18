@@ -27,7 +27,7 @@ endif()
 find_package(Poco 1.4.3 REQUIRED COMPONENTS Foundation Net Util XML NetSSL)
 
 ## Find boost exception library
-find_package(Boost REQUIRED COMPONENTS exception)
+find_package(Boost REQUIRED COMPONENTS exception log log_setup)
 
 ###########
 ## Build ##
@@ -35,6 +35,8 @@ find_package(Boost REQUIRED COMPONENTS exception)
 if(NOT DEFINED BUILD_SHARED_LIBS)
   option(BUILD_SHARED_LIBS "Build dynamically-linked binaries" ON)
 endif()
+
+set(CMAKE_CXX_FLAGS "-DBOOST_LOG_DYN_LINK")
 
 set(
   SRC_FILES
@@ -84,6 +86,8 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 
 target_link_libraries(${PROJECT_NAME}
   PUBLIC ${Poco_LIBRARIES}
+  ${Boost_LOG_LIBRARY}
+  ${Boost_LOG_SETUP_LIBRARY}
 )
 
 if(NOT BUILD_SHARED_LIBS)
@@ -101,6 +105,7 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME OR MYPROJECT_BUILD_TESTING)
   enable_testing()
 
   find_package(GTest REQUIRED)
+  find_package(Boost REQUIRED COMPONENTS exception log log_setup)
 
   add_executable(${PROJECT_NAME}-test
       test/rws_rapid_test.cpp
@@ -110,6 +115,9 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME OR MYPROJECT_BUILD_TESTING)
       ${PROJECT_NAME}
       GTest::GTest
       GTest::Main
+
+      ${Boost_LOG_LIBRARY}
+      ${Boost_LOG_SETUP_LIBRARY}
   )
 
   gtest_discover_tests(${PROJECT_NAME}-test)
