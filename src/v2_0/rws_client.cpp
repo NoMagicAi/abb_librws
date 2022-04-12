@@ -49,6 +49,7 @@
 #include <iostream>
 
 #include <boost/log/trivial.hpp>
+#include <boost/exception/diagnostic_information.hpp>
 
 
 
@@ -99,7 +100,10 @@ RWSClient::~RWSClient()
   catch (std::exception const& e)
   {
     // Catch all exceptions in dtor.
-    std::cerr << "Exception in RWSClient::~RWSClient(): " << e.what() << std::endl;
+    std::string const ex_info = boost::diagnostic_information(e);
+
+    BOOST_LOG_TRIVIAL(error) << "Exception in RWSClient::~RWSClient(): " << ex_info;
+    std::cerr << "Exception in RWSClient::~RWSClient(): " << ex_info << std::endl;
   }
 }
 
@@ -306,10 +310,10 @@ std::string RWSClient::generateFilePath(const FileResource& resource)
 
 POCOResult RWSClient::httpGet(const std::string& uri)
 {
-  BOOST_LOG_TRIVIAL(debug) << "Tyring to GET from uri=" << uri << "\n";
+  //BOOST_LOG_TRIVIAL(debug) << "Tyring to GET from uri=" << uri << "\n";
   POCOResult const result = http_client_.httpGet(uri);
 
-  BOOST_LOG_TRIVIAL(debug) << "GETing from uri=" << uri << " got http status=" << result.httpStatus() << "\n";
+  //BOOST_LOG_TRIVIAL(debug) << "GETing from uri=" << uri << " got http status=" << result.httpStatus() << "\n";
   if (result.httpStatus() != HTTPResponse::HTTP_NO_CONTENT && result.httpStatus() != HTTPResponse::HTTP_OK)
     BOOST_THROW_EXCEPTION(ProtocolError {"HTTP response status not accepted"}
       << HttpMethodErrorInfo {"GET"}
@@ -325,10 +329,10 @@ POCOResult RWSClient::httpGet(const std::string& uri)
 
 POCOResult RWSClient::httpPost(const std::string& uri, const std::string& content, const std::string& content_type)
 {
-  BOOST_LOG_TRIVIAL(debug) << "Tyring to POST to uri=" << uri << "\n";
+  //BOOST_LOG_TRIVIAL(debug) << "Tyring to POST to uri=" << uri << "\n";
   POCOResult const result = http_client_.httpPost(uri, content, content_type);
 
-  BOOST_LOG_TRIVIAL(debug) << "POSTing to uri=" << uri << " got http status=" << result.httpStatus() << "\n";
+  //BOOST_LOG_TRIVIAL(debug) << "POSTing to uri=" << uri << " got http status=" << result.httpStatus() << "\n";
   if (result.httpStatus() != HTTPResponse::HTTP_NO_CONTENT && result.httpStatus() != HTTPResponse::HTTP_OK)
     BOOST_THROW_EXCEPTION(ProtocolError {"HTTP response status not accepted"}
       << HttpMethodErrorInfo {"POST"}
@@ -345,10 +349,10 @@ POCOResult RWSClient::httpPost(const std::string& uri, const std::string& conten
 
 POCOResult RWSClient::httpPut(const std::string& uri, const std::string& content, const std::string& content_type)
 {
-  BOOST_LOG_TRIVIAL(debug) << "Tyring to PUT to uri=" << uri << "\n";
+  //BOOST_LOG_TRIVIAL(debug) << "Tyring to PUT to uri=" << uri << "\n";
   POCOResult const result = http_client_.httpPut(uri, content, content_type);
 
-  BOOST_LOG_TRIVIAL(debug) << "PUTing to uri=" << uri << " got http status=" << result.httpStatus() << "\n";
+  //BOOST_LOG_TRIVIAL(debug) << "PUTing to uri=" << uri << " got http status=" << result.httpStatus() << "\n";
   if (result.httpStatus() != HTTPResponse::HTTP_OK && result.httpStatus() != HTTPResponse::HTTP_CREATED)
     BOOST_THROW_EXCEPTION(ProtocolError {"HTTP response status not accepted"}
       << HttpMethodErrorInfo {"PUT"}
@@ -365,9 +369,9 @@ POCOResult RWSClient::httpPut(const std::string& uri, const std::string& content
 
 POCOResult RWSClient::httpDelete(const std::string& uri)
 {
-  BOOST_LOG_TRIVIAL(debug) << "Tyring to DELETE to uri=" << uri << "\n";
+  //BOOST_LOG_TRIVIAL(debug) << "Tyring to DELETE to uri=" << uri << "\n";
   POCOResult const result = http_client_.httpDelete(uri);
-  BOOST_LOG_TRIVIAL(debug) << "DELETEing to uri=" << uri << " got http status=" << result.httpStatus() << "\n";
+  //BOOST_LOG_TRIVIAL(debug) << "DELETEing to uri=" << uri << " got http status=" << result.httpStatus() << "\n";
   if (result.httpStatus() != HTTPResponse::HTTP_OK && result.httpStatus() != HTTPResponse::HTTP_NO_CONTENT)
     BOOST_THROW_EXCEPTION(ProtocolError {"HTTP response status not accepted"}
       << HttpMethodErrorInfo {"DELETE"}
@@ -398,10 +402,10 @@ std::string RWSClient::openSubscription(std::vector<std::pair<std::string, Subsc
   std::string content_type = "application/x-www-form-urlencoded;v=2.0";
 
   // Make a subscription request.
-  BOOST_LOG_TRIVIAL(debug) << "Sending subscription request to uri=" << Services::SUBSCRIPTION << " with content=" << subscription_content.str() << "\n";
+  //BOOST_LOG_TRIVIAL(debug) << "Sending subscription request to uri=" << Services::SUBSCRIPTION << " with content=" << subscription_content.str() << "\n";
   POCOResult const poco_result = http_client_.httpPost(Services::SUBSCRIPTION, subscription_content.str(), content_type);
 
-  BOOST_LOG_TRIVIAL(debug) << "Subscription request sent and got status=" << poco_result.httpStatus() << "\n";
+  //BOOST_LOG_TRIVIAL(debug) << "Subscription request sent and got status=" << poco_result.httpStatus() << "\n";
   if (poco_result.httpStatus() != HTTPResponse::HTTP_CREATED)
     BOOST_THROW_EXCEPTION(
       ProtocolError {"Unable to create Subscription"}
