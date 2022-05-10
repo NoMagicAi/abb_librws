@@ -77,4 +77,14 @@ namespace abb :: rws :: v2_0 :: rw :: panel
      * \throw \a RWSError if something goes wrong.
      */
     void setSpeedRatio(RWSClient& client, unsigned int ratio);
+
+    /**
+     * \brief A function for setting the operation mode of the controller.
+     *
+     * \param client RWS client
+     * \param mode Operation mode of controller {auto | man | manf}
+     *
+     * \throw \a RWSError if something goes wrong.
+     */
+    void setOperationMode(RWSClient& client, SetOperationMode mode);
 }

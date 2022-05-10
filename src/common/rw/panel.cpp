@@ -94,6 +94,26 @@ namespace abb :: rws :: rw
         return os;
     }
 
+    std::ostream& operator<<(std::ostream& os, SetOperationMode mode)
+    {
+        switch (mode)
+        {
+        case SetOperationMode::man:
+            os << "man";
+            break;
+        case SetOperationMode::manF:
+            os << "manf";
+            break;
+        case SetOperationMode::automatic:
+            os << "auto";
+            break;
+        default:
+            BOOST_THROW_EXCEPTION(std::logic_error {"Invalid OperationMode value"});
+        }
+
+        return os;
+    }
+
 
     /**
      * \brief Create \a OperationMode from string.

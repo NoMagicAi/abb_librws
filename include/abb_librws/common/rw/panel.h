@@ -73,6 +73,25 @@ namespace abb :: rws :: rw
 
     std::ostream& operator<<(std::ostream& os, OperationMode mode);
 
+    /**
+     * @brief Set robot operation mode.
+     *
+     * The documentation strings are taken from 
+     * https://developercenter.robotstudio.com/api/RWS?urls.primaryName=Panel%20Service -> POST rw/panel/mode
+     */
+    enum class SetOperationMode
+    {
+        // State manual mode
+        man,
+        // State manual mode & full speed
+        manF,
+        // State automatic mode
+        automatic,
+    };
+
+
+    std::ostream& operator<<(std::ostream& os, SetOperationMode mode);
+
 
     /**
      * \brief Create \a OperationMode from string.
