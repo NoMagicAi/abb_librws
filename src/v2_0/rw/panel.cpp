@@ -72,4 +72,14 @@ namespace abb :: rws :: v2_0 :: rw :: panel
 
         client.httpPost(uri, content.str());
     }
+
+    void setOperationMode(RWSClient& client, SetOperationMode mode)
+    {
+        std::string uri = "/rw/panel/opmode";
+        std::stringstream content;
+        content << "opmode=" << mode;
+        std::string content_type = "application/x-www-form-urlencoded;v=2.0";
+
+        client.httpPost(uri, content.str(), content_type);
+    }
 }
