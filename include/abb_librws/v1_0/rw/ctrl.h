@@ -1,6 +1,7 @@
 
 #include <abb_librws/rws.h>
 #include <abb_librws/v1_0/rws_client.h>
+#include <abb_librws/common/rw/ctrl.h>
 
 #include <string>
 #include <iosfwd>
@@ -22,6 +23,6 @@ namespace abb :: rws :: v1_0 :: rw :: ctrl
      *
      * \throw \a RWSError if something goes wrong.
      */
-    void restartController(RWSClient& client);
+    void restartController(RWSClient& client, RestartMode const& restartMode = RestartMode::restart);
 
 }
