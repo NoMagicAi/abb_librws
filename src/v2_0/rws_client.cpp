@@ -101,7 +101,7 @@ RWSClient::~RWSClient()
     // Catch all exceptions in dtor.
     std::string const ex_info = boost::diagnostic_information(e);
 
-    BOOST_LOG_TRIVIAL(error) << "Exception in RWSClient::~RWSClient(): " << ex_info;
+    //BOOST_LOG_TRIVIAL(error) << "Exception in RWSClient::~RWSClient(): " << ex_info;
     std::cerr << "Exception in RWSClient::~RWSClient(): " << ex_info << std::endl;
   }
 }
@@ -314,7 +314,7 @@ POCOResult RWSClient::httpGet(const std::string& uri)
 
   while (result.httpStatus() == HTTPResponse::HTTP_SERVICE_UNAVAILABLE && it != connectionOptions_.retry_backoff.end()){
     std::this_thread::sleep_for(*(it++));
-    BOOST_LOG_TRIVIAL(warning) << "Received status 503 for " << uri << " doing retry";
+    //BOOST_LOG_TRIVIAL(warning) << "Received status 503 for " << uri << " doing retry";
     result = http_client_.httpGet(uri);
   }
 
@@ -338,7 +338,7 @@ POCOResult RWSClient::httpPost(const std::string& uri, const std::string& conten
 
   while (result.httpStatus() == HTTPResponse::HTTP_SERVICE_UNAVAILABLE && it != connectionOptions_.retry_backoff.end()){
     std::this_thread::sleep_for(*(it++));
-    BOOST_LOG_TRIVIAL(warning) << "Received status 503 for " << uri << " doing retry";
+    //BOOST_LOG_TRIVIAL(warning) << "Received status 503 for " << uri << " doing retry";
     result = http_client_.httpPost(uri, content, content_type);
   }
 
@@ -363,7 +363,7 @@ POCOResult RWSClient::httpPut(const std::string& uri, const std::string& content
 
   while (result.httpStatus() == HTTPResponse::HTTP_SERVICE_UNAVAILABLE && it != connectionOptions_.retry_backoff.end()){
     std::this_thread::sleep_for(*(it++));
-    BOOST_LOG_TRIVIAL(warning) << "Received status 503 for " << uri << " doing retry";
+    //BOOST_LOG_TRIVIAL(warning) << "Received status 503 for " << uri << " doing retry";
     result = http_client_.httpPut(uri, content, content_type);
   }
 
@@ -388,7 +388,7 @@ POCOResult RWSClient::httpDelete(const std::string& uri)
 
   while (result.httpStatus() == HTTPResponse::HTTP_SERVICE_UNAVAILABLE && it != connectionOptions_.retry_backoff.end()){
     std::this_thread::sleep_for(*(it++));
-    BOOST_LOG_TRIVIAL(warning) << "Received status 503 for " << uri << " doing retry";
+    //BOOST_LOG_TRIVIAL(warning) << "Received status 503 for " << uri << " doing retry";
     result = http_client_.httpDelete(uri);
   }
 
@@ -427,7 +427,7 @@ std::string RWSClient::openSubscription(std::vector<std::pair<std::string, Subsc
 
   while (poco_result.httpStatus() == HTTPResponse::HTTP_SERVICE_UNAVAILABLE && it != connectionOptions_.retry_backoff.end()){
     std::this_thread::sleep_for(*(it++));
-    BOOST_LOG_TRIVIAL(warning) << "Received status 503 for subscription doing retry";
+    //BOOST_LOG_TRIVIAL(warning) << "Received status 503 for subscription doing retry";
     poco_result = http_client_.httpPost(Services::SUBSCRIPTION, subscription_content.str(), content_type);
   }
 
