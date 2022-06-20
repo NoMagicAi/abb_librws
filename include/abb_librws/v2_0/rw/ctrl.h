@@ -21,6 +21,7 @@ namespace abb :: rws :: v2_0 :: rw :: ctrl
      *
      * \param client RWS client
      * \param mastership {implicit | explicit} by default mastership is explicit
+     * \param restartMode Controller restart type
      *
      * \throw \a RWSError if something goes wrong.
      */

@@ -20,6 +20,7 @@ namespace abb :: rws :: v1_0 :: rw :: ctrl
      * https://developercenter.robotstudio.com/api/RWS?urls.primaryName=Controller%20Service
      *
      * \param client RWS client
+     * \param restartMode Controller restart type
      *
      * \throw \a RWSError if something goes wrong.
      */
