@@ -11,6 +11,6 @@ namespace abb :: rws :: v1_0 :: rw :: cfg
         std::string content =
             "filepath=" + resource.directory + "/" + resource.filename + "&action-type=replace";
 
-        client.httpPost(uri.str(), content, std::set<Poco::Net::HTTPResponse::HTTPStatus> {Poco::Net::HTTPResponse::HTTP_NO_CONTENT, Poco::Net::HTTPResponse::HTTP_OK});
+        client.httpPost(uri.str(), content, {Poco::Net::HTTPResponse::HTTP_NO_CONTENT});
     }
 }
