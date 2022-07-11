@@ -106,6 +106,7 @@ namespace abb :: rws
   {
     auto now = std::chrono::steady_clock::now();
     auto deadline = std::chrono::steady_clock::now() + timeout;
+    auto final_deadline = deadline + timeout;
 
     // If the connection is still active...
     int flags = 0;
@@ -117,7 +118,9 @@ namespace abb :: rws
     {
       now = std::chrono::steady_clock::now();
       if (now >= deadline)
-        BOOST_THROW_EXCEPTION(TimeoutError {"WebSocket frame receive timeout"});
+        BOOST_LOG_TRIVIAL(warning) << "WebSocket frame deadline reached";
+      if (now >= final_deadline)
+        BOOST_THROW_EXCEPTION(TimeoutError {"WebSocket frame deadline reached"});
 
       webSocket_.setReceiveTimeout(std::chrono::duration_cast<std::chrono::microseconds>(deadline - now).count());
       flags = 0;
