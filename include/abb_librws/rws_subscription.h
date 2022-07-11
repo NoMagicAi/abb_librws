@@ -286,7 +286,7 @@ namespace abb :: rws
      *
      * \throw \a TimeoutError if waiting time exceeds \a timeout.
      */
-    bool waitForEvent(SubscriptionCallback& callback, std::chrono::microseconds timeout = DEFAULT_SUBSCRIPTION_TIMEOUT);
+    bool waitForEvent(SubscriptionCallback& callback, std::chrono::microseconds timeout = DEFAULT_SUBSCRIPTION_TIMEOUT, std::chrono::microseconds ping_pong_timeout = DEFAULT_PING_PONG_TIMEOUT);
 
 
     /**
@@ -307,9 +307,13 @@ namespace abb :: rws
 
   private:
     /**
-     * \brief Default RWS subscription timeout [microseconds].
+     * \brief Default RWS subscription timeout - timout in between messages [microseconds].
      */
     static const std::chrono::microseconds DEFAULT_SUBSCRIPTION_TIMEOUT;
+        /**
+     * \brief Default RWS subscription ping pong timeout - timeout in between two ping pong messages [microseconds].
+     */
+    static const std::chrono::microseconds DEFAULT_PING_PONG_TIMEOUT;
 
     /**
      * \brief Static constant for the socket's buffer size.
@@ -334,7 +338,7 @@ namespace abb :: rws
     Poco::XML::DOMParser parser_;
 
 
-    bool webSocketReceiveFrame(WebSocketFrame& frame, std::chrono::microseconds timeout);
+    bool webSocketReceiveFrame(WebSocketFrame& frame, std::chrono::microseconds timeout, std::chrono::microseconds ping_pong_timeout);
   };
 
 

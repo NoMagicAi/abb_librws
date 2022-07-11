@@ -73,7 +73,8 @@ namespace abb :: rws
   }
 
 
-  const std::chrono::microseconds SubscriptionReceiver::DEFAULT_SUBSCRIPTION_TIMEOUT {180000000};
+  const std::chrono::microseconds SubscriptionReceiver::DEFAULT_SUBSCRIPTION_TIMEOUT {86400000000};
+  const std::chrono::microseconds SubscriptionReceiver::DEFAULT_PING_PONG_TIMEOUT {90000000};
 
 
   SubscriptionReceiver::SubscriptionReceiver(SubscriptionManager& subscription_manager, std::string const& subscription_group_id)
@@ -88,10 +89,10 @@ namespace abb :: rws
   }
 
 
-  bool SubscriptionReceiver::waitForEvent(SubscriptionCallback& callback, std::chrono::microseconds timeout)
+  bool SubscriptionReceiver::waitForEvent(SubscriptionCallback& callback, std::chrono::microseconds timeout, std::chrono::microseconds ping_pong_timeout)
   {
     WebSocketFrame frame;
-    if (webSocketReceiveFrame(frame, timeout))
+    if (webSocketReceiveFrame(frame, timeout, ping_pong_timeout))
     {
       Poco::AutoPtr<Poco::XML::Document> doc = parser_.parseString(frame.frame_content);
       subscription_manager_.processEvent(doc, callback);
@@ -102,12 +103,11 @@ namespace abb :: rws
   }
 
 
-  bool SubscriptionReceiver::webSocketReceiveFrame(WebSocketFrame& frame, std::chrono::microseconds timeout)
+  bool SubscriptionReceiver::webSocketReceiveFrame(WebSocketFrame& frame, std::chrono::microseconds timeout, std::chrono::microseconds ping_pong_timeout)
   {
-    auto started = std::chrono::steady_clock::now();
     auto now = std::chrono::steady_clock::now();
     auto deadline = std::chrono::steady_clock::now() + timeout;
-    auto final_deadline = deadline + timeout;
+    auto last_ping = std::chrono::steady_clock::now();
 
     // If the connection is still active...
     int flags = 0;
@@ -119,11 +119,9 @@ namespace abb :: rws
     {
       now = std::chrono::steady_clock::now();
       if (now >= deadline)
-        BOOST_LOG_TRIVIAL(warning) << "WebSocket frame deadline reached";
-      if (now >= final_deadline)
         BOOST_THROW_EXCEPTION(TimeoutError {"WebSocket frame deadline reached"});
 
-      webSocket_.setReceiveTimeout(std::chrono::duration_cast<std::chrono::microseconds>(deadline - now).count());
+      webSocket_.setReceiveTimeout(std::chrono::duration_cast<std::chrono::microseconds>(ping_pong_timeout).count());
       flags = 0;
 
       try
@@ -132,6 +130,7 @@ namespace abb :: rws
       }
       catch (Poco::TimeoutException const&)
       {
+        BOOST_LOG_TRIVIAL(error) << "WebSocket frame receive timeout";
         BOOST_THROW_EXCEPTION(
           TimeoutError {"WebSocket frame receive timeout"}
             << boost::errinfo_nested_exception(boost::current_exception())
@@ -143,7 +142,9 @@ namespace abb :: rws
       // Check for ping frame.
       if ((flags & WebSocket::FRAME_OP_BITMASK) == WebSocket::FRAME_OP_PING)
       {
-        BOOST_LOG_TRIVIAL(info) << "Received ping replying with pong after: " << (now - started).count();
+        now = std::chrono::steady_clock::now();
+        BOOST_LOG_TRIVIAL(info) << "Received ping replying with pong after: " << (now - last_ping).count();
+        last_ping = now;
         // Reply with a pong frame.
         webSocket_.sendFrame(websocket_buffer_,
                                 number_of_bytes_received,
