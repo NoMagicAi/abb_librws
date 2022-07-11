@@ -143,7 +143,7 @@ namespace abb :: rws
       // Check for ping frame.
       if ((flags & WebSocket::FRAME_OP_BITMASK) == WebSocket::FRAME_OP_PING)
       {
-        BOOST_LOG_TRIVIAL(info) << "Received ping replying with pong after: " << (now - started);
+        BOOST_LOG_TRIVIAL(info) << "Received ping replying with pong after: " << (now - started).count();
         // Reply with a pong frame.
         webSocket_.sendFrame(websocket_buffer_,
                                 number_of_bytes_received,
