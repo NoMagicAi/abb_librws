@@ -309,9 +309,9 @@ POCOResult RWSClient::httpGet(const std::string& uri)
   POCOResult result = http_client_.httpGet(uri);
   std::list<std::chrono::milliseconds>::const_iterator it=connectionOptions_.retry_backoff.begin();
 
-  while (result.httpStatus() == HTTPResponse::HTTP_SERVICE_UNAVAILABLE && it != connectionOptions_.retry_backoff.end()){
+  while ((result.httpStatus() == HTTPResponse::HTTP_SERVICE_UNAVAILABLE || result.httpStatus() == HTTPResponse::HTTP_FORBIDDEN) && it != connectionOptions_.retry_backoff.end()){
     std::this_thread::sleep_for(*(it++));
-    BOOST_LOG_TRIVIAL(warning) << "Received status 503 for " << uri << " doing retry";
+    BOOST_LOG_TRIVIAL(warning) << "Received status "<< result.httpStatus() <<" for " << uri << " doing retry";
     result = http_client_.httpGet(uri);
   }
 

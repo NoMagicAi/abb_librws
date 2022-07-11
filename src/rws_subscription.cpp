@@ -5,6 +5,7 @@
 #include <Poco/Net/HTTPRequest.h>
 
 #include <boost/exception/diagnostic_information.hpp>
+#include <boost/log/trivial.hpp>
 
 #include <iostream>
 
@@ -138,6 +139,7 @@ namespace abb :: rws
       // Check for ping frame.
       if ((flags & WebSocket::FRAME_OP_BITMASK) == WebSocket::FRAME_OP_PING)
       {
+        BOOST_LOG_TRIVIAL(info) << "Received ping "<< content <<" replying with pong";
         // Reply with a pong frame.
         webSocket_.sendFrame(websocket_buffer_,
                                 number_of_bytes_received,
