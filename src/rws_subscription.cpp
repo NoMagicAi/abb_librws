@@ -73,7 +73,7 @@ namespace abb :: rws
   }
 
 
-  const std::chrono::microseconds SubscriptionReceiver::DEFAULT_SUBSCRIPTION_TIMEOUT {40000000000};
+  const std::chrono::microseconds SubscriptionReceiver::DEFAULT_SUBSCRIPTION_TIMEOUT {90000000};
 
 
   SubscriptionReceiver::SubscriptionReceiver(SubscriptionManager& subscription_manager, std::string const& subscription_group_id)
@@ -139,7 +139,7 @@ namespace abb :: rws
       // Check for ping frame.
       if ((flags & WebSocket::FRAME_OP_BITMASK) == WebSocket::FRAME_OP_PING)
       {
-        BOOST_LOG_TRIVIAL(info) << "Received ping "<< content <<" replying with pong";
+        BOOST_LOG_TRIVIAL(info) << "Received ping replying with pong";
         // Reply with a pong frame.
         webSocket_.sendFrame(websocket_buffer_,
                                 number_of_bytes_received,
@@ -160,6 +160,8 @@ namespace abb :: rws
 
     frame.flags = flags;
     frame.frame_content = content;
+
+    BOOST_LOG_TRIVIAL(info) << "Received frame: "<< content;
 
     return number_of_bytes_received != 0;
   }
