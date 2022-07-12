@@ -404,7 +404,6 @@ POCOResult RWSClient::httpDelete(const std::string& uri)
 
 std::string RWSClient::openSubscription(std::vector<std::pair<std::string, SubscriptionPriority>> const& resources)
 {
-  std::string resources_string = "";
   // Generate content for a subscription HTTP post request.
   std::stringstream subscription_content;
   for (std::size_t i = 0; i < resources.size(); ++i)
@@ -415,10 +414,9 @@ std::string RWSClient::openSubscription(std::vector<std::pair<std::string, Subsc
                           << "&"
                           << i << "-p=" << static_cast<int>(resources[i].second)
                           << (i < resources.size() - 1 ? "&" : "");
-    resources_string += resources[i].first;
   }
 
-  BOOST_LOG_TRIVIAL(info) << "Opening subscription for resources: " << resources_string;
+  BOOST_LOG_TRIVIAL(info) << "Opening subscription for: " << subscription_content.str();
 
   std::string content_type = "application/x-www-form-urlencoded;v=2.0";
 
@@ -462,6 +460,8 @@ std::string RWSClient::openSubscription(std::vector<std::pair<std::string, Subsc
 
   if (subscription_group_id.empty())
     BOOST_THROW_EXCEPTION(ProtocolError {"Cannot get subscription group from HTTP response"});
+
+  BOOST_LOG_TRIVIAL(info) << "Subscription open as group: " << subscription_group_id << " for: " << subscription_content.str();
 
   return subscription_group_id;
 }
