@@ -362,8 +362,14 @@ private:
    */
   static std::string generateFilePath(const FileResource& resource);
 
-  static bool shouldRetry(const POCOResult result,
-                          std::set<Poco::Net::HTTPResponse::HTTPStatus> const& retry_required_statuses);
+  /**
+   * \brief Method to verify whether the Post method requires retry
+   *
+   * \param Http status code returned by client
+   *
+   * \return bool
+   */
+  static bool shouldRetryPost(Poco::Net::HTTPResponse::HTTPStatus status);
 
   ConnectionOptions const connectionOptions_;
   Poco::Net::Context::Ptr context_;
