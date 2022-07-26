@@ -362,6 +362,9 @@ private:
    */
   static std::string generateFilePath(const FileResource& resource);
 
+  static bool shouldRetry(const POCOResult result,
+                          std::set<Poco::Net::HTTPResponse::HTTPStatus> const& retry_required_statuses);
+
   ConnectionOptions const connectionOptions_;
   Poco::Net::Context::Ptr context_;
   Poco::Net::HTTPSClientSession session_;
