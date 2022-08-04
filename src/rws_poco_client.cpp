@@ -43,7 +43,9 @@
 #include <abb_librws/rws_poco_client.h>
 #include <abb_librws/rws_error.h>
 
+#include <boost/log/core.hpp>
 #include <boost/log/trivial.hpp>
+#include <boost/log/expressions.hpp>
 
 
 using namespace Poco;
@@ -65,6 +67,8 @@ POCOClient::POCOClient(
 , http_credentials_ {username, password}
 {
   http_client_session_.setKeepAlive(true);
+  // TODO(michalk): Read the severity from a config file.
+  boost::log::core::get()->set_filter(boost::log::trivial::severity >= boost::log::trivial::debug);
 }
 
 POCOClient::~POCOClient()
@@ -95,6 +99,16 @@ POCOResult POCOClient::httpDelete(const std::string& uri)
   return makeHTTPRequest(HTTPRequest::HTTP_DELETE, uri);
 }
 
+
+void logTrimmedContent(std::string const& content, int const logLimit)
+{
+  int contentLength = content.length();
+  BOOST_LOG_TRIVIAL(debug)
+      << "Content: '" << content.substr(0, std::min(logLimit / 2, contentLength)) << " (...) "
+      << content.substr(std::max(0, contentLength - logLimit / 2), contentLength) << "'."
+      << "\nSome of the content omitted because it was " << contentLength << " characters long.";
+}
+
 POCOResult POCOClient::makeHTTPRequest(const std::string& method,
                                                    const std::string& uri,
                                                    const std::string& content,
@@ -120,23 +134,24 @@ POCOResult POCOClient::makeHTTPRequest(const std::string& method,
   // Attempt the communication.
   try
   {
+    BOOST_LOG_TRIVIAL(debug) << "Trying to " << method << " from uri=" << uri;
 
-    BOOST_LOG_TRIVIAL(debug)
-      << "Trying to " << method
-      << " from uri=" << uri
-      << " request_content=";
-
-    if (content.length() <= 120)
-      BOOST_LOG_TRIVIAL(debug) << content;
+    static int const logLimit = 250;
+    if (content.length() < logLimit)
+      BOOST_LOG_TRIVIAL(debug) << "Request content: '" << content << "'.";
     else
-      BOOST_LOG_TRIVIAL(debug) << ">>snipped (too long)<<";
-
-    BOOST_LOG_TRIVIAL(debug) << "\n";
+      logTrimmedContent(content, logLimit);
 
     sendAndReceive(request, response, content, response_content);
 
     BOOST_LOG_TRIVIAL(debug) << "Got status=" << response.getStatus() << " when " << method
-                             << "ing from uri=" << uri << " response_content=" << response_content << "\n";
+                             << "ing from uri=" << uri;
+
+    if (response_content.length() < logLimit)
+      BOOST_LOG_TRIVIAL(debug) << "Response content: '" << response_content << "'.";
+    else
+      logTrimmedContent(response_content, logLimit);
+
     // Check if the server has sent an update for the cookies.
     std::vector<HTTPCookie> temp_cookies;
     response.getCookies(temp_cookies);

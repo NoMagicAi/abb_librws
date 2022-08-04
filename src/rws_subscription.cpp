@@ -118,7 +118,11 @@ namespace abb :: rws
       if (now >= deadline)
         BOOST_THROW_EXCEPTION(TimeoutError {"WebSocket frame receive timeout"});
 
-      webSocket_.setReceiveTimeout(std::chrono::duration_cast<std::chrono::microseconds>(deadline - now).count());
+      // The pollInterval value must be between 30 and 120 seconds. Not 11 hours like it was before.
+      // Otherwise the code will not notice that websocket's PING-PONG dies
+      static const std::chrono::microseconds pollInterval = std::chrono::seconds(50);
+
+      webSocket_.setReceiveTimeout(pollInterval.count());
       flags = 0;
 
       try
