@@ -112,6 +112,7 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME OR MYPROJECT_BUILD_TESTING)
   enable_testing()
 
   find_package(GTest REQUIRED)
+  find_package(Boost REQUIRED COMPONENTS exception log log_setup)
 
   add_executable(${PROJECT_NAME}-test
       test/rws_rapid_test.cpp
@@ -121,6 +122,9 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME OR MYPROJECT_BUILD_TESTING)
       ${PROJECT_NAME}
       GTest::GTest
       GTest::Main
+
+      ${Boost_LOG_LIBRARY}
+      ${Boost_LOG_SETUP_LIBRARY}
   )
 
   gtest_discover_tests(${PROJECT_NAME}-test)
