@@ -121,7 +121,18 @@ POCOResult POCOClient::makeHTTPRequest(const std::string& method,
   try
   {
 
-    BOOST_LOG_TRIVIAL(debug) << "Tyring to " << method << " from uri=" << uri << " request_content=" << content << "\n";
+    BOOST_LOG_TRIVIAL(debug)
+      << "Trying to " << method
+      << " from uri=" << uri
+      << " request_content=";
+
+    if (content.length() <= 120)
+      BOOST_LOG_TRIVIAL(debug) << content;
+    else
+      BOOST_LOG_TRIVIAL(debug) << ">>snipped (too long)<<";
+
+    BOOST_LOG_TRIVIAL(debug) << "\n";
+
     sendAndReceive(request, response, content, response_content);
 
     BOOST_LOG_TRIVIAL(debug) << "Got status=" << response.getStatus() << " when " << method
