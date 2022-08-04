@@ -43,6 +43,8 @@
 #include <abb_librws/rws_poco_client.h>
 #include <abb_librws/rws_error.h>
 
+#include <boost/log/trivial.hpp>
+
 
 using namespace Poco;
 using namespace Poco::Net;
@@ -169,6 +171,9 @@ Poco::Net::WebSocket POCOClient::webSocketConnect(const std::string& uri, const 
   HTTPRequest request(HTTPRequest::HTTP_GET, uri, HTTPRequest::HTTP_1_1);
   request.set("Sec-WebSocket-Protocol", protocol);
   request.setCookies(cookies_);
+  std::stringstream request_stream{};
+  request.write(request_stream);
+  BOOST_LOG_TRIVIAL(info) << "Opening websocket " << request_stream.str();
 
   // Attempt the communication.
   try

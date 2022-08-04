@@ -23,8 +23,8 @@ endif()
 ########################
 ## POCO C++ Libraries ##
 ########################
-# We need at least 1.4.3 because of WebSocket support.
-find_package(Poco 1.4.3 REQUIRED COMPONENTS Foundation Net Util XML NetSSL)
+# We need at least 1.12.2 because of WebSocket disconnecting issue.
+find_package(Poco 1.12.2 REQUIRED COMPONENTS Foundation Net Util XML NetSSL)
 
 ## Find boost exception library
 find_package(Boost REQUIRED COMPONENTS exception log log_setup)

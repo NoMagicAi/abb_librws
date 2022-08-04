@@ -409,6 +409,14 @@ POCOResult RWSClient::httpDelete(const std::string& uri,
 std::string RWSClient::openSubscription(std::vector<std::pair<std::string, SubscriptionPriority>> const& resources)
 {
   // Generate content for a subscription HTTP post request.
+   std::stringstream ss;
+    for (auto it = resources.begin(); it != resources.end(); it++)    {
+        if (it != resources.begin()) {
+            ss << " ";
+        }
+        ss << (*it).first;
+    }
+  BOOST_LOG_TRIVIAL(info) << "Opening subscription " << ss.str();
   std::stringstream subscription_content;
   for (std::size_t i = 0; i < resources.size(); ++i)
   {

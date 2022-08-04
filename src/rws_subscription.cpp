@@ -8,6 +8,8 @@
 
 #include <iostream>
 
+#include <boost/log/trivial.hpp>
+
 
 namespace abb :: rws
 {
@@ -139,6 +141,7 @@ namespace abb :: rws
       if ((flags & WebSocket::FRAME_OP_BITMASK) == WebSocket::FRAME_OP_PING)
       {
         // Reply with a pong frame.
+        BOOST_LOG_TRIVIAL(info) << "Replying to ping message " << content << " of length " << number_of_bytes_received << " flags: " << flags;
         webSocket_.sendFrame(websocket_buffer_,
                                 number_of_bytes_received,
                                 WebSocket::FRAME_FLAG_FIN | WebSocket::FRAME_OP_PONG);
@@ -148,6 +151,7 @@ namespace abb :: rws
     // Check for closing frame.
     if ((flags & WebSocket::FRAME_OP_BITMASK) == WebSocket::FRAME_OP_CLOSE)
     {
+      BOOST_LOG_TRIVIAL(info) << "Received closing frame";
       // Do not pass content of a closing frame to end user,
       // according to "The WebSocket Protocol" RFC6455.
       frame.frame_content.clear();
@@ -158,6 +162,8 @@ namespace abb :: rws
 
     frame.flags = flags;
     frame.frame_content = content;
+
+    BOOST_LOG_TRIVIAL(info) << "Received data...";
 
     return number_of_bytes_received != 0;
   }
