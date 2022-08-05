@@ -195,6 +195,12 @@ RWSClient::RWSResult RWSClient::getMechanicalUnitRobTarget(const std::string& me
   return parseContent(httpGet(uri));
 }
 
+RWSResult RWSClient::getProgress(std::string const& id)
+{
+  std::string uri = "/progress/" + id;
+  return parseContent(httpGet(uri,{Poco::Net::HTTPResponse::HTTP_OK, Poco::Net::HTTPResponse::HTTP_CREATED}));
+}
+
 RWSClient::RWSResult RWSClient::getRobotWareSystem()
 {
   std::string uri = Resources::RW_SYSTEM;
