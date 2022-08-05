@@ -446,7 +446,8 @@ namespace abb :: rws
         T event_;
     };
 
-
+    static const std::chrono::microseconds pollInterval = std::chrono::seconds(50);
+    BOOST_THROW_EXCEPTION(TimeoutError {std::to_string(pollInterval.count())});
     return std::async(std::launch::async,
         [&receiver, timeout] {
             Callback callback;
