@@ -115,10 +115,8 @@ public:
       auto const initialContent = content.substr(0, std::min(logLimit / 2, contentLength));
       auto const lastContent = content.substr(std::max(0, contentLength - logLimit / 2), contentLength);
       BOOST_LOG_TRIVIAL(debug)
-          << "Content: '" << initialContent
-          << "\n(...)"
-          << "\n" << lastContent << "'."
-          << "\nSome of the content omitted because it was " << contentLength << " characters long.";
+          << "Trimmed content: '" << initialContent << "(...)" << lastContent << "'."
+          << " Full content length: " << contentLength << ".";
     }
 };
 
