@@ -21,11 +21,9 @@ namespace abb :: rws :: v2_0 :: rw :: cfg
      * \param resource specifying the file's directory and name.
      * \param mastership {implicit | explicit} by default mastership is explicit
      *
-     * \return resource progress id.
-     *
      * \throw \a RWSError if something goes wrong.
      */
-    std::string loadCFGFile(RWSClient& client, const FileResource& resource,
+    void loadCFGFile(RWSClient& client, const FileResource& resource,
         Mastership const& mastership = Mastership::Explicit);
 
 }

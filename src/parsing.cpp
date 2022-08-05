@@ -282,17 +282,4 @@ namespace abb :: rws
 
     return values;
   }
-
-  std::string xmlNodeTextByTagAndAttribute(const Poco::AutoPtr<Poco::XML::Document> & document,
-                                          const std::string & tag,
-                                          const XMLAttribute & xml_attribute)
-  {
-      std::vector<Poco::XML::Node*> const& code_elements = abb::rws::xmlFindNodes(document, xml_attribute);
-      for (auto const& node : code_elements)
-      {
-          if (node->nodeName() == tag)
-            return node->innerText();
-      }
-      return std::string();
-  }
 }
