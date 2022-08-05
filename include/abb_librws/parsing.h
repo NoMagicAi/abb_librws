@@ -132,4 +132,17 @@ namespace abb :: rws
                                                      const char start_delimiter,
                                                      const char end_delimiter,
                                                      const char separator);
+  
+  /**
+   * @brief A method to get text of first element identified by tag and containing given attribute.
+   * 
+   * @param document XML document to search.
+   * @param tag name of node.
+   * @param xml_attribute attribute the element must contain.
+   * @return text of first matched element. Empty string if no match found.
+   */
+  std::string xmlNodeTextByTagAndAttribute(const Poco::AutoPtr<Poco::XML::Document> & document, 
+                                          const std::string & tag, 
+                                          const XMLAttribute & xml_attribute);
+
 }

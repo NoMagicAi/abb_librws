@@ -181,6 +181,17 @@ public:
                                        const std::string& wobj = "");
 
   /**
+   * \brief Checks progress of provided resource.
+   * 
+   * \param id Resource id to check
+   *
+   * \return \a RWSResult containing the result.
+   *
+   * \throw \a RWSError if something goes wrong.
+   */
+  RWSResult getProgress(std::string const& id);
+  
+  /**
    * \brief A method for retrieving info about the current robot controller system.
    *
    * \return RWSResult containing the result.
