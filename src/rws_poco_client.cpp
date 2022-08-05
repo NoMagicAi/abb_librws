@@ -111,22 +111,25 @@ public:
 
     static void logTrimmed(std::string const& content, int const logLimit)
     {
-      int contentLength = content.length();
+      int const contentLength = content.length();
+      auto const initialContent = content.substr(0, std::min(logLimit / 2, contentLength));
+      auto const lastContent = content.substr(std::max(0, contentLength - logLimit / 2), contentLength);
       BOOST_LOG_TRIVIAL(debug)
-          << "Content: '" << content.substr(0, std::min(logLimit / 2, contentLength)) << "\n(...)\n"
-          << content.substr(std::max(0, contentLength - logLimit / 2), contentLength) << "'."
+          << "Content: '" << initialContent
+          << "\n(...)"
+          << "\n" << lastContent << "'."
           << "\nSome of the content omitted because it was " << contentLength << " characters long.";
-    }
-
-    static void logContent(std::string const& content)
-    {
-        if (content.length() < logLimit_)
-            ContentLogging::logFull(response_content);
-        else
-            ContentLogging::logTrimmed(response_content, 250);
     }
 };
 
+static void logContent(std::string const& content)
+{
+    static constexpr int logLimit = 150;
+    if (content.length() < logLimit)
+        ContentLogging::logFull(content);
+    else
+        ContentLogging::logTrimmed(content, logLimit);
+}
 
 POCOResult POCOClient::makeHTTPRequest(const std::string& method,
                                                    const std::string& uri,
@@ -154,12 +157,12 @@ POCOResult POCOClient::makeHTTPRequest(const std::string& method,
   try
   {
     BOOST_LOG_TRIVIAL(debug) << "Trying to " << method << " from uri=" << uri;
-    ContentLogging::logContent(content);
+    logContent(content);
 
     sendAndReceive(request, response, content, response_content);
 
     BOOST_LOG_TRIVIAL(debug) << "Got status=" << response.getStatus() << " when " << method << "ing from uri=" << uri;
-    ContentLogging::logContent(response_content);
+    logContent(response_content);
 
     // Check if the server has sent an update for the cookies.
     std::vector<HTTPCookie> temp_cookies;
@@ -187,7 +190,7 @@ POCOResult POCOClient::makeHTTPRequest(const std::string& method,
     // Check if the request was unauthorized, if so add credentials.
     if (response.getStatus() == HTTPResponse::HTTP_UNAUTHORIZED)
     {
-      BOOST_LOG_TRIVIAL(debug) << "Tyring to SECURELY " << method << " from uri=" << uri << "\n";
+      BOOST_LOG_TRIVIAL(debug) << "Trying to SECURELY " << method << " from uri=" << uri << "\n";
       authenticate(request, response, content, response_content);
     }
 
