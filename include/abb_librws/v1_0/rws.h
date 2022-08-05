@@ -391,6 +391,7 @@ namespace abb :: rws :: v1_0
      */
     static const std::string LOGOUT;
 
+     * \brief Progress.
     /**
      * \brief Robtarget.
      */
