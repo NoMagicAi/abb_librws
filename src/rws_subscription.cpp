@@ -8,6 +8,7 @@
 #include <boost/log/trivial.hpp>
 
 #include <iostream>
+#include <stdexcept>
 
 
 namespace abb :: rws
@@ -26,6 +27,7 @@ namespace abb :: rws
   : subscription_manager_ {rhs.subscription_manager_}
   , subscription_group_id_ {rhs.subscription_group_id_}
   {
+    BOOST_LOG_TRIVIAL(debug) << "[SubscriptionGroup] Constructor called.";
     // Clear subscription_group_id_ of the SubscriptionGroup that has been moved from,
     // s.t. its destructor does not close the subscription.
     rhs.subscription_group_id_.clear();
@@ -34,7 +36,9 @@ namespace abb :: rws
 
   SubscriptionGroup::~SubscriptionGroup()
   {
+    BOOST_LOG_TRIVIAL(debug) << "[SubscriptionGroup] Destructor called.";
     close();
+    BOOST_LOG_TRIVIAL(debug) << "[SubscriptionGroup] Done calling destructor.";
   }
 
 
@@ -107,8 +111,6 @@ namespace abb :: rws
     // The pollInterval value must be between 30 and 120 seconds. Not 11 hours like it was before.
     // Otherwise the code will not notice that websocket's PING-PONG dies
     static const std::chrono::microseconds pollInterval = std::chrono::seconds(50);
-    BOOST_LOG_TRIVIAL(debug) << "SubscriptionReceiver::webSocketReceiveFrame: pollInterval = " << pollInterval.count();
-    BOOST_THROW_EXCEPTION(TimeoutError {std::to_string(pollInterval.count())});
 
     auto now = std::chrono::steady_clock::now();
     auto deadline = std::chrono::steady_clock::now() + timeout;

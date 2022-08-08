@@ -79,6 +79,7 @@ RWSClient::RWSClient(ConnectionOptions const& connection_options)
 , session_ {connectionOptions_.ip_address, connectionOptions_.port, context_}
 , http_client_ {session_, connectionOptions_.username, connectionOptions_.password}
 {
+  BOOST_LOG_TRIVIAL(debug) << "[RWSClient] Constructor called.";
   session_.setTimeout(
     connectionOptions_.connection_timeout.count(),
     connectionOptions_.send_timeout.count(),
@@ -92,6 +93,7 @@ RWSClient::RWSClient(ConnectionOptions const& connection_options)
 
 RWSClient::~RWSClient()
 {
+  BOOST_LOG_TRIVIAL(debug) << "[RWSClient] Destructor called.";
   try
   {
     logout();
@@ -102,8 +104,8 @@ RWSClient::~RWSClient()
     std::string const ex_info = boost::diagnostic_information(e);
 
     BOOST_LOG_TRIVIAL(error) << "Exception in RWSClient::~RWSClient(): " << ex_info;
-    std::cerr << "Exception in RWSClient::~RWSClient(): " << ex_info << std::endl;
   }
+  BOOST_LOG_TRIVIAL(debug) << "[RWSClient] Destructor call done.";
 }
 
 
@@ -411,6 +413,7 @@ POCOResult RWSClient::httpDelete(const std::string& uri,
 
 std::string RWSClient::openSubscription(std::vector<std::pair<std::string, SubscriptionPriority>> const& resources)
 {
+  BOOST_LOG_TRIVIAL(debug) << "[RWSClient] Opening subscription.";
   // Generate content for a subscription HTTP post request.
   std::stringstream subscription_content;
   for (std::size_t i = 0; i < resources.size(); ++i)
@@ -466,15 +469,18 @@ std::string RWSClient::openSubscription(std::vector<std::pair<std::string, Subsc
   if (subscription_group_id.empty())
     BOOST_THROW_EXCEPTION(ProtocolError {"Cannot get subscription group from HTTP response"});
 
+  BOOST_LOG_TRIVIAL(debug) << "[RWSClient] Opened subscription " << subscription_group_id << ".";
   return subscription_group_id;
 }
 
 
 void RWSClient::closeSubscription(std::string const& subscription_group_id)
 {
+  BOOST_LOG_TRIVIAL(debug) << "[RWSClient] Closing subscription " << subscription_group_id << ".";
   // Unsubscribe from events
   std::string const uri = Services::SUBSCRIPTION + "/" + subscription_group_id;
   httpDelete(uri);
+  BOOST_LOG_TRIVIAL(debug) << "[RWSClient] Closed subscription " << subscription_group_id << ".";
 }
 
 

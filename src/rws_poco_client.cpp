@@ -66,13 +66,16 @@ POCOClient::POCOClient(
 : http_client_session_ {session}
 , http_credentials_ {username, password}
 {
+
   http_client_session_.setKeepAlive(true);
   // TODO(michalk): Read the severity from a config file.
   boost::log::core::get()->set_filter(boost::log::trivial::severity >= boost::log::trivial::debug);
+  BOOST_LOG_TRIVIAL(debug) << "[POCOClient] Constructor called.";
 }
 
 POCOClient::~POCOClient()
 {
+  BOOST_LOG_TRIVIAL(debug) << "[POCOClient] Destructor called.";
 }
 
 /************************************************************
