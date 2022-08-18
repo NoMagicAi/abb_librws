@@ -350,7 +350,7 @@ namespace abb :: rws
      *
      * @param res list of new subscribed resources.
      */
-    virtual void resources(SubscriptionResources const& res) = 0;
+    virtual void updateResources(SubscriptionResources const& res) = 0;
 
     /**
      * \brief Establish WebSocket connection ans start receiving subscription events.

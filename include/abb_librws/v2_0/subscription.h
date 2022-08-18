@@ -59,7 +59,7 @@ namespace abb :: rws :: v2_0 :: subscription
       return resources_;
     }
 
-    void resources(SubscriptionResources const& res) override;
+    void updateResources(SubscriptionResources const& res) override;
     SubscriptionReceiver receive() const override;
 
 

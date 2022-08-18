@@ -105,7 +105,7 @@ namespace abb :: rws :: v2_0 :: subscription
   }
 
 
-  void SubscriptionGroup::resources(SubscriptionResources const& res)
+  void SubscriptionGroup::updateResources(SubscriptionResources const& res)
   {
     client_.httpPut(Services::SUBSCRIPTION + "/" + subscription_group_id_, resourcesString(client_, res), "application/x-www-form-urlencoded;v=2.0");
     resources_ = res;

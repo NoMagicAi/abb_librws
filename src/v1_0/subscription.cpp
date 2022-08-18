@@ -103,7 +103,7 @@ namespace abb :: rws :: v1_0 :: subscription
   }
 
 
-  void SubscriptionGroup::resources(SubscriptionResources const& res)
+  void SubscriptionGroup::updateResources(SubscriptionResources const& res)
   {
     POCOResult result = client_.httpPut(Services::SUBSCRIPTION + "/" + subscription_group_id_, resourcesString(client_, res));
     resources_ = res;
