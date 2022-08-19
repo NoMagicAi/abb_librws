@@ -26,6 +26,11 @@ namespace abb :: rws
      * \brief IO signal name.
      */
     std::string name;
+
+    bool operator==(const IOSignalResource& rhs) const
+    {
+       return name == rhs.name;
+    }
   };
 
 
@@ -112,6 +117,10 @@ namespace abb :: rws
    */
   struct RAPIDExecutionStateResource
   {
+    bool operator==(const RAPIDExecutionStateResource& rhs) const
+    {
+       return true;
+    }
   };
 
 
@@ -120,6 +129,10 @@ namespace abb :: rws
    */
   struct OperationModeResource
   {
+    bool operator==(const OperationModeResource& rhs) const
+    {
+       return true;
+    }
   };
 
 
@@ -128,6 +141,10 @@ namespace abb :: rws
    */
   struct ControllerStateResource
   {
+    bool operator==(const ControllerStateResource& rhs) const
+    {
+       return true;
+    }
   };
 
 

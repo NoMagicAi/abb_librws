@@ -17,6 +17,7 @@
 #include <utility>
 #include <future>
 #include <chrono>
+#include <iostream>
 
 
 namespace abb :: rws
@@ -128,11 +129,20 @@ namespace abb :: rws
       return priority_;
     }
 
+    bool operator==(const SubscriptionResource& rhs) const
+    {
+       auto lhs_resource = resource_.get();
+       auto rhs_resource = rhs.resource_.get();
+       return (*lhs_resource == *rhs_resource)
+       && (priority_ == rhs.priority_);
+    }
+
   private:
     struct ResourceInterface
     {
       virtual std::string getURI(SubscriptionManager const& subscription_manager) const = 0;
       virtual ~ResourceInterface() {};
+      virtual bool operator==(ResourceInterface& rhs) const = 0;
     };
 
     template <typename T>
@@ -148,6 +158,14 @@ namespace abb :: rws
       std::string getURI(SubscriptionManager const& subscription_manager) const override
       {
         return subscription_manager.getResourceURI(resource_);
+      }
+
+      bool operator==(ResourceInterface& rhs) const override{
+        if (ResourceImpl<T>* d = dynamic_cast<ResourceImpl<T>*>(&rhs); d != nullptr)
+        {
+            return resource_ == d->resource_;
+        }
+        return false;
       }
 
     private:
