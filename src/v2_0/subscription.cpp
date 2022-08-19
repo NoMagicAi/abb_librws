@@ -59,16 +59,15 @@ namespace abb :: rws :: v2_0 :: subscription
   {
     // Generate content for a subscription HTTP post/put request.
     std::stringstream subscription_content;
-    subscription_content << "resources=";
 
     for (std::size_t i = 0; i < resources.size(); ++i)
     {
-      subscription_content << i
-                            << "&"
-                            << i << "=" << resources[i].getURI(client)
-                            << "&"
-                            << i << "-p=" << static_cast<int>(resources[i].getPriority())
-                            << (i < resources.size() - 1 ? "&" : "");
+    subscription_content << "resources=" << i
+                          << "&"
+                          << i << "=" << resources[i].getURI(client)
+                          << "&"
+                          << i << "-p=" << static_cast<int>(resources[i].getPriority())
+                          << (i < resources.size() - 1 ? "&" : "");
     }
 
     return subscription_content.str();
