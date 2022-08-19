@@ -514,7 +514,7 @@ public:
    *
    * \throw \a std::exception if something goes wrong
    */
-  subscription::SubscriptionGroup openSubscription(const SubscriptionResources& resources);
+  std::unique_ptr<subscription::SubscriptionGroup> openSubscription(const SubscriptionResources& resources);
 
   /**
    * \brief A method for registering a user as local.
