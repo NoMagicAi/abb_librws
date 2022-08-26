@@ -141,7 +141,7 @@ namespace abb :: rws
     {
        auto lhs_resource = resource_.get();
        auto rhs_resource = rhs.resource_.get();
-       return lhs_resource < rhs_resource;
+       return !(*lhs_resource == *rhs_resource) && lhs_resource < rhs_resource;
     }
 
   private:
