@@ -18,6 +18,7 @@
 #include <future>
 #include <chrono>
 #include <iostream>
+#include <functional>
 
 
 namespace abb :: rws
@@ -54,6 +55,8 @@ namespace abb :: rws
      * \throw \a RWSError if something goes wrong.
      */
     virtual Poco::Net::WebSocket receiveSubscription(std::string const& subscription_group_id) = 0;
+
+    virtual std::string getResourceURI(SubscribableResource const& resource) const = 0;
 
     /**
      * \brief Get URI for subscribing to an IO signal
@@ -113,16 +116,15 @@ namespace abb :: rws
   class SubscriptionResource
   {
   public:
-    template <typename T>
-    SubscriptionResource(T const& resource, SubscriptionPriority priority)
-    : resource_ {new ResourceImpl<T> {resource}}
+    SubscriptionResource(std::shared_ptr<SubscribableResource> resource_ptr, SubscriptionPriority priority)
+    : resource_ptr_ {resource_ptr}
     , priority_ {priority}
     {
     }
 
     std::string getURI(SubscriptionManager const& subscription_manager) const
     {
-      return resource_->getURI(subscription_manager);
+      return subscription_manager.getResourceURI(*(resource_ptr_).get());
     }
 
     SubscriptionPriority getPriority() const noexcept
@@ -130,57 +132,9 @@ namespace abb :: rws
       return priority_;
     }
 
-    bool operator==(const SubscriptionResource& rhs) const
-    {
-       auto lhs_resource = resource_.get();
-       auto rhs_resource = rhs.resource_.get();
-       return *lhs_resource == *rhs_resource;
-    }
-
-    bool operator<(const SubscriptionResource& rhs) const
-    {
-       auto lhs_resource = resource_.get();
-       auto rhs_resource = rhs.resource_.get();
-       return !(*lhs_resource == *rhs_resource) && lhs_resource < rhs_resource;
-    }
-
   private:
-    struct ResourceInterface
-    {
-      virtual std::string getURI(SubscriptionManager const& subscription_manager) const = 0;
-      virtual ~ResourceInterface() {};
-      virtual bool operator==(ResourceInterface& rhs) const = 0;
-    };
 
-    template <typename T>
-    class ResourceImpl
-    : public ResourceInterface
-    {
-    public:
-      ResourceImpl(T const& resource)
-      : resource_ {resource}
-      {
-      }
-
-      std::string getURI(SubscriptionManager const& subscription_manager) const override
-      {
-        return subscription_manager.getResourceURI(resource_);
-      }
-
-      bool operator==(ResourceInterface& rhs) const override{
-        if (ResourceImpl<T>* d = dynamic_cast<ResourceImpl<T>*>(&rhs); d != nullptr)
-        {
-            return resource_ == d->resource_;
-        }
-        return false;
-      }
-
-    private:
-      T const resource_;
-    };
-
-
-    std::shared_ptr<ResourceInterface> resource_;
+    std::shared_ptr<SubscribableResource> resource_ptr_;
 
     /**
      * \brief Priority of the subscription.

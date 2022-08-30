@@ -329,6 +329,23 @@ Poco::Net::WebSocket RWSClient::receiveSubscription(std::string const& subscript
     Poco::Net::HTTPClientSession {connectionOptions_.ip_address, connectionOptions_.port});
 }
 
+std::string RWSClient::getResourceURI(SubscribableResource const& resource) const{
+  if (const IOSignalResource* d = dynamic_cast<const IOSignalResource*>(&resource); d != nullptr)
+  {
+    return getResourceURI(*d);
+  }else if (const ControllerStateResource* d = dynamic_cast<const ControllerStateResource*>(&resource); d != nullptr)
+  {
+    return getResourceURI(*d);
+  } else if (const RAPIDExecutionStateResource* d = dynamic_cast<const RAPIDExecutionStateResource*>(&resource); d != nullptr)
+  {
+    return getResourceURI(*d);
+  } else if (const OperationModeResource* d = dynamic_cast<const OperationModeResource*>(&resource); d != nullptr)
+  {
+    return getResourceURI(*d);
+  }
+  boost::throw_exception(std::runtime_error {"Unknown resource type"});
+}
+
 
 std::string RWSClient::getResourceURI(IOSignalResource const& io_signal) const
 {

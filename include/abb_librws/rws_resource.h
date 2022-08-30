@@ -4,13 +4,21 @@
 
 #include <string>
 #include <iosfwd>
+#include <iostream>
+#include <functional>
 
 namespace abb :: rws
 {
+  struct SubscribableResource
+  {
+    virtual std::size_t getHash() const = 0;
+    virtual std::string getUniqueClassId() const = 0;
+    virtual bool equals(const SubscribableResource& rhs) const = 0;
+  };
   /**
    * \brief IO signal as a resource.
    */
-  struct IOSignalResource
+  struct IOSignalResource: SubscribableResource
   {
     /**
      * \brief A constructor.
@@ -27,10 +35,21 @@ namespace abb :: rws
      */
     std::string name;
 
-    bool operator==(const IOSignalResource& rhs) const
+    bool equals(const SubscribableResource& rhs) const override
     {
-       return name == rhs.name;
+      if (const IOSignalResource* d = dynamic_cast<const IOSignalResource*>(&rhs); d != nullptr)
+      {
+        return name == d -> name;
+      }
+      return false;
     }
+
+    std::string getUniqueClassId() const override{
+        return "IOSignalResource";
+    }
+
+    std::size_t getHash() const override
+    { return std::hash<std::string>()(name) ^ std::hash<std::string>()(getUniqueClassId()); }
   };
 
 
@@ -115,36 +134,69 @@ namespace abb :: rws
   /**
    * \brief RAPID execution state subscription resource
    */
-  struct RAPIDExecutionStateResource
+  struct RAPIDExecutionStateResource: SubscribableResource
   {
-    bool operator==(const RAPIDExecutionStateResource& rhs) const
+    bool equals(const SubscribableResource& rhs) const override
     {
-       return true;
+      if (const RAPIDExecutionStateResource* d = dynamic_cast<const RAPIDExecutionStateResource*>(&rhs); d != nullptr)
+      {
+        return true;
+      }
+      return false;
     }
+
+    std::string getUniqueClassId() const override{
+        return "RAPIDExecutionStateResource";
+    }
+
+    std::size_t getHash() const override
+    { return std::hash<std::string>()(getUniqueClassId()); }
   };
 
 
   /**
    * \brief Controller operation mode subscription resource
    */
-  struct OperationModeResource
+  struct OperationModeResource: SubscribableResource
   {
-    bool operator==(const OperationModeResource& rhs) const
+    bool equals(const SubscribableResource& rhs) const override
     {
-       return true;
+      if (const OperationModeResource* d = dynamic_cast<const OperationModeResource*>(&rhs); d != nullptr)
+      {
+        return true;
+      }
+      return false;
     }
+
+    std::string getUniqueClassId() const override{
+        return "OperationModeResource";
+    }
+
+    std::size_t getHash() const override
+    { return std::hash<std::string>()(getUniqueClassId()); }
   };
 
 
   /**
    * \brief Controller state subscription resource
    */
-  struct ControllerStateResource
+  struct ControllerStateResource: SubscribableResource
   {
-    bool operator==(const ControllerStateResource& rhs) const
+    bool equals(const SubscribableResource& rhs) const override
     {
-       return true;
+      if (const ControllerStateResource* d = dynamic_cast<const ControllerStateResource*>(&rhs); d != nullptr)
+      {
+        return true;
+      }
+      return false;
     }
+
+    std::string getUniqueClassId() const override{
+        return "ControllerStateResource";
+    }
+
+    std::size_t getHash() const override
+    { return std::hash<std::string>()(getUniqueClassId()); }
   };
 
 
