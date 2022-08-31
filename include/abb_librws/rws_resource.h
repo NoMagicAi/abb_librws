@@ -37,7 +37,7 @@ namespace abb :: rws
 
     bool equals(const SubscribableResource& rhs) const override
     {
-      if (const IOSignalResource* d = dynamic_cast<const IOSignalResource*>(&rhs); d != nullptr)
+      if (const IOSignalResource* d = dynamic_cast<const IOSignalResource*>(&rhs))
       {
         return name == d -> name;
       }
@@ -138,7 +138,7 @@ namespace abb :: rws
   {
     bool equals(const SubscribableResource& rhs) const override
     {
-      if (const RAPIDExecutionStateResource* d = dynamic_cast<const RAPIDExecutionStateResource*>(&rhs); d != nullptr)
+      if (const RAPIDExecutionStateResource* d = dynamic_cast<const RAPIDExecutionStateResource*>(&rhs))
       {
         return true;
       }
@@ -161,7 +161,7 @@ namespace abb :: rws
   {
     bool equals(const SubscribableResource& rhs) const override
     {
-      if (const OperationModeResource* d = dynamic_cast<const OperationModeResource*>(&rhs); d != nullptr)
+      if (const OperationModeResource* d = dynamic_cast<const OperationModeResource*>(&rhs))
       {
         return true;
       }
@@ -184,7 +184,7 @@ namespace abb :: rws
   {
     bool equals(const SubscribableResource& rhs) const override
     {
-      if (const ControllerStateResource* d = dynamic_cast<const ControllerStateResource*>(&rhs); d != nullptr)
+      if (const ControllerStateResource* d = dynamic_cast<const ControllerStateResource*>(&rhs))
       {
         return true;
       }
