@@ -145,11 +145,15 @@ namespace abb :: rws
 
   using SubscriptionResources = std::vector<SubscriptionResource>;
 
+  struct SubscriptionEvent{
+    virtual ~SubscriptionEvent() = default;
+  };
+
 
   /**
    * \brief Event received when an IO signal state changes.
    */
-  struct IOSignalStateEvent
+  struct IOSignalStateEvent: public SubscriptionEvent
   {
     /// \brief IO signal name
     std::string signal;
@@ -164,7 +168,7 @@ namespace abb :: rws
   /**
    * \brief Event received when an IO signal state changes.
    */
-  struct RAPIDExecutionStateEvent
+  struct RAPIDExecutionStateEvent: public SubscriptionEvent
   {
     /**
      * \brief RAPID execution state
@@ -176,7 +180,7 @@ namespace abb :: rws
   /**
    * \brief Event received when controller state changes.
    */
-  struct ControllerStateEvent
+  struct ControllerStateEvent: public SubscriptionEvent
   {
     /**
      * \brief Controller state
@@ -188,7 +192,7 @@ namespace abb :: rws
   /**
    * \brief Event received when operation mode changes.
    */
-  struct OperationModeEvent
+  struct OperationModeEvent: public SubscriptionEvent
   {
     /**
      * \brief Operation mode
