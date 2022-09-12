@@ -19,34 +19,22 @@ namespace abb :: rws :: v2_0 :: rw :: panel
     /**
      * \brief Controller operation mode subscription resource
      */
-    struct OperationModeSubscribableResource: SubscribableResource
+    struct OperationModeSubscribableResource: public SubscribableResource
     {
-        bool equals(const SubscribableResource& rhs) const override
-        {
-          return getURI() == rhs.getURI();
-        }
+        std::string getURI() const override;
 
-        std::size_t getHash() const override
-        { return std::hash<std::string>()(getURI()); }
-
-        std::string getURI() const;
+        void processEvent(Poco::XML::Element const& li_element, SubscriptionCallback& callback) const override;
     };
 
 
     /**
      * \brief Controller state subscription resource
      */
-    struct ControllerStateSubscribableResource: SubscribableResource
+    struct ControllerStateSubscribableResource: public SubscribableResource
     {
-        bool equals(const SubscribableResource& rhs) const override
-        {
-          return getURI() == rhs.getURI();
-        }
+        std::string getURI() const override;
 
-        std::size_t getHash() const override
-        { return std::hash<std::string>()(getURI()); }
-
-        std::string getURI() const;
+        void processEvent(Poco::XML::Element const& li_element, SubscriptionCallback& callback) const override;
     };
 
 

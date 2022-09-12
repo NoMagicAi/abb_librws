@@ -258,23 +258,22 @@ namespace abb :: rws :: v2_0 :: rw :: rapid
         return Resources::RW_RAPID_TASKS + "/" + task;
     }
 
-    std::string RAPIDSubscribableResource::getURI() const
-    {
-      std::string resource_uri = Resources::RW_RAPID_SYMBOL_DATA_RAPID;
-      resource_uri += "/";
-      resource_uri += task;
-      resource_uri += "/";
-      resource_uri += module;
-      resource_uri += "/";
-      resource_uri += name;
-      resource_uri += ";";
-      resource_uri += Identifiers::VALUE;
-      return resource_uri;
-    }
-
 
     std::string RAPIDExecutionStateSubscribableResource::getURI() const
     {
       return "/rw/rapid/execution;ctrlexecstate";
+    }
+
+
+    void RAPIDExecutionStateSubscribableResource::processEvent(Poco::XML::Element const& li_element, SubscriptionCallback& callback) const
+    {
+        if (li_element.getAttribute("class") == "rap-ctrlexecstate-ev")
+        {
+            RAPIDExecutionStateEvent event;
+            event.state = rw::makeRAPIDExecutionState(xmlFindTextContent(&li_element, XMLAttribute {"class", "ctrlexecstate"}));
+            event.resource = std::make_shared<RAPIDExecutionStateSubscribableResource>();
+
+            callback.processEvent(event);
+        }
     }
 }

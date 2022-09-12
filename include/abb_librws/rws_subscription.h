@@ -10,6 +10,7 @@
 #include <Poco/DOM/DOMParser.h>
 #include <Poco/DOM/Element.h>
 #include <Poco/Net/WebSocket.h>
+#include <Poco/DOM/NodeList.h>
 
 #include <string>
 #include <vector>
@@ -37,6 +38,21 @@ namespace abb :: rws
   class SubscriptionCallback;
   class AbstractSubscriptionGroup;
 
+  struct SubscribableResource
+  {
+    public:
+        virtual std::string getURI() const = 0;
+        virtual void processEvent(Poco::XML::Element const& li_element, SubscriptionCallback& callback) const = 0;
+
+        bool equals(const SubscribableResource& rhs) const
+        {
+          return getURI() == rhs.getURI();
+        }
+
+        std::size_t getHash() const
+        { return std::hash<std::string>()(getURI()); }
+  };
+
 
   /**
    * \brief Provides the mechanism to open, receive, and close RWS event subscription.
@@ -55,16 +71,6 @@ namespace abb :: rws
      * \throw \a RWSError if something goes wrong.
      */
     virtual Poco::Net::WebSocket receiveSubscription(std::string const& subscription_group_id) = 0;
-
-    /**
-     * \brief Process subscription event.
-     *
-     * Parses the event content \a content, determines event type, and calls the appropriate function in \a callback.
-     *
-     * \param content XML content of the event
-     * \param callback event callback
-     */
-    virtual void processEvent(Poco::AutoPtr<Poco::XML::Document> content, SubscriptionCallback& callback) const = 0;
   };
 
 
@@ -90,6 +96,11 @@ namespace abb :: rws
       return priority_;
     }
 
+    void processEvent(Poco::XML::Element const& li_element, SubscriptionCallback& callback) const
+    {
+      resource_ptr_ -> processEvent(li_element, callback);
+    }
+
   private:
 
     std::shared_ptr<SubscribableResource> resource_ptr_;
@@ -105,6 +116,7 @@ namespace abb :: rws
 
   struct SubscriptionEvent{
     virtual ~SubscriptionEvent() = default;
+    std::shared_ptr<SubscribableResource> resource;
   };
 
 
@@ -165,10 +177,7 @@ namespace abb :: rws
   class SubscriptionCallback
   {
   public:
-    virtual void processEvent(IOSignalStateEvent const& event);
-    virtual void processEvent(RAPIDExecutionStateEvent const& event);
-    virtual void processEvent(ControllerStateEvent const& event);
-    virtual void processEvent(OperationModeEvent const& event);
+    virtual void processEvent(SubscriptionEvent const& event) = 0;
   };
 
 
@@ -359,4 +368,14 @@ namespace abb :: rws
         }
     );
   }
+
+    /**
+   * \brief Process all events in a subscription package.
+   *
+   * Parses all events in \a content, determines event type, and calls the appropriate functions in \a callback.
+   *
+   * \param content XML content of the event
+   * \param callback event callback
+   */
+  void processAllEvents(Poco::AutoPtr<Poco::XML::Document> doc, SubscriptionResources const& resources, SubscriptionCallback& callback);
 }

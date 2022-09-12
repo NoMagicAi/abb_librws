@@ -260,7 +260,6 @@ public:
 
   // SubscriptionManager implementation
   Poco::Net::WebSocket receiveSubscription(std::string const& subscription_group_id) override;
-  void processEvent(Poco::AutoPtr<Poco::XML::Document> content, SubscriptionCallback& callback) const override;
 
   /**
    * \brief A method for sending a HTTP GET request and checking response status.

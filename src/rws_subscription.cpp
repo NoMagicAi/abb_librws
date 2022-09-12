@@ -36,7 +36,7 @@ namespace abb :: rws
     if (webSocketReceiveFrame(frame, timeout))
     {
       Poco::AutoPtr<Poco::XML::Document> doc = parser_.parseString(frame.frame_content);
-      subscription_manager_.processEvent(doc, callback);
+      processAllEvents(doc, group_.resources(), callback);
       return true;
     }
 
@@ -112,23 +112,24 @@ namespace abb :: rws
     webSocket_.shutdown();
   }
 
-
-  void SubscriptionCallback::processEvent(IOSignalStateEvent const& event)
+  void processAllEvents(Poco::AutoPtr<Poco::XML::Document> doc, SubscriptionResources const& resources, SubscriptionCallback& callback)
   {
-  }
+    // IMPORTANT: don't use AutoPtr<XML::Element> here! Otherwise you will get memory corruption.
+    Poco::XML::Element const * ul_element = dynamic_cast<Poco::XML::Element const *>(doc->getNodeByPath("html/body/div/ul"));
+    if (!ul_element)
+      BOOST_THROW_EXCEPTION(ProtocolError {"Cannot parse RWS event message: can't find XML element at path html/body/div/ul"});
 
+    // Cycle through all <li> elements
+    Poco::AutoPtr<Poco::XML::NodeList> li_elements = ul_element->getElementsByTagName("li");
+    for (unsigned long index = 0; index < li_elements->length(); ++index)
+    {
+      Poco::XML::Element const * li_element = dynamic_cast<Poco::XML::Element const *>(li_elements->item(index));
+      if (!li_element)
+        BOOST_THROW_EXCEPTION(std::logic_error {"An item of the list returned by getElementsByTagName() is not an XML::Element"});
 
-  void SubscriptionCallback::processEvent(RAPIDExecutionStateEvent const& event)
-  {
-  }
-
-
-  void SubscriptionCallback::processEvent(ControllerStateEvent const& event)
-  {
-  }
-
-
-  void SubscriptionCallback::processEvent(OperationModeEvent const& event)
-  {
+      // Cycle throught all subscription resources
+      for (auto const& resource : resources)
+        resource.processEvent(*li_element, callback);
+    }
   }
 }

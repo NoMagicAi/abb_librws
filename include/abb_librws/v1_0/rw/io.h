@@ -12,7 +12,7 @@ namespace abb :: rws :: v1_0 :: rw :: io
     /**
      * \brief IO signal subscription resource.
      */
-    struct IOSignalSubscribableResource: SubscribableResource
+    struct IOSignalSubscribableResource: public SubscribableResource
     {
         /**
          * \brief A constructor.
@@ -25,7 +25,9 @@ namespace abb :: rws :: v1_0 :: rw :: io
         }
 
 
-        std::string getURI() const;
+        std::string getURI() const override;
+
+        void processEvent(Poco::XML::Element const& li_element, SubscriptionCallback& callback) const override;
 
 
     private:

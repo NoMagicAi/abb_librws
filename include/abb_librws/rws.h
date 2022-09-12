@@ -46,11 +46,4 @@ namespace abb :: rws
 
 
   std::ostream& operator<<(std::ostream& os, MastershipDomain domain);
-
-  struct SubscribableResource
-  {
-    virtual std::size_t getHash() const = 0;
-    virtual bool equals(const SubscribableResource& rhs) const = 0;
-    virtual std::string getURI() const = 0;
-  };
 }
