@@ -412,67 +412,6 @@ Poco::Net::WebSocket RWSClient::receiveSubscription(std::string const& subscript
     Poco::Net::HTTPSClientSession {connectionOptions_.ip_address, connectionOptions_.port, context_});
 }
 
-std::string RWSClient::getResourceURI(SubscribableResource const& resource) const{
-  if (const IOSignalResource* d = dynamic_cast<const IOSignalResource*>(&resource); d != nullptr)
-  {
-    return getResourceURI(*d);
-  }else if (const ControllerStateResource* d = dynamic_cast<const ControllerStateResource*>(&resource); d != nullptr)
-  {
-    return getResourceURI(*d);
-  } else if (const RAPIDExecutionStateResource* d = dynamic_cast<const RAPIDExecutionStateResource*>(&resource); d != nullptr)
-  {
-    return getResourceURI(*d);
-  } else if (const OperationModeResource* d = dynamic_cast<const OperationModeResource*>(&resource); d != nullptr)
-  {
-    return getResourceURI(*d);
-  }
-  boost::throw_exception(std::runtime_error {"Unknown resource type"});
-}
-
-
-std::string RWSClient::getResourceURI(IOSignalResource const& io_signal) const
-{
-  std::string resource_uri = Resources::RW_IOSYSTEM_SIGNALS;
-  resource_uri += "/";
-  resource_uri += io_signal.name;
-  resource_uri += ";";
-  resource_uri += Identifiers::STATE;
-  return resource_uri;
-}
-
-
-std::string RWSClient::getResourceURI(RAPIDResource const& resource) const
-{
-  std::string resource_uri = Resources::RW_RAPID_SYMBOL_DATA_RAPID;
-  resource_uri += "/";
-  resource_uri += resource.task;
-  resource_uri += "/";
-  resource_uri += resource.module;
-  resource_uri += "/";
-  resource_uri += resource.name;
-  resource_uri += ";";
-  resource_uri += Identifiers::VALUE;
-  return resource_uri;
-}
-
-
-std::string RWSClient::getResourceURI(ControllerStateResource const& resource) const
-{
-  return "/rw/panel/ctrl-state";
-}
-
-
-std::string RWSClient::getResourceURI(RAPIDExecutionStateResource const&) const
-{
-  return "/rw/rapid/execution;ctrlexecstate";
-}
-
-
-std::string RWSClient::getResourceURI(OperationModeResource const&) const
-{
-  return "/rw/panel/opmode";
-}
-
 
 bool RWSClient::shouldRetryPost(Poco::Net::HTTPResponse::HTTPStatus status)
 {

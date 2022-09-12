@@ -72,4 +72,15 @@ namespace abb :: rws :: v2_0 :: rw :: panel
 
         client.httpPost(uri, content.str());
     }
+
+    std::string ControllerStateSubscribableResource::getURI() const
+    {
+      return "/rw/panel/ctrl-state";
+    }
+
+
+    std::string OperationModeSubscribableResource::getURI() const
+    {
+      return "/rw/panel/opmode";
+    }
 }

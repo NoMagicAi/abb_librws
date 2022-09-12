@@ -17,6 +17,39 @@ namespace abb :: rws :: v1_0 :: rw
 namespace abb :: rws :: v1_0 :: rw :: panel
 {
     /**
+     * \brief Controller operation mode subscription resource
+     */
+    struct OperationModeSubscribableResource: SubscribableResource
+    {
+        bool equals(const SubscribableResource& rhs) const override
+        {
+          return getURI() == rhs.getURI();
+        }
+
+        std::size_t getHash() const override
+        { return std::hash<std::string>()(getURI()); }
+
+        std::string getURI() const override;
+    };
+
+
+    /**
+     * \brief Controller state subscription resource
+     */
+    struct ControllerStateSubscribableResource: SubscribableResource
+    {
+        bool equals(const SubscribableResource& rhs) const override
+        {
+          return getURI() == rhs.getURI();
+        }
+
+        std::size_t getHash() const override
+        { return std::hash<std::string>()(getURI()); }
+
+        std::string getURI() const override;
+    };
+
+    /**
      * \brief A function for retrieving the controller state.
      *
      * \param client RWS client

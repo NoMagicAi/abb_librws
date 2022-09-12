@@ -56,48 +56,6 @@ namespace abb :: rws
      */
     virtual Poco::Net::WebSocket receiveSubscription(std::string const& subscription_group_id) = 0;
 
-    virtual std::string getResourceURI(SubscribableResource const& resource) const = 0;
-
-    /**
-     * \brief Get URI for subscribing to an IO signal
-     *
-     * \param io_signal IO signal to subscribe
-     *
-     * \return Subscription URI for \a io_signal
-     */
-    virtual std::string getResourceURI(IOSignalResource const& io_signal) const = 0;
-
-    /**
-     * \brief Get URI for subscribing to a RAPID variable
-     *
-     * \param resource RAPID variable resource
-     *
-     * \return Subscription URI for \a resource
-     */
-    virtual std::string getResourceURI(RAPIDResource const& resource) const = 0;
-
-    /**
-     * \brief Get URI for subscribing to RAPID execution state
-     *
-     * \return Subscription URI
-     */
-    virtual std::string getResourceURI(RAPIDExecutionStateResource const&) const = 0;
-
-    /**
-     * \brief Get URI for subscribing to controller state
-     *
-     * \return Subscription URI
-     */
-    virtual std::string getResourceURI(ControllerStateResource const&) const = 0;
-
-
-    /**
-     * \brief Get URI for subscribing to operation mode
-     *
-     * \return Subscription URI
-     */
-    virtual std::string getResourceURI(OperationModeResource const&) const = 0;
-
     /**
      * \brief Process subscription event.
      *
@@ -122,9 +80,9 @@ namespace abb :: rws
     {
     }
 
-    std::string getURI(SubscriptionManager const& subscription_manager) const
+    std::string getURI() const
     {
-      return subscription_manager.getResourceURI(*(resource_ptr_).get());
+      return resource_ptr_ -> getURI();
     }
 
     SubscriptionPriority getPriority() const noexcept

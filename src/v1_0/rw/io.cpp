@@ -120,4 +120,14 @@ namespace abb :: rws :: v1_0 :: rw :: io
 
         return value == SystemConstants::IOSignals::HIGH;
     }
+
+    std::string IOSignalSubscribableResource::getURI() const
+    {
+      std::string resource_uri = Resources::RW_IOSYSTEM_SIGNALS;
+      resource_uri += "/";
+      resource_uri += name;
+      resource_uri += ";";
+      resource_uri += Identifiers::STATE;
+      return resource_uri;
+    }
 }

@@ -9,16 +9,10 @@
 
 namespace abb :: rws
 {
-  struct SubscribableResource
-  {
-    virtual std::size_t getHash() const = 0;
-    virtual std::string getUniqueClassId() const = 0;
-    virtual bool equals(const SubscribableResource& rhs) const = 0;
-  };
-  /**
+   /**
    * \brief IO signal as a resource.
    */
-  struct IOSignalResource: SubscribableResource
+  struct IOSignalResource
   {
     /**
      * \brief A constructor.
@@ -34,22 +28,6 @@ namespace abb :: rws
      * \brief IO signal name.
      */
     std::string name;
-
-    bool equals(const SubscribableResource& rhs) const override
-    {
-      if (const IOSignalResource* d = dynamic_cast<const IOSignalResource*>(&rhs))
-      {
-        return name == d -> name;
-      }
-      return false;
-    }
-
-    std::string getUniqueClassId() const override{
-        return "IOSignalResource";
-    }
-
-    std::size_t getHash() const override
-    { return std::hash<std::string>()(name) ^ std::hash<std::string>()(getUniqueClassId()); }
   };
 
 
@@ -129,77 +107,6 @@ namespace abb :: rws
      */
     std::string name;
   };
-
-
-  /**
-   * \brief RAPID execution state subscription resource
-   */
-  struct RAPIDExecutionStateResource: SubscribableResource
-  {
-    bool equals(const SubscribableResource& rhs) const override
-    {
-      if (const RAPIDExecutionStateResource* d = dynamic_cast<const RAPIDExecutionStateResource*>(&rhs))
-      {
-        return true;
-      }
-      return false;
-    }
-
-    std::string getUniqueClassId() const override{
-        return "RAPIDExecutionStateResource";
-    }
-
-    std::size_t getHash() const override
-    { return std::hash<std::string>()(getUniqueClassId()); }
-  };
-
-
-  /**
-   * \brief Controller operation mode subscription resource
-   */
-  struct OperationModeResource: SubscribableResource
-  {
-    bool equals(const SubscribableResource& rhs) const override
-    {
-      if (const OperationModeResource* d = dynamic_cast<const OperationModeResource*>(&rhs))
-      {
-        return true;
-      }
-      return false;
-    }
-
-    std::string getUniqueClassId() const override{
-        return "OperationModeResource";
-    }
-
-    std::size_t getHash() const override
-    { return std::hash<std::string>()(getUniqueClassId()); }
-  };
-
-
-  /**
-   * \brief Controller state subscription resource
-   */
-  struct ControllerStateResource: SubscribableResource
-  {
-    bool equals(const SubscribableResource& rhs) const override
-    {
-      if (const ControllerStateResource* d = dynamic_cast<const ControllerStateResource*>(&rhs))
-      {
-        return true;
-      }
-      return false;
-    }
-
-    std::string getUniqueClassId() const override{
-        return "ControllerStateResource";
-    }
-
-    std::size_t getHash() const override
-    { return std::hash<std::string>()(getUniqueClassId()); }
-  };
-
-
   /**
    * \brief A class for representing a file resource.
    */

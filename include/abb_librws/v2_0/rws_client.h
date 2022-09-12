@@ -43,7 +43,6 @@
 #include <abb_librws/system_constants.h>
 #include <abb_librws/rws_rapid.h>
 #include <abb_librws/rws_poco_client.h>
-#include <abb_librws/rws_resource.h>
 #include <abb_librws/rws_subscription.h>
 #include <abb_librws/coordinate.h>
 #include <abb_librws/connection_options.h>
@@ -261,12 +260,6 @@ public:
 
   // SubscriptionManager implementation
   Poco::Net::WebSocket receiveSubscription(std::string const& subscription_group_id) override;
-  std::string getResourceURI(SubscribableResource const& resource) const override;
-  std::string getResourceURI(IOSignalResource const& io_signal) const override;
-  std::string getResourceURI(RAPIDResource const& resource) const override;
-  std::string getResourceURI(RAPIDExecutionStateResource const&) const override;
-  std::string getResourceURI(ControllerStateResource const&) const override;
-  std::string getResourceURI(OperationModeResource const&) const override;
   void processEvent(Poco::AutoPtr<Poco::XML::Document> content, SubscriptionCallback& callback) const override;
 
   /**

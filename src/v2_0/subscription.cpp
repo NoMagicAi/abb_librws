@@ -64,7 +64,7 @@ namespace abb :: rws :: v2_0 :: subscription
     {
     subscription_content << "resources=" << i
                           << "&"
-                          << i << "=" << resources[i].getURI(client)
+                          << i << "=" << resources[i].getURI()
                           << "&"
                           << i << "-p=" << static_cast<int>(resources[i].getPriority())
                           << (i < resources.size() - 1 ? "&" : "");
