@@ -17,20 +17,6 @@ namespace abb :: rws :: v1_0 :: rw
 namespace abb :: rws :: v1_0 :: rw :: rapid
 {
     /**
-     * \brief RAPID execution state subscription resource
-     */
-    struct RAPIDExecutionStateSubscribableResource: public SubscribableResource
-    {
-        explicit RAPIDExecutionStateSubscribableResource()
-        {
-        }
-
-        std::string getURI() const override;
-
-        void processEvent(Poco::XML::Element const& li_element, SubscriptionCallback& callback) const override;
-    };
-
-    /**
      * \brief A function for retrieving the execution state of RAPID.
      *
      * https://developercenter.robotstudio.com/api/rwsApi/rapid_execution_get_page.html

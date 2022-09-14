@@ -4,12 +4,10 @@
 
 #include <string>
 #include <iosfwd>
-#include <iostream>
-#include <functional>
 
 namespace abb :: rws
 {
-   /**
+  /**
    * \brief IO signal as a resource.
    */
   struct IOSignalResource
@@ -107,6 +105,32 @@ namespace abb :: rws
      */
     std::string name;
   };
+
+
+  /**
+   * \brief RAPID execution state subscription resource
+   */
+  struct RAPIDExecutionStateResource
+  {
+  };
+
+
+  /**
+   * \brief Controller operation mode subscription resource
+   */
+  struct OperationModeResource
+  {
+  };
+
+
+  /**
+   * \brief Controller state subscription resource
+   */
+  struct ControllerStateResource
+  {
+  };
+
+
   /**
    * \brief A class for representing a file resource.
    */
