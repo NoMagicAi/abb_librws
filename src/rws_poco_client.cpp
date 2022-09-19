@@ -43,6 +43,8 @@
 #include <abb_librws/rws_poco_client.h>
 #include <abb_librws/rws_error.h>
 
+#include <boost/log/trivial.hpp>
+
 
 using namespace Poco;
 using namespace Poco::Net;
@@ -118,7 +120,11 @@ POCOResult POCOClient::makeHTTPRequest(const std::string& method,
   // Attempt the communication.
   try
   {
+    BOOST_LOG_TRIVIAL(debug) << "Tyring to " << method << " from uri=" << uri << " request_content=" << content.substr(0, 100) << "\n";
     sendAndReceive(request, response, content, response_content);
+
+    BOOST_LOG_TRIVIAL(debug) << "Got status=" << response.getStatus() << " when " << method
+                             << "ing from uri=" << uri << " response_content=" << response_content << "\n";
 
     // Check if the server has sent an update for the cookies.
     std::vector<HTTPCookie> temp_cookies;
@@ -140,13 +146,19 @@ POCOResult POCOClient::makeHTTPRequest(const std::string& method,
     {
       http_client_session_.reset();
       request.erase(HTTPRequest::COOKIE);
+      BOOST_LOG_TRIVIAL(debug) << "Retrying received error > internal server error for " << method << " from uri=" << uri << "\n";
       sendAndReceive(request, response, content, response_content);
+      BOOST_LOG_TRIVIAL(debug) << "Got status=" << response.getStatus() << " when retrying for error > internal server error " << method
+                                 << "ing from uri=" << uri << " response_content=" << response_content << "\n";
     }
 
     // Check if the request was unauthorized, if so add credentials.
     if (response.getStatus() == HTTPResponse::HTTP_UNAUTHORIZED)
     {
+      BOOST_LOG_TRIVIAL(debug) << "Received unauthorised in " << method << " from uri=" << uri << "\n";
       authenticate(request, response, content, response_content);
+      BOOST_LOG_TRIVIAL(debug) << "Got status=" << response.getStatus() << " when authenticating for " << method
+                                 << "ing from uri=" << uri << " response_content=" << response_content << "\n";
     }
 
 
