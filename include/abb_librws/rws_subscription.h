@@ -170,6 +170,12 @@ namespace abb :: rws
     rw::OperationMode mode;
   };
 
+  struct ElogEvent: public SubscriptionEvent
+  {
+    int domain;
+    int seqnum;
+  };
+
 
   /**
    * \brief Defines callbacks for different types of RWS subscription events.
