@@ -14,7 +14,7 @@ namespace abb ::rws ::v2_0 ::rw ::elog
 {
     using namespace rws::rw::elog;
 
-    ElogSubscribableResource::ElogSubscribableResource(int const domain)
+    ElogSubscribableResource::ElogSubscribableResource(int domain)
         : domain_(domain)
     {
     }
@@ -90,15 +90,14 @@ namespace abb ::rws ::v2_0 ::rw ::elog
         uri << "/rw/elog?lang=" << lang << "&resource=count";
         POCOResult poco_result = client.httpGet(uri.str());
         RWSResult const &rws_result = parseXml(poco_result.content());
-        std::vector<std::pair<int, std::string>> domains = parseDomains(rws_result);
-        return domains;
+        return parseDomains(rws_result);
     }
 
     ElogMessage parseElogMessageXml(std::string const xml_string)
     {
         Poco::AutoPtr<Poco::XML::Document> rws_result = parseXml(xml_string);
         ElogMessage message;
-        message.messageType = static_cast<MessageType>(std::stoi(xmlFindTextContent(rws_result, XMLAttribute("class", "msgtype"))));
+        message.messageType = static_cast<ElogMessageType>(std::stoi(xmlFindTextContent(rws_result, XMLAttribute("class", "msgtype"))));
         message.code = std::stoi(xmlFindTextContent(rws_result, XMLAttribute("class", "code")));
         message.sourceName;
         std::istringstream ss(xmlFindTextContent(rws_result, XMLAttribute("class", "tstamp")));
@@ -113,16 +112,17 @@ namespace abb ::rws ::v2_0 ::rw ::elog
 
         for (int i = 1; i <= argc; i++)
         {
-            ElogMessageArg arg;
-            std::stringstream arg_class;
-            arg_class << "arg" << i;
-            auto node = xmlFindNodes(rws_result, XMLAttribute("class", arg_class.str()))[0];
+            std::stringstream arg_name;
+            arg_name << "arg" << i;
+            auto node = xmlFindNodes(rws_result, XMLAttribute("class", arg_name.str()))[0];
 
-            arg.argNum = i;
-            arg.value = node->innerText();
-            arg.argType = makeArgType(xmlNodeGetAttributeValue(node, "type"));
+            std::string value = node->innerText();
+            std::string valueType = xmlNodeGetAttributeValue(node, "type");
 
-            message.argv.push_back(arg);
+            message.argv.emplace_back(
+                std::make_pair(
+                    arg_name.str(),
+                    makeElogMessageArg(valueType, value)));
         }
         return message;
     }

@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <chrono>
+#include <variant>
 
 namespace abb ::rws ::rw ::elog
 {
@@ -10,42 +11,27 @@ namespace abb ::rws ::rw ::elog
     /**
      * @brief Types of elog messages
      */
-    enum class MessageType
+    enum class ElogMessageType
     {
         INFORMATION = 1,
         WARNING = 2,
         ERROR = 3
     };
 
-    std::string to_string(MessageType const messagType);
+    std::string to_string(ElogMessageType const messagType);
+
 
     /**
-     * @brief Types of elog message arguments
-     */
-    enum class ArgType
-    {
-        STRING,
-        LONG,
-        FLOAT
-    };
-
-    ArgType makeArgType(std::string const &str);
-
-    std::string to_string(ArgType const &argType);
-
-    /**
-     * @brief Argument of elog message
+     * @brief Argument of elog message.
+     * Can be of string, long or float type.
      * https://developercenter.robotstudio.com/api/rwsApi/elog_domain_get_page.html
      */
-    struct ElogMessageArg
-    {
-        int argNum;
-        ArgType argType;
-        std::string value;
+    using ElogMessageArg = std::variant<std::string, long, float>;
 
-        float toFloat();
-        long toLong();
-    };
+    ElogMessageArg makeElogMessageArg(std::string const &type, std::string const& value);
+
+    std::string to_string(ElogMessageArg const& arg);
+
 
     /**
      * @brief Elog message structure
@@ -55,7 +41,7 @@ namespace abb ::rws ::rw ::elog
     {
         int domain;                       // Domain of message.
         int sequenceNumber;               // Sequence number of message in domain.
-        MessageType messageType;          // The elog message type.
+        ElogMessageType messageType;          // The elog message type.
         int code;                         // The elog message code.
         std::string sourceName;           // The elog message source.
         std::tm timestamp;                // The time stamp when the event log was generated.
@@ -64,7 +50,14 @@ namespace abb ::rws ::rw ::elog
         std::string conseqs;              // The elog message consequences in the specified langauge. Available only when lang parameter is provided.
         std::string causes;               // The elog message causes in the specified langauge. Available only when lang parameter is provided.
         std::string actions;              // The elog message actions in the specified langauge. Available only when lang parameter is provided.
-        std::vector<ElogMessageArg> argv; // The argument's position e.g. arg1, arg2 etc.. The type of argument can be float, string or long.
+        
+        /**
+         * @brief Message arguments necessary for filling message templates.
+         * If valid language is provided when retrieving /rw/elog message, args are filled in appropirate places. 
+         * @param first arg name: e.g. arg1, arg2 etc.. 
+         * @param second the argument value. The type of argument can be float, string or long.
+         */
+        std::vector<std::pair<std::string,ElogMessageArg>> argv;
     };
 
     struct Language final

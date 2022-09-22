@@ -7,80 +7,63 @@
 
 #include <iomanip>
 #include <sstream>
+#include <variant>
 
 namespace abb ::rws ::rw ::elog
 {
-    std::string to_string(MessageType const messageType)
+    std::string to_string(ElogMessageType const messageType)
     {
         switch (messageType)
         {
-        case MessageType::INFORMATION:
+        case ElogMessageType::INFORMATION:
             return "INFORMATION";
             break;
-        case MessageType::WARNING:
+        case ElogMessageType::WARNING:
             return "WARNING";
             break;
-        case MessageType::ERROR:
+        case ElogMessageType::ERROR:
             return "ERROR";
             break;
         default:
-            BOOST_THROW_EXCEPTION(std::logic_error{"Invalid MessageType value"});
+            BOOST_THROW_EXCEPTION(std::logic_error{"Invalid ElogMessageType value"});
         }
     }
 
-    ArgType makeArgType(std::string const &str)
+    ElogMessageArg makeElogMessageArg(std::string const &type, std::string const& value)
     {
-        std::string name = boost::algorithm::to_upper_copy(str);
+        std::string name = boost::algorithm::to_upper_copy(type);
         if (name == "STRING")
-            return ArgType::STRING;
+            return ElogMessageArg(value);
         else if (name == "LONG")
-            return ArgType::LONG;
+            return ElogMessageArg(std::stol(value));
         else if (name == "FLOAT")
-            return ArgType::FLOAT;
-        std::stringstream msg;
-        BOOST_THROW_EXCEPTION(std::invalid_argument("Unexpected string representation of elog message argument type: \"" + str + "\""));
+            return ElogMessageArg(std::stof(value));
+        BOOST_THROW_EXCEPTION(std::invalid_argument("Unexpected string representation of elog message argument type: \"" + type + "\" value: \"" + value + "\""));
     }
 
-    std::string to_string(ArgType const &argType)
+    std::string to_string(ElogMessageArg const &arg)
     {
-        switch (argType)
+        std::stringstream ss;
+        switch (arg.index())
         {
-        case ArgType::FLOAT:
-            return "FLOAT";
+        case 0:
+            ss << "STRING";
             break;
-        case ArgType::LONG:
-            return "LONG";
+        case 1:
+            ss << "LONG";
             break;
-        case ArgType::STRING:
-            return "STRING";
+        case 2:
+            ss << "FLOAT";
             break;
         default:
             BOOST_THROW_EXCEPTION(std::logic_error{"Invalid ArgType value"});
         }
+        ss << "(";
+        std::visit([&ss](auto&& arg){ss << arg;}, arg);
+        ss << ")";
+        return ss.str();
     }
 
-    float ElogMessageArg::toFloat()
-    {
-        if (argType != ArgType::FLOAT)
-        {
-            std::stringstream msg;
-            msg << "ElogMessageArg type is " << to_string(argType) << " not " << to_string(ArgType::LONG) << "!";
-            BOOST_THROW_EXCEPTION(std::invalid_argument(msg.str()));
-        }
-
-        return std::stof(value);
-    }
-
-    long ElogMessageArg::toLong()
-    {
-        if (argType != ArgType::LONG)
-        {
-            std::stringstream msg;
-            msg << "ElogMessageArg type is " << to_string(argType) << " not " << to_string(ArgType::LONG) << "!";
-            BOOST_THROW_EXCEPTION(std::invalid_argument(msg.str()));
-        }
-        return std::stol(value);
-    }
 
     const std::string Language::CZECH = "cs";
     const std::string Language::DANISH = "da";

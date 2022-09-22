@@ -14,7 +14,7 @@ namespace abb ::rws ::v2_0 ::rw ::elog
      */
     struct ElogSubscribableResource : public SubscribableResource
     {
-        explicit ElogSubscribableResource(int const domain);
+        explicit ElogSubscribableResource(int domain);
 
         std::string getURI() const override;
 
