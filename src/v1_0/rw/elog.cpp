@@ -97,7 +97,7 @@ namespace abb ::rws ::v1_0 ::rw ::elog
     {
         Poco::AutoPtr<Poco::XML::Document> rws_result = parseXml(xml_string);
         ElogMessage message;
-        message.messageType = static_cast<ElogMessageType>(std::stoi(xmlFindTextContent(rws_result, XMLAttribute("class", "msgtype"))));
+        message.messageType = makeElogMessageType(std::stoi(xmlFindTextContent(rws_result, XMLAttribute("class", "msgtype"))));
         message.code = std::stoi(xmlFindTextContent(rws_result, XMLAttribute("class", "code")));
         message.sourceName;
         std::istringstream ss(xmlFindTextContent(rws_result, XMLAttribute("class", "tstamp")));
@@ -119,10 +119,7 @@ namespace abb ::rws ::v1_0 ::rw ::elog
             std::string value = node->innerText();
             std::string valueType = xmlNodeGetAttributeValue(node, "type");
 
-            message.argv.emplace_back(
-                std::make_pair(
-                    arg_name.str(),
-                    makeElogMessageArg(valueType, value)));
+            message.argv[i] = makeElogMessageArg(valueType, value);
         }
         return message;
     }
@@ -130,7 +127,7 @@ namespace abb ::rws ::v1_0 ::rw ::elog
     ElogMessage getElogMessage(RWSClient &client, int const domain, int const seqnum, std::string const &lang)
     {
         std::stringstream uri;
-        uri << "/rw/elog/" << static_cast<int>(domain) << "/" << seqnum << "?lang=" << lang;
+        uri << "/rw/elog/" << domain << "/" << seqnum << "?lang=" << lang;
         POCOResult poco_result = client.httpGet(uri.str());
         ElogMessage message = parseElogMessageXml(poco_result.content());
         message.domain = domain;

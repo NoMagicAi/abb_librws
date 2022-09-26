@@ -11,6 +11,23 @@
 
 namespace abb ::rws ::rw ::elog
 {
+    ElogMessageType makeElogMessageType(int val)
+    {
+        switch (val)
+        {
+        case 1:
+            return ElogMessageType::INFORMATION;
+        case 2:
+            return ElogMessageType::WARNING;
+        case 3:
+            return ElogMessageType::ERROR;
+        default:
+            std::stringstream msg;
+            msg << "Unable to make ElogMessageType, invalid value: " << val;
+            BOOST_THROW_EXCEPTION(std::invalid_argument(msg.str()));
+        }
+    }
+
     std::string to_string(ElogMessageType const messageType)
     {
         switch (messageType)

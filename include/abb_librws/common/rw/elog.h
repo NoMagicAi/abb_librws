@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <vector>
+#include <map>
 #include <chrono>
 #include <variant>
 
@@ -17,6 +17,8 @@ namespace abb ::rws ::rw ::elog
         WARNING = 2,
         ERROR = 3
     };
+
+    ElogMessageType makeElogMessageType(int val);
 
     std::string to_string(ElogMessageType const messagType);
 
@@ -57,7 +59,7 @@ namespace abb ::rws ::rw ::elog
          * @param first arg name: e.g. arg1, arg2 etc.. 
          * @param second the argument value. The type of argument can be float, string or long.
          */
-        std::vector<std::pair<std::string,ElogMessageArg>> argv;
+        std::map<int,ElogMessageArg> argv;
     };
 
     struct Language final
