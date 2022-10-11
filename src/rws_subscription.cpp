@@ -68,10 +68,9 @@ namespace abb :: rws
         BOOST_THROW_EXCEPTION(TimeoutError {"WebSocket Failed to receive new subscription message in " +
                                             std::to_string(new_message_timeout.count()) + " microseconds."});
 
-      flags = 0;
-
       // Set the timeout for the next receive operation (we receive ping-pong messages every 30 seconds from controller).
-      webSocket_.setReceiveTimeout({ping_pong_timeout.count()});
+      webSocket_.setReceiveTimeout({std::min(ping_pong_timeout.count(), std::chrono::duration_cast<std::chrono::microseconds>(deadline-now).count())});
+      flags = 0;
 
       try
       {
@@ -81,10 +80,10 @@ namespace abb :: rws
       {
         now = std::chrono::steady_clock::now();
         BOOST_THROW_EXCEPTION(
-          TimeoutError {"WebSocket Failed to receive ping-pong message in " +
-                        std::to_string(ping_pong_timeout.count()) + " microseconds. Last frame received " + std::to_string(
-                          std::chrono::duration_cast<std::chrono::microseconds>(now - last_frame).count()) + " microseconds ago."}
+          TimeoutError {"WebSocket Failed to receive ping-pong message"}
             << boost::errinfo_nested_exception(boost::current_exception())
+            << PingPongTimeoutErrorInfo {ping_pong_timeout}
+            << LastFrameReceivedErrorInfo {std::chrono::duration_cast<std::chrono::microseconds>(now - last_frame)}
         );
       }
 

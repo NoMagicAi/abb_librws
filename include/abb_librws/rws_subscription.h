@@ -34,6 +34,16 @@ namespace abb :: rws
     HIGH    ///< High priority. Only RobotWare 6.05 (or newer) and for IO signals and persistant RAPID variables.
   };
 
+   /**
+   * \brief Error info containing timeout for websocket receive.
+   */
+  using PingPongTimeoutErrorInfo = boost::error_info<struct PingPongTimeoutErrorInfoTag, std::chrono::microseconds>;
+
+   /**
+   * \brief Error info containing time since last message was received over websocket.
+   */
+  using LastFrameReceivedErrorInfo = boost::error_info<struct LastFrameReceivedErrorInfoTag, std::chrono::microseconds>;
+
 
   class SubscriptionCallback;
   class AbstractSubscriptionGroup;
