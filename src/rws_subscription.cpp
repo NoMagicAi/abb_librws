@@ -14,8 +14,8 @@ namespace abb :: rws
   using namespace Poco::Net;
 
 
-  const std::chrono::microseconds SubscriptionReceiver::DEFAULT_SUBSCRIPTION_NEW_MESSAGE_TIMEOUT {172800000000};  // 2 days
-  const std::chrono::microseconds SubscriptionReceiver::DEFAULT_SUBSCRIPTION_PING_PONG_TIMEOUT {60000000}; // 60 seconds
+  const std::chrono::microseconds SubscriptionReceiver::DEFAULT_SUBSCRIPTION_NEW_MESSAGE_TIMEOUT = std::chrono::hours {48};  // 2 days
+  const std::chrono::microseconds SubscriptionReceiver::DEFAULT_SUBSCRIPTION_PING_PONG_TIMEOUT = std::chrono::seconds {60}; // 60 seconds
 
 
   SubscriptionReceiver::SubscriptionReceiver(SubscriptionManager& subscription_manager, AbstractSubscriptionGroup const& group)
