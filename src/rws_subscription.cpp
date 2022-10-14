@@ -62,8 +62,8 @@ namespace abb :: rws
     // Wait for (non-ping) WebSocket frames.
     do
     {
-      auto last_frame = std::chrono::steady_clock::now();
       now = std::chrono::steady_clock::now();
+      auto last_frame = now;
       if (now >= deadline)
         BOOST_THROW_EXCEPTION(TimeoutError {"WebSocket Failed to receive new subscription message in " +
                                             std::to_string(new_message_timeout.count()) + " microseconds."});
@@ -78,13 +78,12 @@ namespace abb :: rws
       }
       catch (Poco::TimeoutException const&)
       {
-        now = std::chrono::steady_clock::now();
-        BOOST_THROW_EXCEPTION(
-          TimeoutError {"WebSocket Failed to receive ping-pong message"}
-            << boost::errinfo_nested_exception(boost::current_exception())
-            << PingPongTimeoutErrorInfo {ping_pong_timeout}
-            << LastFrameReceivedErrorInfo {std::chrono::duration_cast<std::chrono::microseconds>(now - last_frame)}
-        );
+        if (now >= deadline)
+            BOOST_THROW_EXCEPTION(TimeoutError {"WebSocket Failed to receive new subscription message in " +
+                                            std::to_string(new_message_timeout.count()) + " microseconds."});
+
+        BOOST_THROW_EXCEPTION(TimeoutError {"WebSocket Failed to receive ping-pong message in " +
+                                            std::to_string(ping_pong_timeout.count()) + " microseconds."});
       }
 
       content = std::string(websocket_buffer_, number_of_bytes_received);
