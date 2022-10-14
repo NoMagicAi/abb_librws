@@ -69,7 +69,10 @@ namespace abb :: rws
                                             std::to_string(new_message_timeout.count()) + " microseconds."});
 
       // Set the timeout for the next receive operation (we receive ping-pong messages every 30 seconds from controller).
-      webSocket_.setReceiveTimeout({std::min(ping_pong_timeout.count(), std::chrono::duration_cast<std::chrono::microseconds>(deadline-now).count())});
+      // If the timeout is larger than deadline, we set it to deadline.
+      Poco::Timespan timeout {std::min(ping_pong_timeout.count(), std::chrono::duration_cast<std::chrono::microseconds>(deadline-now).count())};
+
+      webSocket_.setReceiveTimeout(timeout);
       flags = 0;
 
       try
