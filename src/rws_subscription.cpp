@@ -63,14 +63,16 @@ namespace abb :: rws
     do
     {
       now = std::chrono::steady_clock::now();
-      auto last_frame = now;
       if (now >= deadline)
         BOOST_THROW_EXCEPTION(TimeoutError {"WebSocket Failed to receive new subscription message in " +
                                             std::to_string(new_message_timeout.count()) + " microseconds."});
 
       // Set the timeout for the next receive operation (we receive ping-pong messages every 30 seconds from controller).
       // If the timeout is larger than deadline, we set it to deadline.
-      Poco::Timespan timeout {std::min(ping_pong_timeout.count(), std::chrono::duration_cast<std::chrono::microseconds>(deadline-now).count())};
+      auto current_new_message_timeout = std::chrono::duration_cast<std::chrono::microseconds>(deadline-now);
+      bool wait_on_deadline = current_new_message_timeout.count() < ping_pong_timeout.count();
+
+      Poco::Timespan timeout {wait_on_deadline ? current_new_message_timeout.count() : ping_pong_timeout.count()};
 
       webSocket_.setReceiveTimeout(timeout);
       flags = 0;
@@ -81,7 +83,7 @@ namespace abb :: rws
       }
       catch (Poco::TimeoutException const&)
       {
-        if (now >= deadline)
+        if (wait_on_deadline)
             BOOST_THROW_EXCEPTION(TimeoutError {"WebSocket Failed to receive new subscription message in " +
                                             std::to_string(new_message_timeout.count()) + " microseconds."});
 
