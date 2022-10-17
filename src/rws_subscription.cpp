@@ -70,7 +70,7 @@ namespace abb :: rws
       // Set the timeout for the next receive operation (we receive ping-pong messages every 30 seconds from controller).
       // If the timeout is larger than deadline, we set it to deadline.
       auto current_new_message_timeout = std::chrono::duration_cast<std::chrono::microseconds>(deadline-now);
-      bool wait_on_deadline = current_new_message_timeout.count() < ping_pong_timeout.count();
+      bool wait_on_deadline = current_new_message_timeout < ping_pong_timeout;
 
       Poco::Timespan timeout {wait_on_deadline ? current_new_message_timeout.count() : ping_pong_timeout.count()};
 
