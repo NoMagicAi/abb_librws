@@ -17,3 +17,5 @@ namespace abb::rws::rw::retcode
 
     std::string to_string(RetcodeInfo const& retcode);
 }
+
+std::ostream& operator<<(std::ostream& os, abb::rws::rw::retcode::RetcodeInfo const& info);

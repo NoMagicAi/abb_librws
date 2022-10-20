@@ -11,3 +11,9 @@ namespace abb::rws::rw::retcode
         return ss.str(); 
     }
 }
+
+std::ostream& operator<<(std::ostream& os, abb::rws::rw::retcode::RetcodeInfo const& info)
+{
+    os << info.severity << " " << info.code << " " << info.name << ": " << info.description;
+    return os;
+}

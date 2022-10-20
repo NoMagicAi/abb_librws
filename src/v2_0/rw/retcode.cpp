@@ -20,6 +20,12 @@ namespace abb::rws::v2_0::rw::retcode
         POCOResult poco_result = client.httpGet(uri.str());
         RWSResult const& rws_result = parseXml(poco_result.content());
         std::vector<Poco::XML::Node*> nodes = xmlFindNodes(rws_result, XMLAttribute("class", "err-desc"));
+        if (nodes.empty())
+        {
+            using content_info = boost::error_info<struct XmlContent, std::string>;
+            BOOST_THROW_EXCEPTION(boost::enable_error_info(std::runtime_error("Unable to find error description: "))
+                                    << content_info {poco_result.content()});
+        }
         return parseErrorDescriptionXml(nodes[0]);
     }
 
