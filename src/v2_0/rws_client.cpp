@@ -304,22 +304,13 @@ std::string RWSClient::generateFilePath(const FileResource& resource)
   return Services::FILESERVICE + "/" + resource.directory + "/" + resource.filename;
 }
 
-// Try finding <span class="code">[RETCODE]</span> and return value of [RETCODE].
-std::optional<int> tryParseRetcode(std::string const& xmlStr)
+// Try finding xml tag with class="code" containing retcode.
+std::optional<int> tryParseRetcode(Poco::AutoPtr<Poco::XML::Document> const& xml)
 {
-  std::string xml_prefix = R"(<span class="code">)";
-  std::string xml_postfix = R"(</span>)";
-  std::size_t pos_start = xmlStr.find(xml_prefix);
-  if (pos_start==std::string::npos)
-      return {};
-  pos_start += xml_prefix.size();
-  std::size_t pos_end = xmlStr.find(xml_postfix, pos_start);
-  if (pos_end==std::string::npos)
-      return {};
-  int retcode;
+  std::string code_str = xmlFindTextContent(xml, XMLAttribute{"class", "code"});
   try
   {
-    retcode = std::stoi(xmlStr.substr(pos_start, pos_end-pos_start));
+    return std::stoi(code_str);
   }
   catch (std::invalid_argument)
   {
@@ -329,7 +320,6 @@ std::optional<int> tryParseRetcode(std::string const& xmlStr)
   {
     return {};
   }
-  return {retcode};
 }
 
 POCOResult RWSClient::httpGet(const std::string& uri,
@@ -352,7 +342,7 @@ POCOResult RWSClient::httpGet(const std::string& uri,
       << HttpStatusErrorInfo {result.httpStatus()}
       << HttpResponseContentErrorInfo {result.content()}
       << HttpReasonErrorInfo {result.reason()};
-    if (auto retcode = tryParseRetcode(result.content()))
+    if (auto retcode = tryParseRetcode(parseXml(result.content())))
       exception << RetcodeErrorInfo {retcode.value()};
     BOOST_THROW_EXCEPTION(exception);
   }
@@ -382,7 +372,7 @@ POCOResult RWSClient::httpPost(const std::string& uri, const std::string& conten
       << HttpStatusErrorInfo {result.httpStatus()}
       << HttpResponseContentErrorInfo {result.content()}
       << HttpReasonErrorInfo {result.reason()};
-    if (auto retcode = tryParseRetcode(result.content()))
+    if (auto retcode = tryParseRetcode(parseXml(result.content())))
       exception << RetcodeErrorInfo {retcode.value()};
     BOOST_THROW_EXCEPTION(exception);
   }
@@ -410,7 +400,7 @@ POCOResult RWSClient::httpPut(const std::string& uri, const std::string& content
       << HttpStatusErrorInfo {result.httpStatus()}
       << HttpResponseContentErrorInfo {result.content()}
       << HttpReasonErrorInfo {result.reason()};
-    if (auto retcode = tryParseRetcode(result.content()))
+    if (auto retcode = tryParseRetcode(parseXml(result.content())))
       exception << RetcodeErrorInfo {retcode.value()};
     BOOST_THROW_EXCEPTION(exception);
   }
@@ -439,7 +429,7 @@ POCOResult RWSClient::httpDelete(const std::string& uri,
       << HttpStatusErrorInfo {result.httpStatus()}
       << HttpResponseContentErrorInfo {result.content()}
       << HttpReasonErrorInfo {result.reason()};
-    if (auto retcode = tryParseRetcode(result.content()))
+    if (auto retcode = tryParseRetcode(parseXml(result.content())))
       exception << RetcodeErrorInfo {retcode.value()};
     BOOST_THROW_EXCEPTION(exception);
   }
