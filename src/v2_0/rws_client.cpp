@@ -41,6 +41,7 @@
 
 #include <Poco/Net/HTTPRequest.h>
 #include <Poco/DOM/NodeList.h>
+#include <Poco/XML/XMLException.h>
 
 #include <boost/log/trivial.hpp>
 
@@ -314,7 +315,10 @@ std::optional<int> tryParseRetcode(std::string const& content) noexcept
     std::string code_str = xmlFindTextContent(xml, XMLAttribute{"class", "code"});
     if (!code_str.empty())
         result = std::stoi(code_str);
-  } catch (...) {}
+  } 
+  catch (Poco::XML::XMLException const&) {}
+  catch (std::invalid_argument const&) {}
+  catch (std::out_of_range const&) {}
   return result;
 }
 
