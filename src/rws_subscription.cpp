@@ -15,7 +15,10 @@ namespace abb :: rws
 
 
   const std::chrono::microseconds SubscriptionReceiver::DEFAULT_SUBSCRIPTION_NEW_MESSAGE_TIMEOUT = std::chrono::hours {48};  // 2 days
-  const std::chrono::microseconds SubscriptionReceiver::DEFAULT_SUBSCRIPTION_PING_PONG_TIMEOUT = std::chrono::seconds {60}; // 60 seconds
+
+  // 60 seconds should work for both for RWS1 and RWS2, but since on RWS2 TLS is used and due to a bug in POCO
+  // (https://github.com/pocoproject/poco/issues/3848), the actual timeout will be 120 seconds.
+  const std::chrono::microseconds SubscriptionReceiver::DEFAULT_SUBSCRIPTION_PING_PONG_TIMEOUT = std::chrono::seconds {60};
 
 
   SubscriptionReceiver::SubscriptionReceiver(SubscriptionManager& subscription_manager, AbstractSubscriptionGroup const& group)
