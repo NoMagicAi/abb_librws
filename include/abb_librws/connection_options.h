@@ -15,9 +15,9 @@ namespace abb :: rws
             unsigned short port,
             std::string const& username,
             std::string password,
-            std::chrono::microseconds connection_timeout = std::chrono::milliseconds {400},
-            std::chrono::microseconds send_timeout = std::chrono::milliseconds {400},
-            std::chrono::microseconds receive_timeout = std::chrono::milliseconds {400},
+            std::chrono::microseconds connection_timeout = std::chrono::seconds {5},
+            std::chrono::microseconds send_timeout = std::chrono::seconds {5},
+            std::chrono::microseconds receive_timeout = std::chrono::seconds {5},
             std::list<std::chrono::milliseconds> retry_backoff = std::list<std::chrono::milliseconds> {});
 
         /// \brief Robot controller's IP address.
