@@ -43,6 +43,8 @@
 #include <abb_librws/rws_poco_client.h>
 #include <abb_librws/rws_error.h>
 
+#include <boost/log/trivial.hpp>
+
 
 using namespace Poco;
 using namespace Poco::Net;
@@ -234,13 +236,16 @@ void POCOClient::sendAndReceive(HTTPRequest& request,
 
   try
   {
-    std::istream& response_content_stream = http_client_session_.receiveResponse(response);
+      BOOST_LOG_TRIVIAL(info) << "Sending request: " << request.getURI();
+      http_client_session_.socket().setReceiveTimeout(Poco::Timespan(100, 0));
+      std::istream& response_content_stream = http_client_session_.receiveResponse(response);
 
     response_content.clear();
     StreamCopier::copyToString(response_content_stream, response_content);
   }
   catch (Poco::Exception const& e)
   {
+    BOOST_LOG_TRIVIAL(info) << "Sending failed: " << request.getURI();
     BOOST_THROW_EXCEPTION(
       CommunicationError {"HTTP receive error: " + e.displayText()}
         << HttpMethodErrorInfo {request.getMethod()}
