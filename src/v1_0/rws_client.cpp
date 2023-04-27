@@ -48,10 +48,15 @@
 
 #include <iostream>
 
+#include <boost/stacktrace.hpp>
+#include <boost/log/trivial.hpp>
+
 
 namespace abb :: rws :: v1_0
 {
 using namespace Poco::Net;
+
+typedef boost::error_info<struct stacktraceTag, boost::stacktrace::stacktrace> stacktraceInfo;
 
 
 /***********************************************************************************************************************
@@ -274,6 +279,7 @@ std::optional<int> tryParseRetcode(std::string const& content) noexcept
 POCOResult RWSClient::httpGet(const std::string& uri,
   std::set<Poco::Net::HTTPResponse::HTTPStatus> const& accepted_status)
 {
+    BOOST_LOG_TRIVIAL(info) << "Getting " << uri << " from RWS";
   POCOResult const result = http_client_.httpGet(uri);
 
   if (accepted_status.find(result.httpStatus()) == accepted_status.end())
@@ -286,7 +292,9 @@ POCOResult RWSClient::httpGet(const std::string& uri,
       << HttpReasonErrorInfo {result.reason()};
     if (auto retcode = tryParseRetcode(result.content()))
       exception << RetcodeErrorInfo {retcode.value()};
-    BOOST_THROW_EXCEPTION(exception);
+    // Add stacktrace to exception
+
+    BOOST_THROW_EXCEPTION(exception << stacktraceInfo(boost::stacktrace::stacktrace()));
   }
 
   return result;
@@ -296,6 +304,7 @@ POCOResult RWSClient::httpGet(const std::string& uri,
 POCOResult RWSClient::httpPost(const std::string& uri, const std::string& content,
   std::set<Poco::Net::HTTPResponse::HTTPStatus> const& accepted_status)
 {
+    BOOST_LOG_TRIVIAL(info) << "Posting " << uri << " from RWS";
   POCOResult const result = http_client_.httpPost(uri, content);
 
   if (accepted_status.find(result.httpStatus()) == accepted_status.end())
@@ -309,7 +318,7 @@ POCOResult RWSClient::httpPost(const std::string& uri, const std::string& conten
       << HttpReasonErrorInfo {result.reason()};
     if (auto retcode = tryParseRetcode(result.content()))
       exception << RetcodeErrorInfo {retcode.value()};
-    BOOST_THROW_EXCEPTION(exception);
+      BOOST_THROW_EXCEPTION(exception << stacktraceInfo(boost::stacktrace::stacktrace()));
   }
 
   return result;
@@ -319,6 +328,7 @@ POCOResult RWSClient::httpPost(const std::string& uri, const std::string& conten
 POCOResult RWSClient::httpPut(const std::string& uri, const std::string& content,
   std::set<Poco::Net::HTTPResponse::HTTPStatus> const& accepted_status)
 {
+    BOOST_LOG_TRIVIAL(info) << "Puting " << uri << " from RWS";
   POCOResult const result = http_client_.httpPut(uri, content);
   if (accepted_status.find(result.httpStatus()) == accepted_status.end())
   {
@@ -331,7 +341,7 @@ POCOResult RWSClient::httpPut(const std::string& uri, const std::string& content
       << HttpReasonErrorInfo {result.reason()};
     if (auto retcode = tryParseRetcode(result.content()))
       exception << RetcodeErrorInfo {retcode.value()};
-    BOOST_THROW_EXCEPTION(exception);
+      BOOST_THROW_EXCEPTION(exception << stacktraceInfo(boost::stacktrace::stacktrace()));
   }
 
   return result;
@@ -341,6 +351,7 @@ POCOResult RWSClient::httpPut(const std::string& uri, const std::string& content
 POCOResult RWSClient::httpDelete(const std::string& uri,
   std::set<Poco::Net::HTTPResponse::HTTPStatus> const& accepted_status)
 {
+    BOOST_LOG_TRIVIAL(info) << "Deleting " << uri << " from RWS";
   POCOResult const result = http_client_.httpDelete(uri);
   if (accepted_status.find(result.httpStatus()) == accepted_status.end())
   {
@@ -352,7 +363,8 @@ POCOResult RWSClient::httpDelete(const std::string& uri,
       << HttpReasonErrorInfo {result.reason()};
     if (auto retcode = tryParseRetcode(result.content()))
       exception << RetcodeErrorInfo {retcode.value()};
-    BOOST_THROW_EXCEPTION(exception);
+    BOOST_LOG_TRIVIAL(info) << "Subscription delete failed " << boost::stacktrace::stacktrace();
+    BOOST_THROW_EXCEPTION(exception << stacktraceInfo(boost::stacktrace::stacktrace()));
   }
 
   return result;
@@ -361,6 +373,7 @@ POCOResult RWSClient::httpDelete(const std::string& uri,
 
 Poco::Net::WebSocket RWSClient::receiveSubscription(std::string const& subscription_group_id)
 {
+    BOOST_LOG_TRIVIAL(info) << "Retrieving subscription " << subscription_group_id << " from ws";
   return http_client_.webSocketConnect("/poll/" + subscription_group_id, "robapi2_subscription",
     Poco::Net::HTTPClientSession {connectionOptions_.ip_address, connectionOptions_.port});
 }
