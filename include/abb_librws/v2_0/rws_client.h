@@ -278,11 +278,14 @@ public:
    * \param uri for the URI (path and query).
    * \param content for the request's content.
    * \param accepted_status accepted status values.
+   * \param should_retry whether to retry on failure (default: true).
    *
    * \return POCOResult containing the result.
    */
-  POCOResult httpPost(const std::string& uri, const std::string& content = "", const std::string& content_type = "",
-    std::set<Poco::Net::HTTPResponse::HTTPStatus> const& accepted_status = {Poco::Net::HTTPResponse::HTTP_NO_CONTENT, Poco::Net::HTTPResponse::HTTP_OK});
+  POCOResult httpPost(const std::string &uri, const std::string &content = "", const std::string &content_type = "",
+                      std::set<Poco::Net::HTTPResponse::HTTPStatus> const &accepted_status = {
+                              Poco::Net::HTTPResponse::HTTP_NO_CONTENT, Poco::Net::HTTPResponse::HTTP_OK},
+                      bool should_retry = true);
 
   /**
    * \brief A method for sending a HTTP PUT request and checking response status.
@@ -290,11 +293,14 @@ public:
    * \param uri for the URI (path and query).
    * \param content for the request's content.
    * \param accepted_status accepted status values.
+   * \param should_retry whether to retry on failure (default: true).
    *
    * \return POCOResult containing the result.
    */
-  POCOResult httpPut(const std::string& uri, const std::string& content = "", const std::string& content_type = "",
-    std::set<Poco::Net::HTTPResponse::HTTPStatus> const& accepted_status = {Poco::Net::HTTPResponse::HTTP_OK, Poco::Net::HTTPResponse::HTTP_CREATED});
+  POCOResult httpPut(const std::string &uri, const std::string &content = "", const std::string &content_type = "",
+                     std::set<Poco::Net::HTTPResponse::HTTPStatus> const &accepted_status = {
+                             Poco::Net::HTTPResponse::HTTP_OK, Poco::Net::HTTPResponse::HTTP_CREATED},
+                     bool should_retry = true);
 
   /**
    * \brief A method for sending a HTTP DELETE request and checking response status.

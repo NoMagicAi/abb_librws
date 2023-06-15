@@ -48,7 +48,8 @@ namespace abb :: rws :: v2_0 :: rw :: panel
         content << "ctrl-state=" << state;
         std::string content_type = "application/x-www-form-urlencoded;v=2.0";
 
-        client.httpPost(uri, content.str(), content_type);
+        client.httpPost(uri, content.str(), content_type,
+                        {Poco::Net::HTTPResponse::HTTP_NO_CONTENT, Poco::Net::HTTPResponse::HTTP_OK}, false);
     }
 
 

@@ -352,12 +352,12 @@ POCOResult RWSClient::httpGet(const std::string& uri,
 
 
 POCOResult RWSClient::httpPost(const std::string& uri, const std::string& content, const std::string& content_type,
-  std::set<Poco::Net::HTTPResponse::HTTPStatus> const& accepted_status)
+  std::set<Poco::Net::HTTPResponse::HTTPStatus> const& accepted_status, bool should_retry)
 {
   POCOResult result = http_client_.httpPost(uri, content, content_type);
-  std::list<std::chrono::milliseconds>::const_iterator it=connectionOptions_.retry_backoff.begin();
+  auto it=connectionOptions_.retry_backoff.begin();
 
-  while (shouldRetryPost(result.httpStatus()) && it != connectionOptions_.retry_backoff.end()){
+  while (should_retry && shouldRetryPost(result.httpStatus()) && it != connectionOptions_.retry_backoff.end()){
     std::this_thread::sleep_for(*(it++));
     BOOST_LOG_TRIVIAL(warning) << "Received status " << result.httpStatus()
     << " for " << uri << " doing retry. Response is: " << result.content();
@@ -382,12 +382,14 @@ POCOResult RWSClient::httpPost(const std::string& uri, const std::string& conten
 }
 
 POCOResult RWSClient::httpPut(const std::string& uri, const std::string& content, const std::string& content_type,
-  std::set<Poco::Net::HTTPResponse::HTTPStatus> const& accepted_status)
+  std::set<Poco::Net::HTTPResponse::HTTPStatus> const& accepted_status, bool should_retry)
 {
   POCOResult result = http_client_.httpPut(uri, content, content_type);
-  std::list<std::chrono::milliseconds>::const_iterator it=connectionOptions_.retry_backoff.begin();
+  auto it=connectionOptions_.retry_backoff.begin();
 
-  while (result.httpStatus() == HTTPResponse::HTTP_SERVICE_UNAVAILABLE && it != connectionOptions_.retry_backoff.end()){
+  while (should_retry && result.httpStatus() == HTTPResponse::HTTP_SERVICE_UNAVAILABLE &&
+         it != connectionOptions_.retry_backoff.end())
+  {
     std::this_thread::sleep_for(*(it++));
     BOOST_LOG_TRIVIAL(warning) << "Received status 503 for " << uri << " doing retry";
     result = http_client_.httpPut(uri, content, content_type);
