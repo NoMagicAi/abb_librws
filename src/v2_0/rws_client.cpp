@@ -326,13 +326,6 @@ POCOResult RWSClient::httpGet(const std::string& uri,
   std::set<Poco::Net::HTTPResponse::HTTPStatus> const& accepted_status)
 {
   POCOResult result = http_client_.httpGet(uri);
-  std::list<std::chrono::milliseconds>::const_iterator it=connectionOptions_.retry_backoff.begin();
-
-  while (result.httpStatus() == HTTPResponse::HTTP_SERVICE_UNAVAILABLE && it != connectionOptions_.retry_backoff.end()){
-    std::this_thread::sleep_for(*(it++));
-    BOOST_LOG_TRIVIAL(warning) << "Received status 503 for " << uri << " doing retry";
-    result = http_client_.httpGet(uri);
-  }
 
   if (accepted_status.find(result.httpStatus()) == accepted_status.end())
   {
@@ -355,14 +348,6 @@ POCOResult RWSClient::httpPost(const std::string& uri, const std::string& conten
   std::set<Poco::Net::HTTPResponse::HTTPStatus> const& accepted_status)
 {
   POCOResult result = http_client_.httpPost(uri, content, content_type);
-  std::list<std::chrono::milliseconds>::const_iterator it=connectionOptions_.retry_backoff.begin();
-
-  while (shouldRetryPost(result.httpStatus()) && it != connectionOptions_.retry_backoff.end()){
-    std::this_thread::sleep_for(*(it++));
-    BOOST_LOG_TRIVIAL(warning) << "Received status " << result.httpStatus()
-    << " for " << uri << " doing retry. Response is: " << result.content();
-    result = http_client_.httpPost(uri, content, content_type);
-  }
 
   if (accepted_status.find(result.httpStatus()) == accepted_status.end())
   {
@@ -385,13 +370,6 @@ POCOResult RWSClient::httpPut(const std::string& uri, const std::string& content
   std::set<Poco::Net::HTTPResponse::HTTPStatus> const& accepted_status)
 {
   POCOResult result = http_client_.httpPut(uri, content, content_type);
-  std::list<std::chrono::milliseconds>::const_iterator it=connectionOptions_.retry_backoff.begin();
-
-  while (result.httpStatus() == HTTPResponse::HTTP_SERVICE_UNAVAILABLE && it != connectionOptions_.retry_backoff.end()){
-    std::this_thread::sleep_for(*(it++));
-    BOOST_LOG_TRIVIAL(warning) << "Received status 503 for " << uri << " doing retry";
-    result = http_client_.httpPut(uri, content, content_type);
-  }
 
   if (accepted_status.find(result.httpStatus()) == accepted_status.end())
   {
@@ -415,13 +393,6 @@ POCOResult RWSClient::httpDelete(const std::string& uri,
   std::set<Poco::Net::HTTPResponse::HTTPStatus> const& accepted_status)
 {
   POCOResult result = http_client_.httpDelete(uri);
-  std::list<std::chrono::milliseconds>::const_iterator it=connectionOptions_.retry_backoff.begin();
-
-  while (result.httpStatus() == HTTPResponse::HTTP_SERVICE_UNAVAILABLE && it != connectionOptions_.retry_backoff.end()){
-    std::this_thread::sleep_for(*(it++));
-    BOOST_LOG_TRIVIAL(warning) << "Received status 503 for " << uri << " doing retry";
-    result = http_client_.httpDelete(uri);
-  }
 
   if (accepted_status.find(result.httpStatus()) == accepted_status.end())
   {
@@ -444,13 +415,5 @@ Poco::Net::WebSocket RWSClient::receiveSubscription(std::string const& subscript
 {
   return http_client_.webSocketConnect("/poll/" + subscription_group_id, "rws_subscription",
     Poco::Net::HTTPSClientSession {connectionOptions_.ip_address, connectionOptions_.port, context_});
-}
-
-
-bool RWSClient::shouldRetryPost(Poco::Net::HTTPResponse::HTTPStatus status)
-{
-  return status == HTTPResponse::HTTP_SERVICE_UNAVAILABLE //Received when robot server is busy and not able to respond now
-    || status == HTTPResponse::HTTP_FORBIDDEN; //Received e.g. when robot is updating rapid data and the resource is held by robot
-                                 //or when rapid execution is stopping and we try to reset PP
 }
 }
