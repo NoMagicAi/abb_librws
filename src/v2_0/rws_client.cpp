@@ -49,14 +49,9 @@
 #include <stdexcept>
 #include <iostream>
 #include <thread>
+#include <utility>
 
 #include <unistd.h>
-
-
-namespace
-{
-static const char EXCEPTION_CREATE_STRING[]{"Failed to create string"};
-}
 
 namespace abb :: rws :: v2_0
 {
@@ -70,8 +65,8 @@ using namespace Poco::Net;
  * Primary methods
  */
 
-RWSClient::RWSClient(ConnectionOptions const& connection_options)
-: connectionOptions_ {connection_options}
+RWSClient::RWSClient(ConnectionOptions connection_options)
+: connectionOptions_ {std::move(connection_options)}
 , context_ {
     new Poco::Net::Context {
       Poco::Net::Context::CLIENT_USE, "", "", "", Poco::Net::Context::VERIFY_NONE, 9, false, "ALL:!ADH:!LOW:!EXP:!MD5:@STRENGTH"
