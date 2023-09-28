@@ -113,8 +113,22 @@ namespace abb ::rws ::v1_0 ::rw ::elog
 
         std::string title = xmlNodeGetAttributeValue(node, "title");
         int sep_pos = title.find_last_of("/");
-        message.domain = std::stoi(title.substr(9, sep_pos - 9));
-        message.sequenceNumber = std::stoi(title.substr(sep_pos + 1));
+
+        message.domain = 0;
+        message.sequenceNumber = 0;        
+        if (sep_pos != std::string::npos)
+        {
+            try {message.domain = std::stoi(title.substr(9, sep_pos - 9));}
+            catch (std::out_of_range const& e) {}
+            catch (std::bad_alloc const& e) {}
+            catch (std::invalid_argument const& e) {}
+
+            try {message.sequenceNumber = std::stoi(title.substr(sep_pos + 1));}
+            catch (std::out_of_range const& e) {}
+            catch (std::bad_alloc const& e) {}
+            catch (std::invalid_argument const& e) {}
+        }
+        
         message.messageType = makeElogMessageType(std::stoi(xmlFindTextContent(node, XMLAttribute("class", "msgtype"))));
         message.code = std::stoi(xmlFindTextContent(node, XMLAttribute("class", "code")));
         message.sourceName = xmlFindTextContent(node, XMLAttribute("class", "src-name"));
@@ -132,11 +146,14 @@ namespace abb ::rws ::v1_0 ::rw ::elog
         {
             std::stringstream arg_name;
             arg_name << "arg" << i;
-            auto arg_node = xmlFindNodes(node, XMLAttribute("class", arg_name.str()))[0];
-
-            std::string value = arg_node->innerText();
-            std::string valueType = xmlNodeGetAttributeValue(arg_node, "type");
-
+            auto arg_nodes = xmlFindNodes(node, XMLAttribute("class", arg_name.str()));
+            std::string value = "STRING";
+            std::string valueType = "UNDEFIEND";
+            if (!arg_nodes.empty())
+            {
+                value = arg_nodes[0]->innerText();
+                valueType = xmlNodeGetAttributeValue(arg_nodes[0], "type");
+            }
             message.argv[i] = makeElogMessageArg(valueType, value);
         }
         return message;
