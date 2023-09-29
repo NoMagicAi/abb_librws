@@ -147,8 +147,8 @@ namespace abb ::rws ::v1_0 ::rw ::elog
             std::stringstream arg_name;
             arg_name << "arg" << i;
             auto arg_nodes = xmlFindNodes(node, XMLAttribute("class", arg_name.str()));
-            std::string value = "STRING";
-            std::string valueType = "UNDEFIEND";
+            std::string value = "";
+            std::string valueType = "STRING";
             if (!arg_nodes.empty())
             {
                 value = arg_nodes[0]->innerText();
