@@ -14,6 +14,6 @@
   <depend version_gte="1.4.3">libpoco-dev</depend>
 
   <export>
-    <build_type>cmake</build_type>
+
   </export>
 </package>
