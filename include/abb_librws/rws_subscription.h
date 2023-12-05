@@ -11,8 +11,10 @@
 #include <Poco/DOM/Element.h>
 #include <Poco/Net/WebSocket.h>
 #include <Poco/DOM/NodeList.h>
+#include <Poco/XML/Name.h>
 
 #include <string>
+#include <utility>
 #include <vector>
 #include <memory>
 #include <utility>
@@ -20,6 +22,7 @@
 #include <chrono>
 #include <iostream>
 #include <functional>
+#include <boost/log/trivial.hpp>
 
 
 namespace abb :: rws
@@ -37,12 +40,13 @@ namespace abb :: rws
 
   class SubscriptionCallback;
   class AbstractSubscriptionGroup;
+  struct SubscriptionEvent;
 
   struct SubscribableResource
   {
     public:
         virtual std::string getURI() const = 0;
-        virtual void processEvent(Poco::XML::Element const& li_element, SubscriptionCallback& callback) const = 0;
+        virtual void processEvent(Poco::XML::Element const& li_element, std::function<void(SubscriptionEvent const&)> const& callback) const = 0;
 
         bool equals(const SubscribableResource& rhs) const
         {
@@ -73,6 +77,11 @@ namespace abb :: rws
     virtual Poco::Net::WebSocket receiveSubscription(std::string const& subscription_group_id) = 0;
   };
 
+    struct SubscriptionEvent{
+        virtual ~SubscriptionEvent() = default;
+        std::shared_ptr<SubscribableResource> resource;
+    };
+
 
   /**
    * \brief Subscription resource that has URI and priority.
@@ -80,25 +89,26 @@ namespace abb :: rws
   class SubscriptionResource
   {
   public:
-    SubscriptionResource(std::shared_ptr<SubscribableResource> resource_ptr, SubscriptionPriority priority)
-    : resource_ptr_ {resource_ptr}
+    SubscriptionResource(std::shared_ptr<SubscribableResource> resource_ptr, SubscriptionPriority priority, std::function<void(SubscriptionEvent const&)> callback)
+    : resource_ptr_ {std::move(resource_ptr)}
     , priority_ {priority}
+    , callback_ {std::move(callback)}
     {
     }
 
-    std::string getURI() const
+    [[nodiscard]] std::string getURI() const
     {
       return resource_ptr_ -> getURI();
     }
 
-    SubscriptionPriority getPriority() const noexcept
+    [[nodiscard]] SubscriptionPriority getPriority() const noexcept
     {
       return priority_;
     }
 
-    void processEvent(Poco::XML::Element const& li_element, SubscriptionCallback& callback) const
+    void processEvent(Poco::XML::Element const& li_element) const
     {
-      resource_ptr_ -> processEvent(li_element, callback);
+      resource_ptr_ -> processEvent(li_element, callback_);
     }
 
     bool operator == ( SubscriptionResource const& other ) const noexcept
@@ -114,15 +124,14 @@ namespace abb :: rws
      * \brief Priority of the subscription.
      */
     SubscriptionPriority priority_;
+      /**
+   * \brief Callback to be called when the subscription event arrives.
+   */
+    std::function<void(SubscriptionEvent const&)> callback_;
   };
 
 
   using SubscriptionResources = std::vector<SubscriptionResource>;
-
-  struct SubscriptionEvent{
-    virtual ~SubscriptionEvent() = default;
-    std::shared_ptr<SubscribableResource> resource;
-  };
 
 
   /**
@@ -150,6 +159,17 @@ namespace abb :: rws
      */
     rw::RAPIDExecutionState state;
   };
+
+    /**
+     * \brief Event received when a speed ratio changes
+     */
+    struct SpeedRatioChangedEvent: public SubscriptionEvent
+    {
+        /**
+         * \brief New value of the speed ratio
+         */
+        unsigned int value;
+    };
 
 
   /**
@@ -182,16 +202,6 @@ namespace abb :: rws
   {
     int domain; // domain number
     int seqnum; // seqnence numver of message in domain
-  };
-
-
-  /**
-   * \brief Defines callbacks for different types of RWS subscription events.
-   */
-  class SubscriptionCallback
-  {
-  public:
-    virtual void processEvent(SubscriptionEvent const& event) = 0;
   };
 
 
@@ -232,9 +242,8 @@ namespace abb :: rws
      *
      * \throw \a TimeoutError if waiting time exceeds \a timeout.
      */
-    bool waitForEvent(SubscriptionCallback& callback,
-                        std::chrono::microseconds ping_pong_timeout = DEFAULT_SUBSCRIPTION_PING_PONG_TIMEOUT,
-                        std::chrono::microseconds new_message_timeout = DEFAULT_SUBSCRIPTION_NEW_MESSAGE_TIMEOUT);
+    bool waitForEvent(std::chrono::microseconds ping_pong_timeout = DEFAULT_SUBSCRIPTION_PING_PONG_TIMEOUT,
+                      std::chrono::microseconds new_message_timeout = DEFAULT_SUBSCRIPTION_NEW_MESSAGE_TIMEOUT);
 
 
     /**
@@ -322,7 +331,7 @@ namespace abb :: rws
      *
      * @param res list of new subscribed resources.
      */
-    virtual void updateResources(SubscriptionResources const& res) = 0;
+    virtual Poco::AutoPtr<Poco::XML::Document> updateResources(SubscriptionResources const& res) = 0;
 
     /**
      * \brief Establish WebSocket connection ans start receiving subscription events.
@@ -353,44 +362,6 @@ namespace abb :: rws
     virtual void detach() noexcept = 0;
   };
 
-
-  /**
-   * \brief Wait for a subscription event of a specific type.
-   *
-   * \tparam T type of an event to wait for
-   *
-   * \param receiver RWS subscription receiver
-   * \param timeout wait timeout
-   *
-   * \return \a std::future with the received event.
-   *
-   * \throw \a CommunicationError if the subscription WebSocket connection is closed while waiting for the event.
-   * \throw \a TimeoutError if waiting time exceeds \a timeout.
-   */
-  template <typename T>
-  inline std::future<T> waitForEvent(SubscriptionReceiver& receiver, std::chrono::microseconds timeout)
-  {
-    struct Callback : rws::SubscriptionCallback
-    {
-        void processEvent(T const& event) override
-        {
-            event_ = event;
-        }
-
-        T event_;
-    };
-
-
-    return std::async(std::launch::async,
-        [&receiver, timeout] {
-            Callback callback;
-            if (!receiver.waitForEvent(callback, timeout))
-              BOOST_THROW_EXCEPTION(CommunicationError {"WebSocket connection shut down when waiting for a subscription event"});
-            return callback.event_;
-        }
-    );
-  }
-
     /**
    * \brief Process all events in a subscription package.
    *
@@ -399,5 +370,5 @@ namespace abb :: rws
    * \param content XML content of the event
    * \param callback event callback
    */
-  void processAllEvents(Poco::AutoPtr<Poco::XML::Document> doc, SubscriptionResources const& resources, SubscriptionCallback& callback);
+  void processAllEvents(Poco::AutoPtr<Poco::XML::Document> doc, SubscriptionResources const& resources);
 }

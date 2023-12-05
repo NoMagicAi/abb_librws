@@ -34,15 +34,15 @@ namespace abb :: rws
   }
 
 
-  bool SubscriptionReceiver::waitForEvent(SubscriptionCallback& callback,
-                                                    std::chrono::microseconds ping_pong_timeout,
-                                                    std::chrono::microseconds new_message_timeout)
+  bool SubscriptionReceiver::waitForEvent(std::chrono::microseconds ping_pong_timeout,
+                                          std::chrono::microseconds new_message_timeout)
   {
     WebSocketFrame frame;
     if (webSocketReceiveFrame(frame, ping_pong_timeout, new_message_timeout))
     {
+      BOOST_LOG_TRIVIAL(debug) << "Processing websocket events: " << frame.frame_content;
       Poco::AutoPtr<Poco::XML::Document> doc = parser_.parseString(frame.frame_content);
-      processAllEvents(doc, group_.resources(), callback);
+      processAllEvents(doc, group_.resources());
       return true;
     }
 
@@ -130,7 +130,7 @@ namespace abb :: rws
     webSocket_.shutdown();
   }
 
-  void processAllEvents(Poco::AutoPtr<Poco::XML::Document> doc, SubscriptionResources const& resources, SubscriptionCallback& callback)
+  void processAllEvents(Poco::AutoPtr<Poco::XML::Document> doc, SubscriptionResources const& resources)
   {
     // IMPORTANT: don't use AutoPtr<XML::Element> here! Otherwise you will get memory corruption.
     Poco::XML::Element const * ul_element = dynamic_cast<Poco::XML::Element const *>(doc->getNodeByPath("html/body/div/ul"));
@@ -147,7 +147,10 @@ namespace abb :: rws
 
       // Cycle throught all subscription resources
       for (auto const& resource : resources)
-        resource.processEvent(*li_element, callback);
+      {
+          resource.processEvent(*li_element);
+      }
+
     }
   }
 }

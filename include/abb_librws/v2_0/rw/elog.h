@@ -16,9 +16,9 @@ namespace abb ::rws ::v2_0 ::rw ::elog
     {
         explicit ElogSubscribableResource(int domain);
 
-        std::string getURI() const override;
+        [[nodiscard]] std::string getURI() const override;
 
-        void processEvent(Poco::XML::Element const &li_element, SubscriptionCallback &callback) const override;
+        void processEvent(Poco::XML::Element const &li_element, std::function<void(SubscriptionEvent const&)> const& callback) const override;
 
     private:
         int const domain_;

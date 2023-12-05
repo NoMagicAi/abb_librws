@@ -21,13 +21,11 @@ namespace abb :: rws :: v1_0 :: rw :: rapid
      */
     struct RAPIDExecutionStateSubscribableResource: public SubscribableResource
     {
-        explicit RAPIDExecutionStateSubscribableResource()
-        {
-        }
+        explicit RAPIDExecutionStateSubscribableResource() = default;
 
-        std::string getURI() const override;
+        [[nodiscard]] std::string getURI() const override;
 
-        void processEvent(Poco::XML::Element const& li_element, SubscriptionCallback& callback) const override;
+        void processEvent(Poco::XML::Element const& li_element, std::function<void(SubscriptionEvent const&)> const& callback) const override;
     };
 
     /**

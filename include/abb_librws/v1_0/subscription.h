@@ -30,20 +30,20 @@ namespace abb :: rws :: v1_0 :: subscription
     /**
      * \a SubscriptionGroup objects are moveable, but not copyable.
      */
-    SubscriptionGroup(SubscriptionGroup&&);
+    SubscriptionGroup(SubscriptionGroup&&) noexcept ;
 
 
     /**
      * \brief Ends an active subscription.
      */
-    ~SubscriptionGroup() noexcept;
+    ~SubscriptionGroup() noexcept override;
 
     /**
      * \brief Get ID of the subscription group.
      *
      * \return ID of the subscription group.
      */
-    std::string const& id() const noexcept override
+    [[nodiscard]] std::string const& id() const noexcept override
     {
       return subscription_group_id_;
     }
@@ -54,13 +54,13 @@ namespace abb :: rws :: v1_0 :: subscription
      *
      * @return list of subscribed resources.
      */
-    SubscriptionResources const& resources() const noexcept override
+    [[nodiscard]] SubscriptionResources const& resources() const noexcept override
     {
       return resources_;
     }
 
-    void updateResources(SubscriptionResources const& res) override;
-    SubscriptionReceiver receive() const override;
+    Poco::AutoPtr<Poco::XML::Document> updateResources(SubscriptionResources const& res) override;
+    [[nodiscard]] SubscriptionReceiver receive() const override;
 
 
     /**
@@ -89,6 +89,7 @@ namespace abb :: rws :: v1_0 :: subscription
   private:
     RWSClient& client_;
     SubscriptionResources resources_;
+    Poco::XML::DOMParser parser_;
 
     /**
      * \brief The subscription group id.

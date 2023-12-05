@@ -84,8 +84,13 @@ namespace abb :: rws :: v2_0 :: rw :: panel
       return "/rw/panel/opmode";
     }
 
+    std::string SpeedRatioSubscribableResource::getURI() const
+    {
+        return "/rw/panel/speedratio";
+    }
 
-    void ControllerStateSubscribableResource::processEvent(Poco::XML::Element const& li_element, SubscriptionCallback& callback) const
+
+    void ControllerStateSubscribableResource::processEvent(Poco::XML::Element const& li_element, std::function<void(SubscriptionEvent const&)> const& callback) const
     {
         if (li_element.getAttribute("class") == "pnl-ctrlstate-ev")
         {
@@ -93,12 +98,12 @@ namespace abb :: rws :: v2_0 :: rw :: panel
             event.state = rw::makeControllerState(xmlFindTextContent(&li_element, XMLAttribute {"class", "ctrlstate"}));
             event.resource = std::make_shared<ControllerStateSubscribableResource>();
 
-            callback.processEvent(event);
+            callback(event);
         }
     }
 
 
-    void OperationModeSubscribableResource::processEvent(Poco::XML::Element const& li_element, SubscriptionCallback& callback) const
+    void OperationModeSubscribableResource::processEvent(Poco::XML::Element const& li_element, std::function<void(SubscriptionEvent const&)> const& callback) const
     {
         if (li_element.getAttribute("class") == "pnl-opmode-ev")
         {
@@ -106,7 +111,20 @@ namespace abb :: rws :: v2_0 :: rw :: panel
             event.mode = rw::makeOperationMode(xmlFindTextContent(&li_element, XMLAttribute {"class", "opmode"}));
             event.resource = std::make_shared<OperationModeSubscribableResource>();
 
-            callback.processEvent(event);
+            callback(event);
+        }
+    }
+
+
+    void SpeedRatioSubscribableResource::processEvent(Poco::XML::Element const& li_element, std::function<void(SubscriptionEvent const&)> const& callback) const
+    {
+        if (li_element.getAttribute("class") == "pnl-speedratio-ev")
+        {
+            SpeedRatioChangedEvent event;
+            event.value = std::stoi(xmlFindTextContent(&li_element, XMLAttribute {"class", "speedratio"}));
+            event.resource = std::make_shared<SpeedRatioSubscribableResource>();
+
+            callback(event);
         }
     }
 }

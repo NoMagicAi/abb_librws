@@ -26,7 +26,7 @@ namespace abb ::rws ::v2_0 ::rw ::elog
         return ss.str();
     }
 
-    void ElogSubscribableResource::processEvent(Poco::XML::Element const &li_element, SubscriptionCallback &callback) const
+    void ElogSubscribableResource::processEvent(Poco::XML::Element const &li_element, std::function<void(SubscriptionEvent const&)> const& callback) const
     {
         if (li_element.getAttribute("class") != "elog-message-ev")
             return;
@@ -67,7 +67,7 @@ namespace abb ::rws ::v2_0 ::rw ::elog
         event.domain = std::stoi(parts[0]);
         event.seqnum = std::stoi(parts[1]);
         event.resource = std::make_shared<ElogSubscribableResource>(*this);
-        callback.processEvent(event);
+        callback(event);
     }
 
     std::vector<std::pair<int, std::string>> parseDomains(RWSResult const &rws_result)

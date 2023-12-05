@@ -1,6 +1,7 @@
 #include <abb_librws/v2_0/subscription.h>
 
 #include <Poco/Net/HTTPRequest.h>
+#include <boost/log/trivial.hpp>
 
 
 namespace abb :: rws :: v2_0 :: subscription
@@ -16,7 +17,7 @@ namespace abb :: rws :: v2_0 :: subscription
   }
 
 
-  SubscriptionGroup::SubscriptionGroup(SubscriptionGroup&& rhs)
+  SubscriptionGroup::SubscriptionGroup(SubscriptionGroup&& rhs) noexcept
   : client_ {rhs.client_}
   , resources_ {std::move(rhs.resources_)}
   , subscription_group_id_ {rhs.subscription_group_id_}
@@ -82,6 +83,7 @@ namespace abb :: rws :: v2_0 :: subscription
     POCOResult const poco_result = client.httpPost(Services::SUBSCRIPTION, resourcesString(client, resources), content_type, {HTTPResponse::HTTP_CREATED});
 
     std::string subscription_group_id;
+    Poco::XML::DOMParser parser;
 
     // Find "Location" header attribute
     auto const h = std::find_if(
@@ -100,19 +102,29 @@ namespace abb :: rws :: v2_0 :: subscription
     if (subscription_group_id.empty())
       BOOST_THROW_EXCEPTION(ProtocolError {"Cannot get subscription group from HTTP response"});
 
+    BOOST_LOG_TRIVIAL(debug) << "Received subscription response: " << poco_result.content();
+    Poco::AutoPtr<Poco::XML::Document> doc = parser.parseString(poco_result.content());
+
     return subscription_group_id;
   }
 
 
-  void SubscriptionGroup::updateResources(SubscriptionResources const& res)
+  Poco::AutoPtr<Poco::XML::Document> SubscriptionGroup::updateResources(SubscriptionResources const& res)
   {
     //We skip updating resources to the controller if there are no changes
     if (res == resources_)
     {
-      return;
+      return {};
     }
-    client_.httpPut(Services::SUBSCRIPTION + "/" + subscription_group_id_, resourcesString(client_, res), "application/x-www-form-urlencoded;v=2.0");
+    POCOResult result = client_.httpPut(Services::SUBSCRIPTION + "/" + subscription_group_id_, resourcesString(client_, res), "application/x-www-form-urlencoded;v=2.0");
+
+    BOOST_LOG_TRIVIAL(debug) << "Received subscription update response: " << result.content();
+
     resources_ = res;
+
+    if(result.content().empty()) return {};
+
+    return parser_.parseString(result.content());
   }
 
 

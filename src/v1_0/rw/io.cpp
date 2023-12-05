@@ -132,7 +132,7 @@ namespace abb :: rws :: v1_0 :: rw :: io
     }
 
 
-    void IOSignalSubscribableResource::processEvent(Poco::XML::Element const& li_element, SubscriptionCallback& callback) const
+    void IOSignalSubscribableResource::processEvent(Poco::XML::Element const& li_element, std::function<void(SubscriptionEvent const&)> const& callback) const
     {
         if (li_element.getAttribute("class") == "ios-signalstate-ev")
         {
@@ -147,7 +147,7 @@ namespace abb :: rws :: v1_0 :: rw :: io
                 event.value = xmlFindTextContent(&li_element, XMLAttribute {"class", "lvalue"});
                 event.resource = std::make_shared<IOSignalSubscribableResource>(event.signal);
 
-                callback.processEvent(event);
+                callback(event);
             }
         }
     }
