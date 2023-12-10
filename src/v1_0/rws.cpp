@@ -69,11 +69,12 @@ namespace abb :: rws :: v1_0
   const std::string Resources::LOGOUT                           = "/logout";
   const std::string Resources::ROBTARGET                        = "/robtarget";
   const std::string Resources::RW_CFG                           = Services::RW + "/cfg";
+  const std::string Resources::RW_PANEL                         = Services::RW + "/panel";
   const std::string Resources::RW_IOSYSTEM_SIGNALS              = Services::RW + "/iosystem/signals";
   const std::string Resources::RW_MASTERSHIP                    = Services::RW + "/mastership";
   const std::string Resources::RW_MOTIONSYSTEM_MECHUNITS        = Services::RW + "/motionsystem/mechunits";
-  const std::string Resources::RW_PANEL_CTRLSTATE               = Services::RW + "/panel/ctrlstate";
-  const std::string Resources::RW_PANEL_OPMODE                  = Services::RW + "/panel/opmode";
+  const std::string Resources::RW_PANEL_CTRLSTATE               = Resources::RW_PANEL + "/ctrlstate";
+  const std::string Resources::RW_PANEL_OPMODE                  = Resources::RW_PANEL + "/opmode";
   const std::string Resources::RW_RAPID_EXECUTION               = Services::RW + "/rapid/execution";
   const std::string Resources::RW_RAPID_MODULES                 = Services::RW + "/rapid/modules";
   const std::string Resources::RW_RAPID_SYMBOL_DATA_RAPID       = Services::RW + "/rapid/symbol/data/RAPID";

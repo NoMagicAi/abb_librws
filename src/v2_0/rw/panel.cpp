@@ -61,16 +61,18 @@ namespace abb :: rws :: v2_0 :: rw :: panel
     }
 
 
-    void setSpeedRatio(RWSClient& client, unsigned int ratio)
+    void setSpeedRatio(RWSClient& client, unsigned int ratio, Mastership const& mastership)
     {
         if (ratio > 100)
             BOOST_THROW_EXCEPTION(std::out_of_range {"Speed ratio argument out of range (should be 0 <= ratio <= 100)"});
 
-        std::string uri = "/rw/panel/speedratio?action=setspeedratio";
+        std::stringstream uri;
+        uri << Resources::RW_PANEL << "/speedratio?action=setspeedratio&mastership=" << mastership;
         std::stringstream content;
         content << "speed-ratio=" << ratio;
+        std::string content_type = "application/x-www-form-urlencoded;v=2.0";
 
-        client.httpPost(uri, content.str());
+        client.httpPost(uri.str(), content.str(), content_type);
     }
 
     std::string ControllerStateSubscribableResource::getURI() const

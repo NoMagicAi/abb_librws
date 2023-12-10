@@ -402,6 +402,11 @@ namespace abb :: rws :: v1_0
     static const std::string RW_CFG;
 
     /**
+     * \brief Panel services.
+     */
+    static const std::string RW_PANEL;
+
+    /**
      * \brief Signals.
      */
     static const std::string RW_IOSYSTEM_SIGNALS;

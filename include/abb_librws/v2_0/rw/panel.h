@@ -103,11 +103,12 @@ namespace abb :: rws :: v2_0 :: rw :: panel
      *
      * \param client RWS client
      * \param ratio specifying the new ratio.
+     * \param mastership {implicit | explicit} by default mastership is explicit
      *
      * \return RWSResult containing the result.
      *
      * \throw std::out_of_range if argument is out of range.
      * \throw \a RWSError if something goes wrong.
      */
-    void setSpeedRatio(RWSClient& client, unsigned int ratio);
+    void setSpeedRatio(RWSClient& client, unsigned int ratio, Mastership const& mastership = Mastership::Explicit);
 }
