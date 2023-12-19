@@ -148,6 +148,8 @@ namespace abb :: rws
     D_SYS = 6,
   };
 
+  CFGDomain to_CFGDomain(std::string const& domain);
+
   std::ostream& operator<<(std::ostream& os, CFGDomain const& domain);
 
   std::string to_string(CFGDomain domain);

@@ -36,6 +36,7 @@
 #include <abb_librws/rws_resource.h>
 
 #include <iostream>
+#include <unordered_map>
 
 
 namespace abb :: rws
@@ -54,6 +55,24 @@ std::ostream& operator<<(std::ostream& os, RAPIDResource const& resource)
 std::ostream& operator<<(std::ostream& os, CFGDomain const& domain)
 {
     return os << to_string(domain);
+}
+
+CFGDomain to_CFGDomain(std::string const& domain)
+{
+    static std::unordered_map<std::string, CFGDomain> const CFGDomainMap
+    {
+        {"EIO", D_EIO},
+        {"MMC", D_MMC},
+        {"MOC", D_MOC},
+        {"PROC", D_PROC},
+        {"SIO", D_SIO},
+        {"SYS", D_SYS},
+    };
+    auto it = CFGDomainMap.find(domain);
+    if (it != CFGDomainMap.end()) {
+        return it->second;
+    throw std::runtime_error("Unknown CFGDomain: " + domain);
+    }
 }
 
 std::string to_string(CFGDomain domain)
