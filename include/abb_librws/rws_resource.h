@@ -138,7 +138,7 @@ namespace abb :: rws
 
   std::ostream& operator<<(std::ostream& os, RAPIDResource const& resource);
 
-  enum CFGDomain
+  enum class CFGDomain
   {
     D_EIO = 1,
     D_MMC = 2,

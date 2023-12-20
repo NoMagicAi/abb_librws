@@ -36,7 +36,8 @@
 #include <abb_librws/rws_resource.h>
 
 #include <iostream>
-#include <unordered_map>
+#include <boost/bimap.hpp>
+#include <boost/assign.hpp>
 
 
 namespace abb :: rws
@@ -57,42 +58,35 @@ std::ostream& operator<<(std::ostream& os, CFGDomain const& domain)
     return os << to_string(domain);
 }
 
+boost::bimap<CFGDomain, std::string> makeCFGDomainMap()
+{
+    boost::bimap<CFGDomain, std::string> map;
+    map.insert(boost::bimap<CFGDomain, std::string>::relation(CFGDomain::D_EIO, "EIO"));
+    map.insert(boost::bimap<CFGDomain, std::string>::relation(CFGDomain::D_MMC, "MMC"));
+    map.insert(boost::bimap<CFGDomain, std::string>::relation(CFGDomain::D_MOC, "MOC"));
+    map.insert(boost::bimap<CFGDomain, std::string>::relation(CFGDomain::D_PROC, "PROC"));
+    map.insert(boost::bimap<CFGDomain, std::string>::relation(CFGDomain::D_SIO, "SIO"));
+    map.insert(boost::bimap<CFGDomain, std::string>::relation(CFGDomain::D_SYS, "SYS"));
+    return map;
+}
+
+static boost::bimap<CFGDomain, std::string> const CFGDomainMap = makeCFGDomainMap();
+
 CFGDomain to_CFGDomain(std::string const& domain)
 {
-    static std::unordered_map<std::string, CFGDomain> const CFGDomainMap
-    {
-        {"EIO", D_EIO},
-        {"MMC", D_MMC},
-        {"MOC", D_MOC},
-        {"PROC", D_PROC},
-        {"SIO", D_SIO},
-        {"SYS", D_SYS},
-    };
-    auto it = CFGDomainMap.find(domain);
-    if (it != CFGDomainMap.end()) {
-        return it->second;
-    throw std::runtime_error("Unknown CFGDomain: " + domain);
+    try{
+        return CFGDomainMap.right.at(domain);
+    } catch (std::out_of_range const& e) {
+        BOOST_THROW_EXCEPTION(std::runtime_error("Unknown CFGDomain: " + domain));
     }
 }
 
 std::string to_string(CFGDomain domain)
 {
-    switch (domain)
-    {
-        case D_EIO:
-            return "EIO";
-        case D_MMC:
-            return "MMC";
-        case D_MOC:
-            return "MOC";
-        case D_PROC:
-            return "PROC";
-        case D_SIO:
-            return "SIO";
-        case D_SYS:
-            return "SYS";
-        default:
-            throw std::runtime_error("Unknown CFGDomain");
+    try {
+        return CFGDomainMap.left.at(domain);
+    } catch (std::out_of_range const& e) {
+        BOOST_THROW_EXCEPTION(std::runtime_error("Unknown CFGDomain: " + std::to_string(static_cast<int>(domain))));
     }
 }
 
