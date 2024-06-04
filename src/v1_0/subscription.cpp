@@ -113,13 +113,14 @@ namespace abb :: rws :: v1_0 :: subscription
     //We skip updating resources to the controller if there are no changes
     if (res == resources_)
     {
+      resources_ = res;
       return {};
     }
     POCOResult result = client_.httpPut(Services::SUBSCRIPTION + "/" + subscription_group_id_, resourcesString(client_, res));
 
     BOOST_LOG_TRIVIAL(debug) << "Received subscription update response: " << result.content();
 
-      resources_ = res;
+    resources_ = res;
 
     if(result.content().empty()) return {};
 

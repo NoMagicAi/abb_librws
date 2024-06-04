@@ -114,6 +114,7 @@ namespace abb :: rws :: v2_0 :: subscription
     //We skip updating resources to the controller if there are no changes
     if (res == resources_)
     {
+      resources_ = res;
       return {};
     }
     POCOResult result = client_.httpPut(Services::SUBSCRIPTION + "/" + subscription_group_id_, resourcesString(client_, res), "application/x-www-form-urlencoded;v=2.0");
