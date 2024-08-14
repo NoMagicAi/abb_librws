@@ -48,6 +48,11 @@ namespace abb :: rws :: v1_0
   const std::string Identifiers::VALUE                          = "value";
   const std::string Identifiers::CLASS                          = "class";
   const std::string Identifiers::OPTION                         = "option";
+  const std::string Identifiers::PCP_INFO                       = "pcp-info";
+  const std::string Identifiers::BEGIN_POSITION                 = "beginposition";
+  const std::string Identifiers::END_POSITION                   = "endposition";
+  const std::string Identifiers::MODULE_NAME                    = "modulemame";
+  const std::string Identifiers::ROUTINE_NAME                   = "routinename";
   const std::string Queries::ACTION_LOAD_MODULE                 = "action=loadmod";
   const std::string Queries::ACTION_RELEASE                     = "action=release";
   const std::string Queries::ACTION_REQUEST                     = "action=request";
@@ -104,6 +109,11 @@ namespace abb :: rws :: v1_0
   const XMLAttribute XMLAttributes::CLASS_TYPE(Identifiers::CLASS              , Identifiers::TYPE);
   const XMLAttribute XMLAttributes::CLASS_VALUE(Identifiers::CLASS             , Identifiers::VALUE);
   const XMLAttribute XMLAttributes::CLASS_OPTION(Identifiers::CLASS            , Identifiers::OPTION);
+  const XMLAttribute XMLAttributes::CLASS_PCP_INFO(Identifiers::CLASS          , Identifiers::PCP_INFO);
+  const XMLAttribute XMLAttributes::CLASS_BEGIN_POSITION(Identifiers::CLASS    , Identifiers::BEGIN_POSITION);
+  const XMLAttribute XMLAttributes::CLASS_END_POSITION(Identifiers::CLASS      , Identifiers::END_POSITION);
+  const XMLAttribute XMLAttributes::CLASS_MODULE_NAME(Identifiers::CLASS       , Identifiers::MODULE_NAME);
+  const XMLAttribute XMLAttributes::CLASS_ROUTINE_NAME(Identifiers::CLASS      , Identifiers::ROUTINE_NAME);
 
 
   std::ostream& operator<<(std::ostream& os, MastershipDomain domain)

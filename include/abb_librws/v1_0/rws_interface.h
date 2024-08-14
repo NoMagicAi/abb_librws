@@ -584,6 +584,15 @@ public:
    */
   void deactivateAllTasks();
 
+  /**
+   * \brief Method to get the program and motion pointers of a task
+   *
+   * \param task name of the task to get the pointers from
+   *
+   * \return rw::RAPIDTaskPcpState
+   */
+  rw::RAPIDTaskPcpState getTaskPointersPosition(const std::string& task);
+
 private:
   /**
    * \brief A method for comparing a single text content (from a XML document node) with a specific string value.

@@ -353,6 +353,15 @@ public:
    */
   void releaseMastership(MastershipDomain domain);
 
+  /**
+   * \brief Method to get the program and motion pointers of a task
+   *
+   * \param task name of the task to get the pointers from
+   *
+   * \return rw::RAPIDTaskPcpState
+   */
+  rw::RAPIDTaskPcpState getTaskPointersPosition(const std::string& task);
+
 private:
   using RWSResult = RWSClient::RWSResult;
 

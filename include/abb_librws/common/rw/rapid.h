@@ -4,6 +4,7 @@
 
 #include <string>
 #include <iosfwd>
+#include <utility>
 
 
 namespace abb :: rws :: rw
@@ -156,4 +157,79 @@ namespace abb :: rws :: rw
          */
         RAPIDTaskExecutionState execution_state;
     };
+
+    /**
+     * \brief A struct for containing information about a RAPID task pointer is.
+     */
+    struct RAPIDPcpInfo
+    {
+        /**
+           * \brief A constructor.
+           *
+           * \param begin_position position where the pointer position starts.
+           * \param end_position position where the pointer position ends.
+           * \param module_name the name of the module where pointer is.
+           * \param routine_name the name of the routine where pointer is.
+         */
+        RAPIDPcpInfo(std::string  begin_position,
+                     std::string  end_position,
+                     std::string  module_name,
+                     std::string  routine_name)
+        :
+        begin_position(std::move(begin_position)),
+        end_position(std::move(end_position)),
+        module_name(std::move(module_name)),
+        routine_name(std::move(routine_name))
+        {}
+
+        /**
+           * \brief Where the pointer position starts.
+         */
+        std::string begin_position;
+        /**
+           * \brief Where the pointer position ends.
+         */
+        std::string end_position;
+        /**
+           * \brief The name of the module where pointer is.
+         */
+        std::string module_name;
+        /**
+           * \brief The name of the routine where pointer is.
+         */
+        std::string routine_name;
+
+    };
+
+    /**
+     * \brief A struct for containing information about a RAPID task program
+     * and motion pointer position.
+     */
+    struct RAPIDTaskPcpState
+    {
+        /**
+           * \brief A constructor.
+           *
+           * \param program_pointer position where the program pointer is.
+           * \param motion_pointer position where the motion pointer is.
+         */
+        RAPIDTaskPcpState(RAPIDPcpInfo program_pointer,
+                          RAPIDPcpInfo motion_pointer)
+        :
+        program_pointer(std::move(program_pointer)),
+        motion_pointer(std::move(motion_pointer))
+        {}
+
+        /**
+           * \brief Where the pointer position starts.
+         */
+        RAPIDPcpInfo program_pointer;
+        /**
+           * \brief Where the pointer position ends.
+         */
+        RAPIDPcpInfo motion_pointer;
+
+    };
+
+
 }

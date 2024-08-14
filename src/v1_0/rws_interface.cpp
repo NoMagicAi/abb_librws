@@ -989,6 +989,34 @@ void RWSInterface::deactivateAllTasks()
 }
 
 
+rw::RAPIDTaskPcpState RWSInterface::getTaskPointersPosition(const std::string& task)
+{
+  std::string const uri = "/rw/rapid/tasks/" + task + "/pcp";
+  RWSResult const rws_result = parseXml(rws_client_.httpGet(uri).content());
+  std::vector<Poco::XML::Node*> node_list = xmlFindNodes(rws_result, XMLAttributes::CLASS_PCP_INFO);
+  std::unordered_map<std::string, rw::RAPIDPcpInfo> result;
+
+  for (auto& i : node_list)
+  {
+    std::string const pcp_name = xmlNodeGetAttributeValue(i, Identifiers::TITLE);
+    std::string const begin_position = xmlFindTextContent(i, XMLAttributes::CLASS_BEGIN_POSITION);
+    std::string const end_position = xmlFindTextContent(i, XMLAttributes::CLASS_END_POSITION);
+    std::string const module_name = xmlFindTextContent(i, XMLAttributes::CLASS_MODULE_NAME);
+    std::string const routine_name = xmlFindTextContent(i, XMLAttributes::CLASS_ROUTINE_NAME);
+    result.emplace(pcp_name, rw::RAPIDPcpInfo{begin_position, end_position, module_name, routine_name});
+  }
+
+  auto const programPointerIter = result.find("progpointer");
+  auto const motionPointerIter = result.find("motionpointer");
+  auto const programPointer =
+      programPointerIter == result.end() ? rw::RAPIDPcpInfo{"", "", "", ""} : programPointerIter->second;
+  auto const motionPointer =
+      motionPointerIter == result.end() ? rw::RAPIDPcpInfo{"", "", "", ""} : motionPointerIter->second;
+
+  return {programPointer, motionPointer};
+}
+
+
 /************************************************************
  * Auxiliary methods
  */
