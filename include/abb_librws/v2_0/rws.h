@@ -134,14 +134,24 @@ namespace abb :: rws :: v2_0
     static const XMLAttribute CLASS_BEGIN_POSITION;
 
     /**
+     * \brief Class & begposition.
+     */
+    static const XMLAttribute CLASS_MISS_SPELLED_BEGIN_POSITION;
+
+    /**
      * \brief Class & endposition.
      */
     static const XMLAttribute CLASS_END_POSITION;
 
     /**
-     * \brief Class & modulemame.
+     * \brief Class & modulename.
      */
     static const XMLAttribute CLASS_MODULE_NAME;
+
+    /**
+     * \brief Class & modulemame - misspelled.
+     */
+    static const XMLAttribute CLASS_MISS_SPELLED_MODULE_NAME;
 
     /**
      * \brief Class & routinename.
@@ -345,6 +355,11 @@ namespace abb :: rws :: v2_0
     static const std::string BEGIN_POSITION;
 
     /**
+     * \brief Begin position but misspelled one.
+     */
+    static const std::string MISS_SPELLED_BEGIN_POSITION;
+
+    /**
      * \brief End position.
      */
     static const std::string END_POSITION;
@@ -353,6 +368,11 @@ namespace abb :: rws :: v2_0
      * \brief Module name.
      */
     static const std::string MODULE_NAME;
+
+    /**
+     * \brief Module name but misspelled one.
+     */
+    static const std::string MISS_SPELLED_MODULE_NAME;
 
     /**
      * \brief Module name.

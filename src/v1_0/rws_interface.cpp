@@ -999,9 +999,17 @@ rw::RAPIDTaskPcpState RWSInterface::getTaskPointersPosition(const std::string& t
   for (auto& i : node_list)
   {
     std::string const pcp_name = xmlNodeGetAttributeValue(i, Identifiers::TITLE);
-    std::string const begin_position = xmlFindTextContent(i, XMLAttributes::CLASS_BEGIN_POSITION);
+    std::string begin_position = xmlFindTextContent(i, XMLAttributes::CLASS_BEGIN_POSITION);
+    if (begin_position.empty())
+    {
+      begin_position = xmlFindTextContent(i, XMLAttributes::CLASS_MISS_SPELLED_BEGIN_POSITION);
+    }
     std::string const end_position = xmlFindTextContent(i, XMLAttributes::CLASS_END_POSITION);
-    std::string const module_name = xmlFindTextContent(i, XMLAttributes::CLASS_MODULE_NAME);
+    std::string module_name = xmlFindTextContent(i, XMLAttributes::CLASS_MODULE_NAME);
+    if (module_name.empty())
+    {
+      module_name = xmlFindTextContent(i, XMLAttributes::CLASS_MISS_SPELLED_MODULE_NAME);
+    }
     std::string const routine_name = xmlFindTextContent(i, XMLAttributes::CLASS_ROUTINE_NAME);
     result.emplace(pcp_name, rw::RAPIDPcpInfo{begin_position, end_position, module_name, routine_name});
   }

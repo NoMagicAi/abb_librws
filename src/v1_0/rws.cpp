@@ -50,8 +50,10 @@ namespace abb :: rws :: v1_0
   const std::string Identifiers::OPTION                         = "option";
   const std::string Identifiers::PCP_INFO                       = "pcp-info";
   const std::string Identifiers::BEGIN_POSITION                 = "beginposition";
+  const std::string Identifiers::MISS_SPELLED_BEGIN_POSITION    = "begposition";
   const std::string Identifiers::END_POSITION                   = "endposition";
-  const std::string Identifiers::MODULE_NAME                    = "modulemame";
+  const std::string Identifiers::MODULE_NAME                    = "modulename";
+  const std::string Identifiers::MISS_SPELLED_MODULE_NAME       = "modulemame";
   const std::string Identifiers::ROUTINE_NAME                   = "routinename";
   const std::string Queries::ACTION_LOAD_MODULE                 = "action=loadmod";
   const std::string Queries::ACTION_RELEASE                     = "action=release";
@@ -111,8 +113,10 @@ namespace abb :: rws :: v1_0
   const XMLAttribute XMLAttributes::CLASS_OPTION(Identifiers::CLASS            , Identifiers::OPTION);
   const XMLAttribute XMLAttributes::CLASS_PCP_INFO(Identifiers::CLASS          , Identifiers::PCP_INFO);
   const XMLAttribute XMLAttributes::CLASS_BEGIN_POSITION(Identifiers::CLASS    , Identifiers::BEGIN_POSITION);
+  const XMLAttribute XMLAttributes::CLASS_MISS_SPELLED_BEGIN_POSITION(Identifiers::CLASS  , Identifiers::MISS_SPELLED_BEGIN_POSITION);
   const XMLAttribute XMLAttributes::CLASS_END_POSITION(Identifiers::CLASS      , Identifiers::END_POSITION);
   const XMLAttribute XMLAttributes::CLASS_MODULE_NAME(Identifiers::CLASS       , Identifiers::MODULE_NAME);
+  const XMLAttribute XMLAttributes::CLASS_MISS_SPELLED_MODULE_NAME(Identifiers::CLASS     , Identifiers::MISS_SPELLED_MODULE_NAME);
   const XMLAttribute XMLAttributes::CLASS_ROUTINE_NAME(Identifiers::CLASS      , Identifiers::ROUTINE_NAME);
 
 
