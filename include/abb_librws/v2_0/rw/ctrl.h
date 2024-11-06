@@ -37,4 +37,14 @@ namespace abb :: rws :: v2_0 :: rw :: ctrl
      * \throw \a RWSError if something goes wrong.
      */
     SafetyViolationInfo getSafetyViolationInfo(RWSClient& client);
+
+    /**
+     * \brief A method for loading a SafeMove configuration to the robot controller.
+     *
+     * \param client RWS client
+     * \param resource specifying the file's directory and name.
+     *
+     * \throw \a std::exception if something goes wrong.
+     */
+     void loadSafeMoveFile(RWSClient& client, const FileResource& resource);
 }

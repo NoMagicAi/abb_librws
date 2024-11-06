@@ -32,4 +32,17 @@ namespace abb :: rws :: v2_0 :: rw :: ctrl
         return result;
     }
 
+
+    void loadSafeMoveFile(RWSClient& client, const FileResource& resource)
+    {
+        std::stringstream uri;
+        uri << Services::CTRL << "/safety/config"; ;
+
+        // Path to file should be a direct path, i.e. without "/fileservice/"
+        std::string content = "filepath=" + resource.directory + "/" + resource.filename;
+        std::string content_type = "application/x-www-form-urlencoded;v=2.0";
+
+        client.httpPost(uri.str(), content, content_type);
+    }
+
 }

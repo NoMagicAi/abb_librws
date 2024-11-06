@@ -13,6 +13,17 @@ namespace abb :: rws :: v1_0 :: rw :: ctrl
         client.httpPost(uri.str(), content.str(), {Poco::Net::HTTPResponse::HTTP_OK});
     }
 
+    void loadSafeMoveFile(RWSClient& client, const FileResource& resource)
+    {
+        std::stringstream uri;
+        uri << Services::CTRL << "/safety?action=load"; ;
+
+        // Path to file should be a direct path, i.e. without "/fileservice/"
+        std::string content = "filepath=" + resource.directory + "/" + resource.filename;
+
+        client.httpPost(uri.str(), content, {Poco::Net::HTTPResponse::HTTP_OK});
+    }
+
     SafetyViolationInfo getSafetyViolationInfo(RWSClient& client)
     {
         std::stringstream uri;
@@ -28,4 +39,6 @@ namespace abb :: rws :: v1_0 :: rw :: ctrl
 
         return result;
     }
+
+
 }

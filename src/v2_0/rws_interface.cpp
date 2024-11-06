@@ -35,6 +35,7 @@
  */
 #include <abb_librws/v2_0/rws_interface.h>
 #include <abb_librws/v2_0/rw/rapid.h>
+#include <abb_librws/v2_0/rw/ctrl.h>
 #include <abb_librws/v2_0/rws.h>
 #include <abb_librws/rws_rapid.h>
 #include <abb_librws/parsing.h>
@@ -781,6 +782,11 @@ void RWSInterface::uploadFile(const FileResource& resource, const std::string& f
 void RWSInterface::deleteFile(const FileResource& resource)
 {
   rws_client_.deleteFile(resource);
+}
+
+void RWSInterface::loadSafeMoveFile(const FileResource& resource)
+{
+  rw::ctrl::loadSafeMoveFile(rws_client_, resource);
 }
 
 std::unique_ptr<subscription::SubscriptionGroup> RWSInterface::openSubscription (const SubscriptionResources& resources)

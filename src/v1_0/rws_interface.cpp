@@ -37,6 +37,7 @@
 #include <abb_librws/v1_0/rw/rapid.h>
 #include <abb_librws/v1_0/rw/panel.h>
 #include <abb_librws/v1_0/rw/io.h>
+#include <abb_librws/v1_0/rw/ctrl.h>
 #include <abb_librws/rws_rapid.h>
 #include <abb_librws/parsing.h>
 #include <abb_librws/rws.h>
@@ -851,6 +852,11 @@ void RWSInterface::getRAPIDSymbolData(RAPIDResource const& resource, RAPIDSymbol
 void RWSInterface::loadModuleIntoTask(const std::string& task, const FileResource& resource, const bool replace)
 {
   rw::rapid::loadModuleIntoTask(rws_client_, task, resource, replace);
+}
+
+void RWSInterface::loadSafeMoveFile(const FileResource& resource)
+{
+  rw::ctrl::loadSafeMoveFile(rws_client_, resource);
 }
 
 void RWSInterface::unloadModuleFromTask(const std::string& task, const FileResource& resource)

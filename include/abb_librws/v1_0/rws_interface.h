@@ -464,6 +464,15 @@ public:
   void loadModuleIntoTask(const std::string& task, const FileResource& resource, const bool replace = false);
 
   /**
+   * \brief A method for loading a SafeMove configuration to the robot controller.
+   *
+   * \param resource specifying the file's directory and name.
+   *
+   * \throw \a std::exception if something goes wrong.
+   */
+  void loadSafeMoveFile(const FileResource& resource);
+
+  /**
    * \brief A method for unloading a module to the robot controller.
    *
    * \param task specifying the RAPID task.
