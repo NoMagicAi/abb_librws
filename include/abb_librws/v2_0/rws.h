@@ -607,4 +607,10 @@ namespace abb :: rws :: v2_0
    * \brief Default username (for unconfigured robot controller systems).
    */
   extern const std::string DEFAULT_USERNAME;
+
+
+  /**
+   * \brief Default admin username (for unconfigured robot controller systems).
+   */
+  extern const std::string DEFAULT_ADMIN_USERNAME;
 }
