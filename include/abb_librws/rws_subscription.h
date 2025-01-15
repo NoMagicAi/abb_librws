@@ -242,8 +242,7 @@ namespace abb :: rws
      *
      * \throw \a TimeoutError if waiting time exceeds \a timeout.
      */
-    bool waitForEvent(std::chrono::microseconds ping_pong_timeout = DEFAULT_SUBSCRIPTION_PING_PONG_TIMEOUT,
-                      std::chrono::microseconds new_message_timeout = DEFAULT_SUBSCRIPTION_NEW_MESSAGE_TIMEOUT);
+    bool waitForEvent(std::chrono::microseconds ping_pong_timeout = DEFAULT_SUBSCRIPTION_PING_PONG_TIMEOUT);
 
 
     /**
@@ -264,9 +263,9 @@ namespace abb :: rws
 
   private:
     /**
-     * \brief Default RWS subscription timeout for new message to arrive [microseconds].
+     * \brief Default RWS subscription timeout for waiting for a new message to arrive [microseconds].
      */
-    static const std::chrono::microseconds DEFAULT_SUBSCRIPTION_NEW_MESSAGE_TIMEOUT;
+    static const std::chrono::microseconds WEBSOCKET_UPDATE_INTERVAL;
 
     /**
      * \brief Default RWS subscription timeout for ping-pong to arrive [microseconds].
@@ -298,9 +297,12 @@ namespace abb :: rws
      */
     Poco::XML::DOMParser parser_;
 
+    bool webSocketReceiveFrame(WebSocketFrame& frame, std::chrono::microseconds ping_pong_timeout);
 
-    bool webSocketReceiveFrame(WebSocketFrame& frame, std::chrono::microseconds ping_pong_timeout,
-                               std::chrono::microseconds new_message_timeout);
+    /**
+     * \brief Last time a ping-pong message was received.
+     */
+    std::chrono::time_point<std::chrono::steady_clock> last_ping_time_;
   };
 
 
