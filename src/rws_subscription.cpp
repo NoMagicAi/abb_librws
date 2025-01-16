@@ -56,6 +56,7 @@ namespace abb :: rws
     int flags = 0;
     std::string content;
     int number_of_bytes_received = 0;
+    bool wait_for_data = true;
 
     // Wait for (non-ping) WebSocket frames.
     do
@@ -91,7 +92,11 @@ namespace abb :: rws
                                 number_of_bytes_received,
                                 WebSocket::FRAME_FLAG_FIN | WebSocket::FRAME_OP_PONG);
       }
-    } while ((flags & WebSocket::FRAME_OP_BITMASK) == WebSocket::FRAME_OP_PING);
+      else
+      {
+        wait_for_data = false;
+      }
+    } while (wait_for_data);
 
     // Check for closing frame.
     if ((flags & WebSocket::FRAME_OP_BITMASK) == WebSocket::FRAME_OP_CLOSE)
