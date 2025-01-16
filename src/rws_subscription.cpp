@@ -52,6 +52,10 @@ namespace abb :: rws
   bool SubscriptionReceiver::webSocketReceiveFrame(WebSocketFrame& frame,
                                                     std::chrono::microseconds ping_pong_timeout)
   {
+    if(isShutdown_){
+      return false;
+    }
+
     // If the connection is still active...
     int flags = 0;
     std::string content;
@@ -67,18 +71,21 @@ namespace abb :: rws
         BOOST_THROW_EXCEPTION(TimeoutError {"WebSocket Failed to receive heartbeat message in " +
                                             std::to_string(ping_pong_timeout.count()) + " microseconds."});
 
-      webSocket_.setReceiveTimeout(WEBSOCKET_UPDATE_INTERVAL);
-      flags = 0;
+      {
+        std::lock_guard lock{socketMutex_};
+        webSocket_.setReceiveTimeout(WEBSOCKET_UPDATE_INTERVAL);
+        flags = 0;
 
-      try
-      {
-        number_of_bytes_received = webSocket_.receiveFrame(websocket_buffer_, sizeof(websocket_buffer_), flags);
-      }
-      catch (Poco::TimeoutException const&)
-      {
-        // Due to the fact that it is not possible to interrupt the receiveFrame() function, when the application
-        // is shutting down, the exception is caught and the timeout is handled manually above.
-        continue;
+        try
+        {
+          number_of_bytes_received = webSocket_.receiveFrame(websocket_buffer_, sizeof(websocket_buffer_), flags);
+        }
+        catch (Poco::TimeoutException const&)
+        {
+          // Due to the fact that it is not possible to interrupt the receiveFrame() function, when the application
+          // is shutting down, the exception is caught and the timeout is handled manually above.
+          continue;
+        }
       }
 
       content = std::string(websocket_buffer_, number_of_bytes_received);
@@ -88,6 +95,7 @@ namespace abb :: rws
       {
         last_ping_time_ = std::chrono::steady_clock::now();
         // Reply with a pong frame.
+        std::lock_guard lock{socketMutex_};
         webSocket_.sendFrame(websocket_buffer_,
                                 number_of_bytes_received,
                                 WebSocket::FRAME_FLAG_FIN | WebSocket::FRAME_OP_PONG);
@@ -96,7 +104,7 @@ namespace abb :: rws
       {
         wait_for_data = false;
       }
-    } while (wait_for_data);
+    } while (wait_for_data && !isShutdown_);
 
     // Check for closing frame.
     if ((flags & WebSocket::FRAME_OP_BITMASK) == WebSocket::FRAME_OP_CLOSE)
@@ -120,6 +128,8 @@ namespace abb :: rws
   {
     // Shut down the socket. This should make webSocketReceiveFrame() return as soon as possible.
     try{
+        isShutdown_ = true;
+        std::lock_guard lock{socketMutex_};
         webSocket_.shutdown();
     }catch(const Poco::IOException& ex){
         std::string info = ex.displayText();

@@ -303,6 +303,16 @@ namespace abb :: rws
      * \brief Last time a ping-pong message was received.
      */
     std::chrono::time_point<std::chrono::steady_clock> last_ping_time_;
+
+    /**
+     * \brief Flag to indicate if the SubscriptionReceiver is shutting down.
+     */
+    std::atomic<bool> isShutdown_ = false;
+
+    /**
+     * \brief Mutex to guard webSocket_ in between threads.
+     */
+    std::mutex socketMutex_;
   };
 
 
