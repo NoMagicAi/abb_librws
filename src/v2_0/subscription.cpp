@@ -38,7 +38,12 @@ namespace abb :: rws :: v2_0 :: subscription
   {
     if (!subscription_group_id_.empty())
     {
-      closeSubscription(client_, subscription_group_id_);
+      try{
+        closeSubscription(client_, subscription_group_id_);
+      }catch(const abb::rws::CommunicationError& ex){
+        std::string info = boost::diagnostic_information(ex);
+        BOOST_LOG_TRIVIAL(error) << "Failed to close subscription: " << info;
+      }
       subscription_group_id_.clear();
     }
   }

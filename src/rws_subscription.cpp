@@ -119,7 +119,13 @@ namespace abb :: rws
   void SubscriptionReceiver::shutdown()
   {
     // Shut down the socket. This should make webSocketReceiveFrame() return as soon as possible.
-    webSocket_.shutdown();
+    try{
+        webSocket_.shutdown();
+    }catch(const Poco::IOException& ex){
+        std::string info = ex.displayText();
+        BOOST_LOG_TRIVIAL(error) << "Shutting down websocket failed: " << info;
+    }
+
   }
 
   void processAllEvents(Poco::AutoPtr<Poco::XML::Document> doc, SubscriptionResources const& resources)
