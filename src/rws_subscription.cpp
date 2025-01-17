@@ -13,11 +13,11 @@ namespace abb :: rws
 {
   using namespace Poco::Net;
 
+  // 1 second should work for both for RWS1 and RWS2, but since on RWS2 TLS is used and due to a bug in POCO
+  // (https://github.com/pocoproject/poco/issues/3848), the actual timeout will be 2 seconds.
   const std::chrono::microseconds SubscriptionReceiver::WEBSOCKET_UPDATE_INTERVAL = std::chrono::seconds {1};
 
-  // 60 seconds should work for both for RWS1 and RWS2, but since on RWS2 TLS is used and due to a bug in POCO
-  // (https://github.com/pocoproject/poco/issues/3848), the actual timeout will be 120 seconds.
-  const std::chrono::microseconds SubscriptionReceiver::DEFAULT_SUBSCRIPTION_PING_PONG_TIMEOUT = std::chrono::seconds {60};
+  const std::chrono::microseconds SubscriptionReceiver::DEFAULT_SUBSCRIPTION_PING_PONG_TIMEOUT = std::chrono::seconds {120};
 
 
   SubscriptionReceiver::SubscriptionReceiver(SubscriptionManager& subscription_manager, AbstractSubscriptionGroup const& group)
