@@ -70,6 +70,7 @@ typedef SystemConstants::RAPID RAPID;
 
 RWSInterface::RWSInterface(RWSClient& client)
 : rws_client_ {client}
+, motionsystem {client}
 {
 }
 
