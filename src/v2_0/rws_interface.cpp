@@ -76,6 +76,7 @@ static bool digitalSignalToBool(std::string const& value)
  */
 RWSInterface::RWSInterface(RWSClient& client)
 : rws_client_ {client}
+, motionsystem {client}
 {
 }
 
