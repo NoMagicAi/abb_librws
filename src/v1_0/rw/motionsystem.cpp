@@ -1,3 +1,4 @@
+#include <sstream>
 #include <string>
 
 #include <abb_librws/v1_0/rw/motionsystem.h>
@@ -16,4 +17,4 @@ void MotionSystemInterface::setMechanicalUnitPosition(std::string const& mechani
 
   rws_client_.httpPost(uri.str(), content);
 }
-}  // namespace abb::rws::v2_0::rw::motionsystem
+}  // namespace abb::rws::v1_0::rw::motionsystem

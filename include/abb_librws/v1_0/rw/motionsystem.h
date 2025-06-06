@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 
+#include <abb_librws/rws_rapid.h>
 #include <abb_librws/v1_0/rws_client.h>
 
 namespace abb ::rws ::v1_0 ::rw ::motionsystem {
@@ -27,4 +28,4 @@ class MotionSystemInterface {
  private:
   RWSClient& rws_client_;
 };
-}  // namespace abb::rws::v2_0::rw::motionsystem
+}  // namespace abb::rws::v1_0::rw::motionsystem

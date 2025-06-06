@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 
+#include <abb_librws/rws_rapid.h>
 #include <abb_librws/v2_0/rws_client.h>
 
 namespace abb ::rws ::v2_0 ::rw ::motionsystem {

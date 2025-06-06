@@ -1,3 +1,4 @@
+#include <sstream>
 #include <string>
 
 #include <abb_librws/v2_0/rw/motionsystem.h>
