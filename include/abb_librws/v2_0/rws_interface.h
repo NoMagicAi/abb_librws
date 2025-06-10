@@ -36,18 +36,17 @@
 
 #pragma once
 
-#include <abb_librws/v2_0/rws_client.h>
-#include <abb_librws/v2_0/rws.h>
-#include <abb_librws/v2_0/subscription.h>
-
-#include <abb_librws/rws_cfg.h>
-#include <abb_librws/common/rw/io.h>
-#include <abb_librws/rws_info.h>
-#include <abb_librws/xml_attribute.h>
-
 #include <chrono>
 #include <cstdint>
 
+#include <abb_librws/common/rw/io.h>
+#include <abb_librws/rws_cfg.h>
+#include <abb_librws/rws_info.h>
+#include <abb_librws/v2_0/rws.h>
+#include <abb_librws/v2_0/rws_client.h>
+#include <abb_librws/v2_0/subscription.h>
+#include <abb_librws/xml_attribute.h>
+#include <abb_librws/v2_0/rw/motionsystem.h>
 
 namespace abb :: rws :: v2_0
 {
@@ -178,7 +177,7 @@ public:
    *
    * \return Mapping from IO signal names to values.
    */
-  rw::io::IOSignalInfo getIOSignals();
+  rws::rw::io::IOSignalInfo getIOSignals();
 
 
   /**
@@ -369,7 +368,9 @@ public:
    *
    * \return rw::RAPIDTaskPcpState
    */
-  rw::RAPIDTaskPcpState getTaskPointersPosition(const std::string& task);
+  rws::rw::RAPIDTaskPcpState getTaskPointersPosition(const std::string& task);
+
+  rw::motionsystem::MotionSystemInterface motionsystem;
 
 private:
   using RWSResult = RWSClient::RWSResult;

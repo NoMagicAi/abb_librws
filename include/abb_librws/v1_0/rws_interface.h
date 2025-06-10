@@ -36,19 +36,20 @@
 
 #pragma once
 
-#include <abb_librws/v1_0/rws_client.h>
-#include <abb_librws/v1_0/rws.h>
-#include <abb_librws/v1_0/rw/rapid.h>
-#include <abb_librws/v1_0/subscription.h>
+#include <chrono>
+#include <cstdint>
+
 #include <abb_librws/common/rw/io.h>
 #include <abb_librws/rws.h>
 #include <abb_librws/rws_cfg.h>
 #include <abb_librws/rws_info.h>
+#include <abb_librws/v1_0/rw/rapid.h>
+#include <abb_librws/v1_0/rws.h>
+#include <abb_librws/v1_0/rws_client.h>
+#include <abb_librws/v1_0/subscription.h>
 #include <abb_librws/xml_attribute.h>
 
-#include <chrono>
-#include <cstdint>
-
+#include <abb_librws/v1_0/rw/motionsystem.h>
 
 namespace abb :: rws :: v1_0
 {
@@ -601,6 +602,8 @@ public:
    * \return rw::RAPIDTaskPcpState
    */
   rw::RAPIDTaskPcpState getTaskPointersPosition(const std::string& task);
+
+  rw::motionsystem::MotionSystemInterface motionsystem;
 
 private:
   /**
