@@ -324,7 +324,7 @@ POCOResult RWSClient::httpGet(const std::string& uri,
 
   if (accepted_status.find(result.httpStatus()) == accepted_status.end())
   {
-    auto exception = ProtocolError {"HTTP response status not accepted"}
+    auto exception = ProtocolError {"HTTP GET response status not accepted: " + std::to_string(result.httpStatus()) + "for uri: " + uri + " " + result.reason() + " " + result.content()}
       << HttpMethodErrorInfo {"GET"}
       << UriErrorInfo {uri}
       << HttpStatusErrorInfo {result.httpStatus()}
@@ -346,7 +346,7 @@ POCOResult RWSClient::httpPost(const std::string& uri, const std::string& conten
 
   if (accepted_status.find(result.httpStatus()) == accepted_status.end())
   {
-    auto exception = ProtocolError {"HTTP response status not accepted"}
+    auto exception = ProtocolError {"HTTP POST response status not accepted" + std::to_string(result.httpStatus()) + "for uri: " + uri + " " + result.reason() + " " + result.content()}
       << HttpMethodErrorInfo {"POST"}
       << UriErrorInfo {uri}
       << HttpRequestContentErrorInfo {content}
@@ -368,7 +368,7 @@ POCOResult RWSClient::httpPut(const std::string& uri, const std::string& content
 
   if (accepted_status.find(result.httpStatus()) == accepted_status.end())
   {
-    auto exception = ProtocolError {"HTTP response status not accepted"}
+    auto exception = ProtocolError {"HTTP PUT response status not accepted"  + std::to_string(result.httpStatus()) + "for uri: " + uri + " " + result.reason() + " " + result.content()}
       << HttpMethodErrorInfo {"PUT"}
       << UriErrorInfo {uri}
       << HttpRequestContentErrorInfo {content}
@@ -391,7 +391,7 @@ POCOResult RWSClient::httpDelete(const std::string& uri,
 
   if (accepted_status.find(result.httpStatus()) == accepted_status.end())
   {
-    auto exception = ProtocolError {"HTTP response status not accepted"}
+    auto exception = ProtocolError {"HTTP DELETE response status not accepted"  + std::to_string(result.httpStatus()) + "for uri: " + uri + " " + result.reason() + " " + result.content()}
       << HttpMethodErrorInfo {"DELETE"}
       << UriErrorInfo {uri}
       << HttpStatusErrorInfo {result.httpStatus()}
