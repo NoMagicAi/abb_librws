@@ -234,7 +234,8 @@ void POCOClient::sendAndReceive(HTTPRequest& request,
 
   try
   {
-    http_client_session_.setReceiveTimeout(Poco::Timespan(30, 0)); // 30 seconds timeout
+    http_client_session_.setReceiveTimeout(Poco::Timespan(60, 0)); // 30 seconds timeout
+    http_client_session_.setTimeout(Poco::Timespan(60, 0)); // 30 seconds timeout
     std::istream& response_content_stream = http_client_session_.receiveResponse(response);
 
     response_content.clear();
