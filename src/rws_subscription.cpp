@@ -73,7 +73,7 @@ namespace abb :: rws
 
       {
         std::lock_guard lock{socketMutex_};
-        webSocket_.setReceiveTimeout(WEBSOCKET_UPDATE_INTERVAL);
+        webSocket_.setReceiveTimeout(Poco::Timespan(WEBSOCKET_UPDATE_INTERVAL.count()));
         flags = 0;
 
         try
