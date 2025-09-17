@@ -1,4 +1,5 @@
 #pragma once
+#include <abb_librws/v2_0/rws_client.h>
 #include <abb_librws/rws_subscription.h>
 
 namespace abb :: rws :: v2_0 :: rw :: finepoint
@@ -11,4 +12,6 @@ namespace abb :: rws :: v2_0 :: rw :: finepoint
 
         void processEvent(Poco::XML::Element const& li_element, std::function<void(SubscriptionEvent const&)> const& callback) const override;
     };
+
+    void startFinePointSubscription(RWSClient& client);
 }

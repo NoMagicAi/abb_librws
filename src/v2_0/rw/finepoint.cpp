@@ -15,4 +15,9 @@ namespace abb :: rws :: v2_0 :: rw :: finepoint
         callback(event);
     }
 
+    void startFinePointSubscription(RWSClient& client)
+    {
+        // TODO write code!
+        return;
+    }
 }
