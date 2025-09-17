@@ -83,6 +83,8 @@ set(
     src/v2_0/subscription.cpp
     src/v2_0/rw/elog.cpp
     src/v2_0/rw/motionsystem.cpp
+    src/v2_0/rw/finepoint.cpp
+
 )
 
 add_library(${PROJECT_NAME} ${SRC_FILES})

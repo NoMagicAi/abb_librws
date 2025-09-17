@@ -204,6 +204,10 @@ namespace abb :: rws
     int seqnum; // seqnence numver of message in domain
   };
 
+  struct FinePointEvent: public SubscriptionEvent
+  {
+    int time;
+  };
 
   /**
    * \brief Receives RWS subscription events.
