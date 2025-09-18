@@ -13,5 +13,6 @@ namespace abb :: rws :: v2_0 :: rw :: finepoint
         void processEvent(Poco::XML::Element const& li_element, std::function<void(SubscriptionEvent const&)> const& callback) const override;
     };
 
-    void startFinePointSubscription(RWSClient& client);
+    int startFinePointSubscription(RWSClient& client);
+    void stopFinePointSubscription(RWSClient& client, int fine_point_subscription_id);
 }
