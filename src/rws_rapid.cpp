@@ -210,6 +210,19 @@ RAPIDRecord& RAPIDRecord::operator=(const RAPIDRecord& other)
   return *this;
 }
 
+std::ostream& operator<<(std::ostream& os, RobJoint const& robax)
+{
+    return os
+        << "RobJoint("
+        << ".rax_1=" << robax.rax_1.value // Axis 1 position in degrees
+        << ", .rax_2=" << robax.rax_2.value // Axis 2 position in degrees
+        << ", .rax_3=" << robax.rax_3.value // Axis 3 position in degrees
+        << ", .rax_4=" << robax.rax_4.value // Axis 4 position in degrees
+        << ", .rax_5=" << robax.rax_5.value // Axis 5 position in degrees
+        << ", .rax_6=" << robax.rax_6.value // Axis 6 position in degrees
+        << ")";
+}
+
 std::ostream& operator<<(std::ostream& os, ExtJoint const& extax)
 {
     return os

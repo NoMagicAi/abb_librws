@@ -1283,6 +1283,8 @@ public:
   RAPIDNum zone_reax;
 };
 
+std::ostream& operator<<(std::ostream& os, RobJoint const& robax);
+
 std::ostream& operator<<(std::ostream& os, ExtJoint const& extax);
 
 std::ostream& operator<<(std::ostream& os, Orient const& orient);
