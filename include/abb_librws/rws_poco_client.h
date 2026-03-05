@@ -81,7 +81,7 @@ namespace rws
      *
      * \return POCOResult containing the result.
      */
-    POCOResult httpGet(const std::string& uri);
+    POCOResult httpGet(const std::string& uri, const std::string& version="2.0");
 
     /**
      * \brief A method for sending a HTTP POST request.
@@ -245,7 +245,8 @@ namespace rws
     POCOResult makeHTTPRequest(const std::string& method,
                               const std::string& uri = "/",
                               const std::string& content = "",
-                              const std::string& content_type = "");
+                              const std::string& content_type = "",
+                              const std::string& version="2.0");
 
     /**
      * \brief A method for sending and receiving HTTP messages.

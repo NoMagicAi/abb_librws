@@ -318,9 +318,10 @@ std::optional<int> tryParseRetcode(std::string const& content) noexcept
 }
 
 POCOResult RWSClient::httpGet(const std::string& uri,
-  std::set<Poco::Net::HTTPResponse::HTTPStatus> const& accepted_status)
+  std::set<Poco::Net::HTTPResponse::HTTPStatus> const& accepted_status,
+  const std::string& version)
 {
-  POCOResult result = http_client_.httpGet(uri);
+  POCOResult result = http_client_.httpGet(uri, version);
 
   if (accepted_status.find(result.httpStatus()) == accepted_status.end())
   {

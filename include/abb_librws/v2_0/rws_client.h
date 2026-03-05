@@ -270,7 +270,8 @@ public:
    * \return POCOResult containing the result.
    */
   POCOResult httpGet(const std::string& uri,
-    std::set<Poco::Net::HTTPResponse::HTTPStatus> const& accepted_status = {Poco::Net::HTTPResponse::HTTP_NO_CONTENT, Poco::Net::HTTPResponse::HTTP_OK});
+    std::set<Poco::Net::HTTPResponse::HTTPStatus> const& accepted_status = {Poco::Net::HTTPResponse::HTTP_NO_CONTENT, Poco::Net::HTTPResponse::HTTP_OK},
+    const std::string& version ="2.0");
 
   /**
    * \brief A method for sending a HTTP POST request and checking response status.

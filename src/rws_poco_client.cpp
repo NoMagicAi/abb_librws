@@ -73,9 +73,9 @@ POCOClient::~POCOClient()
  * Primary methods
  */
 
-POCOResult POCOClient::httpGet(const std::string& uri)
+POCOResult POCOClient::httpGet(const std::string& uri, const std::string& version)
 {
-  return makeHTTPRequest(HTTPRequest::HTTP_GET, uri);
+  return makeHTTPRequest(HTTPRequest::HTTP_GET, uri, "", "", version);
 }
 
 POCOResult POCOClient::httpPost(const std::string& uri, const std::string& content, const std::string& content_type)
@@ -96,14 +96,15 @@ POCOResult POCOClient::httpDelete(const std::string& uri)
 POCOResult POCOClient::makeHTTPRequest(const std::string& method,
                                                    const std::string& uri,
                                                    const std::string& content,
-                                                   const std::string& content_type)
+                                                   const std::string& content_type,
+                                                   const std::string& version)
 {
   // The response and the request.
   HTTPResponse response;
   std::string response_content;
 
   HTTPRequest request(method, uri, HTTPRequest::HTTP_1_1);
-  request.add("accept", "application/xhtml+xml;v=2.0");
+  request.add("accept", "application/xhtml+xml;v="+version);
   request.setCookies(cookies_);
   request.setContentLength(content.length());
 

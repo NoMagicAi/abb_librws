@@ -175,7 +175,7 @@ namespace abb ::rws ::v2_0 ::rw ::elog
         uri << "/rw/elog/" << domain << "?lang=" << lang << "&order=lifo";
         if (seqnum >= 0) uri << "&elogseqnum=" << seqnum;
         if (limit > 0) uri << "&limit=" << limit;
-        POCOResult poco_result = client.httpGet(uri.str());
+        POCOResult poco_result = client.httpGet(uri.str(), {Poco::Net::HTTPResponse::HTTP_NO_CONTENT, Poco::Net::HTTPResponse::HTTP_OK}, "2.1");
         std::vector<ElogMessage> messages = parseElogMessagesXml(poco_result.content());
         return messages;
     }
