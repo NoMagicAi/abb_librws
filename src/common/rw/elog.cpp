@@ -103,4 +103,17 @@ namespace abb ::rws ::rw ::elog
     const std::string Language::TURKISH = "tr";
     const std::string Language::CHINESE = "zh";
 
+    std::string to_string(Order const order)
+    {
+        switch (order)
+        {
+        case Order::FIFO:
+            return "fifo";
+        case Order::LIFO:
+            return "lifo";
+        default:
+            BOOST_THROW_EXCEPTION(std::logic_error{"Invalid Order value"});
+        }
+    }
+
 }

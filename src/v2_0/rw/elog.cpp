@@ -169,10 +169,10 @@ namespace abb ::rws ::v2_0 ::rw ::elog
         return messages;
     }
 
-    std::vector<ElogMessage> getElogMessages(RWSClient& client, int const domain, int const seqnum, std::string const& lang, int const limit)
+    std::vector<ElogMessage> getElogMessages(RWSClient& client, int const domain, int const seqnum, std::string const& lang, int const limit, Order const order)
     {
         std::stringstream uri;
-        uri << "/rw/elog/" << domain << "?lang=" << lang << "&order=lifo";
+        uri << "/rw/elog/" << domain << "?lang=" << lang << "&order=" << to_string(order);
         if (seqnum >= 0) uri << "&elogseqnum=" << seqnum;
         if (limit > 0) uri << "&limit=" << limit;
         POCOResult poco_result = client.httpGet(uri.str(), {Poco::Net::HTTPResponse::HTTP_NO_CONTENT, Poco::Net::HTTPResponse::HTTP_OK}, "2.1");
