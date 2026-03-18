@@ -85,4 +85,15 @@ namespace abb ::rws ::rw ::elog
         static const std::string TURKISH;
         static const std::string CHINESE;
     };
+
+    /**
+     * @brief Order for elog messages
+     */
+    enum class Order
+    {
+        FIFO,
+        LIFO
+    };
+
+    std::string to_string(Order const order);
 }
