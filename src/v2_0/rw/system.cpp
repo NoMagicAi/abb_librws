@@ -3,7 +3,6 @@
 #include <abb_librws/parsing.h>
 #include <abb_librws/rws_error.h>
 #include <abb_librws/v2_0/rws.h>
-#include <abb_librws/xml.h>
 
 #include <boost/throw_exception.hpp>
 
