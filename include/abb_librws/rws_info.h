@@ -142,17 +142,17 @@ namespace abb :: rws
     /**
      * \brief The system's name.
      */
-    std::string system_name;
+    const std::string system_name;
 
     /**
      * \brief The system's options.
      */
-    std::vector<std::string> system_options;
+    const std::vector<std::string> system_options;
 
     /**
     * \brief The system's RobotWare version.
     */
-    RobotWareVersion version;
+    const RobotWareVersion version;
   };
 
   /**
@@ -192,11 +192,11 @@ namespace abb :: rws
     /**
      * \brief Information about the defined RAPID tasks.
      */
-    std::vector<rw::RAPIDTaskInfo> rapid_tasks;
+    const std::vector<rw::RAPIDTaskInfo> rapid_tasks;
 
     /**
      * \brief System information.
      */
-    SystemInfo system_info;
+    const SystemInfo system_info;
   };
 }

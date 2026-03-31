@@ -77,12 +77,7 @@ RWSInterface::RWSInterface(RWSClient& client)
 
 StaticInfo RWSInterface::collectStaticInfo()
 {
-  StaticInfo static_info;
-
-  static_info.rapid_tasks = getRAPIDTasks();
-  static_info.system_info = getSystemInfo();
-
-  return static_info;
+  return StaticInfo{getRAPIDTasks(), getSystemInfo()};
 }
 
 std::vector<cfg::moc::Arm> RWSInterface::getCFGArms()

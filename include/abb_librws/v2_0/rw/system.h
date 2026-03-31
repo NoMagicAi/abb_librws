@@ -12,6 +12,6 @@ namespace abb :: rws :: v2_0 :: rw :: system
      *
      * \return SystemInfo describing current firmware.
      */
-    SystemInfo getRobotWareInfo(RWSClient::RWSResult const& result);
+    SystemInfo getRobotWareInfo(RWSResult const& result);
 
 }

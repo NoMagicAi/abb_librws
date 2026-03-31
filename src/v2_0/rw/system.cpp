@@ -12,7 +12,7 @@
 
 namespace abb :: rws :: v2_0 :: rw :: system
 {
-    SystemInfo getRobotWareInfo(RWSClient::RWSResult const& rws_result)
+    SystemInfo getRobotWareInfo(RWSResult const& rws_result)
     {
         Poco::XML::Node const * li_node = rws_result->getNodeByPath("html/body/div/ul/li");
         if (!li_node)
@@ -52,18 +52,17 @@ namespace abb :: rws :: v2_0 :: rw :: system
             system_name = xmlFindTextContent(node_list.at(i), XMLAttributes::CLASS_NAME);
         }
 
-        RobotWareVersion rw_version(major, minor, revision, sub_revision, build, build_tag, system_name);
-
-        SystemInfo result;
-        result.version = rw_version;
-        result.system_name = system_name;
-
         node_list = xmlFindNodes(rws_result, XMLAttributes::CLASS_SYS_OPTION_LI);
+        std::vector<std::string> system_options;
         for (size_t i = 0; i < node_list.size(); ++i)
         {
-            result.system_options.push_back(xmlFindTextContent(node_list.at(i), XMLAttributes::CLASS_OPTION));
+            system_options.push_back(xmlFindTextContent(node_list.at(i), XMLAttributes::CLASS_OPTION));
         }
 
-        return result;
+        return SystemInfo{
+            system_name,
+            std::move(system_options),
+            RobotWareVersion(major, minor, revision, sub_revision, build, build_tag, system_name)
+        };
     }
 }
