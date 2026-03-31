@@ -378,6 +378,6 @@ private:
   POCOClient http_client_;
   Poco::XML::DOMParser parser_;
   std::map<std::string, int> mastership_count_;
-  RWSResult const robot_ware_system_info_;
+  RWSResult robot_ware_system_info_;
 };
 }
