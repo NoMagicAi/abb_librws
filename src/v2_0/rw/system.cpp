@@ -16,7 +16,8 @@ namespace abb :: rws :: v2_0 :: rw :: system
         }
         return value;
     }
-    RobotWareVersion getRobotWareVersion(RWSClient::RWSResult& result)
+
+    SystemInfo getRobotWareInfo(RWSClient::RWSResult& result)
     {
         Poco::XML::Node const * li_node = result->getNodeByPath("html/body/div/ul/li");
         if (!li_node)
@@ -43,7 +44,24 @@ namespace abb :: rws :: v2_0 :: rw :: system
             BOOST_THROW_EXCEPTION(ProtocolError {"Can't find a node with class=\"build\""});
         int build = getIntOrThrow(build_str, "build number");
         std::string const build_tag = xmlFindTextContent(li_node, XMLAttributes::BUILD_TAG);
+        std::string const system_name = xmlFindTextContent(node_list.at(i), XMLAttributes::CLASS_NAME);
 
-        return RobotWareVersion(major, minor, revision, sub_revision, build, build_tag);
+        rw_version = RobotWareVersion(major, minor, revision, sub_revision, build, build_tag, system_name);
+
+        result.robot_ware_version = xmlFindTextContent(node_list.at(i), XMLAttributes::CLASS_RW_VERSION_NAME);
+
+        SystemInfo result;
+
+        result.version = rw_version;
+
+        node_list = xmlFindNodes(rws_result, XMLAttributes::CLASS_SYS_OPTION_LI);
+        for (size_t i = 0; i < node_list.size(); ++i)
+        {
+            result.system_options.push_back(xmlFindTextContent(node_list.at(i), XMLAttributes::CLASS_OPTION));
+        }
+
+        result.system_type = xmlFindTextContent(rws_client_.getContollerService(), XMLAttributes::CLASS_CTRL_TYPE);
+
+        return result
     }
 }
