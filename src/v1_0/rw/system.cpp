@@ -1,8 +1,8 @@
-#include <abb_librws/v2_0/rw/system.h>
+#include <abb_librws/v1_0/rw/system.h>
 
 #include <abb_librws/parsing.h>
 #include <abb_librws/rws_error.h>
-#include <abb_librws/v2_0/rws.h>
+#include <abb_librws/v1_0/rws.h>
 #include <abb_librws/xml.h>
 
 #include <boost/throw_exception.hpp>
@@ -10,7 +10,7 @@
 #include <string>
 
 
-namespace abb :: rws :: v2_0 :: rw :: system
+namespace abb :: rws :: v1_0 :: rw :: system
 {
     SystemInfo getRobotWareInfo(RWSClient::RWSResult const& rws_result)
     {

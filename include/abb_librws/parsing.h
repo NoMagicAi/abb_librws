@@ -136,14 +136,26 @@ namespace abb :: rws
   
   /**
    * @brief A method to get text of first element identified by tag and containing given attribute.
-   * 
+   *
    * @param document XML document to search.
    * @param tag name of node.
    * @param xml_attribute attribute the element must contain.
    * @return text of first matched element. Empty \a std::optional if no match found.
    */
-  std::optional<std::string> xmlNodeTextByTagAndAttribute(Poco::AutoPtr<Poco::XML::Document> p_xml_document, 
-                                          const std::string & tag, 
+  std::optional<std::string> xmlNodeTextByTagAndAttribute(Poco::AutoPtr<Poco::XML::Document> p_xml_document,
+                                          const std::string & tag,
                                           const XMLAttribute & xml_attribute);
+
+  /**
+   * \brief Convert a string to an integer, throwing a descriptive ProtocolError on failure.
+   *
+   * \param str The string to convert.
+   * \param description A description of what this integer represents (for error messages).
+   *
+   * \return The parsed integer value.
+   *
+   * \throw ProtocolError if the string cannot be parsed or is out of range.
+   */
+  int getIntOrThrow(std::string const& str, std::string const& description);
 
 }

@@ -36,6 +36,7 @@
 #include <abb_librws/v2_0/rws_interface.h>
 #include <abb_librws/v2_0/rw/rapid.h>
 #include <abb_librws/v2_0/rw/ctrl.h>
+#include <abb_librws/v2_0/rw/system.h>
 #include <abb_librws/v2_0/rws.h>
 #include <abb_librws/rws_rapid.h>
 #include <abb_librws/parsing.h>
@@ -732,7 +733,7 @@ SystemInfo RWSInterface::getSystemInfo()
 {
   RWSResult rws_result = rws_client_.getRobotWareSystem();
 
-  return result;
+  return rw::system::getRobotWareInfo(rws_result);
 }
 
 void RWSInterface::setIOSignal(const std::string& iosignal, const std::string& value)

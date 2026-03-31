@@ -145,11 +145,6 @@ namespace abb :: rws
     std::string system_name;
 
     /**
-     * \brief The system's type (e.g. if it is a virtual controller system or not).
-     */
-    std::string system_type;
-
-    /**
      * \brief The system's options.
      */
     std::vector<std::string> system_options;
