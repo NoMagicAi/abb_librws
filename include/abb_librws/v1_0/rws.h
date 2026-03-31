@@ -157,6 +157,36 @@ namespace abb :: rws :: v1_0
      * \brief Class & routinename.
      */
     static const XMLAttribute CLASS_ROUTINE_NAME;
+
+    /**
+     * \brief Class & major version.
+     */
+    static const XMLAttribute CLASS_MAJOR;
+
+    /**
+     * \brief Class & minor version.
+     */
+    static const XMLAttribute CLASS_MINOR;
+
+    /**
+     * \brief Class & revision.
+     */
+    static const XMLAttribute CLASS_REVISION;
+
+    /**
+     * \brief Class & sub-revision.
+     */
+    static const XMLAttribute CLASS_SUB_REVISION;
+
+    /**
+     * \brief Class & build.
+     */
+    static const XMLAttribute CLASS_BUILD;
+
+    /**
+     * \brief Class & build tag.
+     */
+    static const XMLAttribute CLASS_BUILD_TAG;
   };
 
   /**
@@ -378,6 +408,36 @@ namespace abb :: rws :: v1_0
      * \brief Module name.
      */
     static const std::string ROUTINE_NAME;
+
+    /**
+     * \brief Major version.
+     */
+    static const std::string MAJOR;
+
+    /**
+     * \brief Minor version.
+     */
+    static const std::string MINOR;
+
+    /**
+     * \brief Revision.
+     */
+    static const std::string REVISION;
+
+    /**
+     * \brief Sub-revision.
+     */
+    static const std::string SUB_REVISION;
+
+    /**
+     * \brief Build.
+     */
+    static const std::string BUILD;
+
+    /**
+     * \brief Build tag.
+     */
+    static const std::string BUILD_TAG;
   };
 
   /**

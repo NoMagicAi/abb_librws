@@ -82,7 +82,7 @@ RWSClient::RWSClient(ConnectionOptions connection_options)
   );
 
   // Make a request to the server to check connection and initiate authentification.
-  getRobotWareSystem();
+  auto robotware_system = getRobotWareSystem();
 }
 
 
