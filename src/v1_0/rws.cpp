@@ -55,6 +55,12 @@ namespace abb :: rws :: v1_0
   const std::string Identifiers::MODULE_NAME                    = "modulename";
   const std::string Identifiers::MISS_SPELLED_MODULE_NAME       = "modulemame";
   const std::string Identifiers::ROUTINE_NAME                   = "routinename";
+  const std::string Identifiers::MAJOR                          = "major";
+  const std::string Identifiers::MINOR                          = "minor";
+  const std::string Identifiers::REVISION                       = "revision";
+  const std::string Identifiers::SUB_REVISION                   = "sub-revision";
+  const std::string Identifiers::BUILD                          = "build";
+  const std::string Identifiers::BUILD_TAG                      = "buildtag";
   const std::string Queries::ACTION_LOAD_MODULE                 = "action=loadmod";
   const std::string Queries::ACTION_RELEASE                     = "action=release";
   const std::string Queries::ACTION_REQUEST                     = "action=request";
@@ -118,6 +124,12 @@ namespace abb :: rws :: v1_0
   const XMLAttribute XMLAttributes::CLASS_MODULE_NAME(Identifiers::CLASS       , Identifiers::MODULE_NAME);
   const XMLAttribute XMLAttributes::CLASS_MISS_SPELLED_MODULE_NAME(Identifiers::CLASS     , Identifiers::MISS_SPELLED_MODULE_NAME);
   const XMLAttribute XMLAttributes::CLASS_ROUTINE_NAME(Identifiers::CLASS      , Identifiers::ROUTINE_NAME);
+  const XMLAttribute XMLAttributes::CLASS_MAJOR(Identifiers::CLASS                        , Identifiers::MAJOR);
+  const XMLAttribute XMLAttributes::CLASS_MINOR(Identifiers::CLASS                        , Identifiers::MINOR);
+  const XMLAttribute XMLAttributes::CLASS_REVISION(Identifiers::CLASS                     , Identifiers::REVISION);
+  const XMLAttribute XMLAttributes::CLASS_SUB_REVISION(Identifiers::CLASS                 , Identifiers::SUB_REVISION);
+  const XMLAttribute XMLAttributes::CLASS_BUILD(Identifiers::CLASS                        , Identifiers::BUILD);
+  const XMLAttribute XMLAttributes::CLASS_BUILD_TAG(Identifiers::CLASS                    , Identifiers::BUILD_TAG);
 
 
   std::ostream& operator<<(std::ostream& os, MastershipDomain domain)

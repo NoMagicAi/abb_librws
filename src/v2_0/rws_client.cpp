@@ -81,8 +81,8 @@ RWSClient::RWSClient(ConnectionOptions connection_options)
     connectionOptions_.receive_timeout.count()
   );
 
-  // Make a request to the server to check connection and initiate authentification.
-  getRobotWareSystem();
+  // Make a request to the server to check connection and initiate authentification and store the system info for later use.
+  getAndStoreRobotWareSystem();
 }
 
 
@@ -193,8 +193,13 @@ RWSClient::RWSResult RWSClient::getMechanicalUnitRobTarget(const std::string& me
 
 RWSClient::RWSResult RWSClient::getRobotWareSystem()
 {
+  return robot_ware_system_info_;
+}
+
+void RWSClient::getAndStoreRobotWareSystem()
+{
   std::string uri = Resources::RW_SYSTEM;
-  return parseContent(httpGet(uri));
+  robot_ware_system_info_ = parseContent(httpGet(uri));
 }
 
 void RWSClient::setIOSignal(const std::string& iosignal, const std::string& value)

@@ -119,29 +119,40 @@ namespace abb :: rws
   };
 
   /**
+  * \brief Robot controller firmware version
+  */
+  struct RobotWareVersion
+  {
+    explicit RobotWareVersion(int major, int minor, int revision, int sub_revision, int build, std::string build_tag, std::string robot_ware_version_name);
+
+    const int major;
+    const int minor;
+    const int revision;
+    const int sub_revision;
+    const int build;
+    const std::string build_tag;
+    const std::string robot_ware_version_name;
+  };
+
+  /**
    * \brief A struct for containing system information of the robot controller.
    */
   struct SystemInfo
   {
     /**
-     * \brief The RobotWare version name.
-     */
-    std::string robot_ware_version;
-
-    /**
      * \brief The system's name.
      */
-    std::string system_name;
-
-    /**
-     * \brief The system's type (e.g. if it is a virtual controller system or not).
-     */
-    std::string system_type;
+    const std::string system_name;
 
     /**
      * \brief The system's options.
      */
-    std::vector<std::string> system_options;
+    const std::vector<std::string> system_options;
+
+    /**
+    * \brief The system's RobotWare version.
+    */
+    const RobotWareVersion version;
   };
 
   /**
@@ -181,11 +192,11 @@ namespace abb :: rws
     /**
      * \brief Information about the defined RAPID tasks.
      */
-    std::vector<rw::RAPIDTaskInfo> rapid_tasks;
+    const std::vector<rw::RAPIDTaskInfo> rapid_tasks;
 
     /**
      * \brief System information.
      */
-    SystemInfo system_info;
+    const SystemInfo system_info;
   };
 }

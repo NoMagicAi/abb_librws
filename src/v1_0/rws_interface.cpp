@@ -38,6 +38,7 @@
 #include <abb_librws/v1_0/rw/panel.h>
 #include <abb_librws/v1_0/rw/io.h>
 #include <abb_librws/v1_0/rw/ctrl.h>
+#include <abb_librws/v1_0/rw/system.h>
 #include <abb_librws/rws_rapid.h>
 #include <abb_librws/parsing.h>
 #include <abb_librws/rws.h>
@@ -76,12 +77,7 @@ RWSInterface::RWSInterface(RWSClient& client)
 
 StaticInfo RWSInterface::collectStaticInfo()
 {
-  StaticInfo static_info;
-
-  static_info.rapid_tasks = getRAPIDTasks();
-  static_info.system_info = getSystemInfo();
-
-  return static_info;
+  return StaticInfo{getRAPIDTasks(), getSystemInfo()};
 }
 
 std::vector<cfg::moc::Arm> RWSInterface::getCFGArms()
@@ -793,27 +789,9 @@ unsigned int RWSInterface::getSpeedRatio()
 
 SystemInfo RWSInterface::getSystemInfo()
 {
-  SystemInfo result;
-
   RWSResult rws_result = rws_client_.getRobotWareSystem();
 
-  std::vector<Poco::XML::Node*> node_list = xmlFindNodes(rws_result, XMLAttributes::CLASS_SYS_SYSTEM_LI);
-  for (size_t i = 0; i < node_list.size(); ++i)
-  {
-    result.system_name = xmlFindTextContent(node_list.at(i), XMLAttributes::CLASS_NAME);
-    result.robot_ware_version = xmlFindTextContent(node_list.at(i), XMLAttributes::CLASS_RW_VERSION_NAME);
-  }
-
-  node_list = xmlFindNodes(rws_result, XMLAttributes::CLASS_SYS_OPTION_LI);
-  for (size_t i = 0; i < node_list.size(); ++i)
-  {
-    result.system_options.push_back(xmlFindTextContent(node_list.at(i), XMLAttributes::CLASS_OPTION));
-  }
-
-  result.system_type = xmlFindTextContent(rws_client_.getContollerService(),
-                                          XMLAttributes::CLASS_CTRL_TYPE);
-
-  return result;
+  return rw::system::getRobotWareInfo(rws_result);
 }
 
 bool RWSInterface::isAutoMode()

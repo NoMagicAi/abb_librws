@@ -363,11 +363,21 @@ private:
    */
   static std::string generateFilePath(const FileResource& resource);
 
+  /**
+   * \brief A method for retrieving info about the current robot controller system.
+   *
+   * \return RWSResult containing the result.
+   *
+   * \throw \a RWSError if something goes wrong.
+   */
+  void getAndStoreRobotWareSystem();
+
   ConnectionOptions const connectionOptions_;
   Poco::Net::Context::Ptr context_;
   Poco::Net::HTTPSClientSession session_;
   POCOClient http_client_;
   Poco::XML::DOMParser parser_;
   std::map<std::string, int> mastership_count_;
+  RWSResult robot_ware_system_info_;
 };
 }

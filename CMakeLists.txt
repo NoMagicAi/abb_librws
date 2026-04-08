@@ -48,6 +48,7 @@ set(
     src/rws_websocket.cpp
     src/rws.cpp
     src/parsing.cpp
+    src/rws_info.cpp
     src/connection_options.cpp
     src/logger.cpp
 
@@ -70,6 +71,7 @@ set(
     src/v1_0/subscription.cpp
     src/v1_0/rw/elog.cpp
     src/v1_0/rw/motionsystem.cpp
+    src/v1_0/rw/system.cpp
 
     src/v2_0/rws.cpp
     src/v2_0/rws_client.cpp
@@ -83,6 +85,7 @@ set(
     src/v2_0/subscription.cpp
     src/v2_0/rw/elog.cpp
     src/v2_0/rw/motionsystem.cpp
+    src/v2_0/rw/system.cpp
 )
 
 add_library(${PROJECT_NAME} ${SRC_FILES})

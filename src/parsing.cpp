@@ -1,12 +1,16 @@
 #include <sstream>
+#include <stdexcept>
 
 #include <abb_librws/parsing.h>
+#include <abb_librws/rws_error.h>
 
 #include <Poco/DOM/NamedNodeMap.h>
 #include <Poco/DOM/NodeFilter.h>
 #include <Poco/DOM/NodeIterator.h>
 #include <Poco/DOM/NodeList.h>
 #include <Poco/DOM/DOMParser.h>
+
+#include <boost/throw_exception.hpp>
 
 
 namespace abb :: rws
@@ -303,5 +307,23 @@ namespace abb :: rws
       }
     }
     return {};
+  }
+
+  int getIntOrThrow(std::string const& str, std::string const& description)
+  {
+    int value = 0;
+    try
+    {
+      value = std::stoi(str);
+    }
+    catch (std::invalid_argument const&)
+    {
+      BOOST_THROW_EXCEPTION(ProtocolError {"Can't parse " + description + ": invalid integer value: \"" + str + "\""});
+    }
+    catch (std::out_of_range const&)
+    {
+      BOOST_THROW_EXCEPTION(ProtocolError {"Can't parse " + description + ": integer value out of range: \"" + str + "\""});
+    }
+    return value;
   }
 }
