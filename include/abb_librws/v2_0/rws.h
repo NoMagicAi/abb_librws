@@ -595,6 +595,31 @@ namespace abb :: rws :: v2_0
      * \brief RobotWare system.
      */
     static const std::string RW_SYSTEM;
+
+    /**
+     * \brief ControlStation register remote.
+     */
+    static const std::string RW_CONTROLSTATION_REGISTER_REMOTE;
+
+    /**
+     * \brief ControlStation write access request.
+     */
+    static const std::string RW_CONTROLSTATION_WRITEACCESS_REQUEST;
+
+    /**
+     * \brief ControlStation write access release.
+     */
+    static const std::string RW_CONTROLSTATION_WRITEACCESS_RELEASE;
+
+    /**
+     * \brief ControlStation write access status.
+     */
+    static const std::string RW_CONTROLSTATION_WRITEACCESS_STATUS;
+
+    /**
+     * \brief ControlStation motion control allow/release.
+     */
+    static const std::string RW_CONTROLSTATION_MOTIONCONTROL;
   };
 
   /**

@@ -96,6 +96,12 @@ namespace abb :: rws :: v2_0
   const std::string Resources::RW_RAPID_TASKS                   = Services::RW + "/rapid/tasks";
   const std::string Resources::RW_SYSTEM                        = Services::RW + "/system";
 
+  const std::string Resources::RW_CONTROLSTATION_REGISTER_REMOTE     = Services::RW + "/controlstation/register/remote";
+  const std::string Resources::RW_CONTROLSTATION_WRITEACCESS_REQUEST = Services::RW + "/controlstation/writeaccess/request";
+  const std::string Resources::RW_CONTROLSTATION_WRITEACCESS_RELEASE = Services::RW + "/controlstation/writeaccess/release";
+  const std::string Resources::RW_CONTROLSTATION_WRITEACCESS_STATUS  = Services::RW + "/controlstation/writeaccess/status";
+  const std::string Resources::RW_CONTROLSTATION_MOTIONCONTROL       = Services::RW + "/controlstation/allowmotioncontrol";
+
   const XMLAttribute XMLAttributes::CLASS_ACTIVE(Identifiers::CLASS                       , Identifiers::ACTIVE);
   const XMLAttribute XMLAttributes::CLASS_CFG_DT_INSTANCE_LI(Identifiers::CLASS           , Identifiers::CFG_DT_INSTANCE_LI);
   const XMLAttribute XMLAttributes::CLASS_CFG_IA_T_LI(Identifiers::CLASS                  , Identifiers::CFG_IA_T_LI);

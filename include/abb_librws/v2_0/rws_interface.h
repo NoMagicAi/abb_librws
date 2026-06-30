@@ -47,6 +47,7 @@
 #include <abb_librws/v2_0/subscription.h>
 #include <abb_librws/xml_attribute.h>
 #include <abb_librws/v2_0/rw/motionsystem.h>
+#include <abb_librws/v2_0/rw/controlstation.h>
 
 namespace abb :: rws :: v2_0
 {
@@ -371,6 +372,11 @@ public:
   rws::rw::RAPIDTaskPcpState getTaskPointersPosition(const std::string& task);
 
   rw::motionsystem::MotionSystemInterface motionsystem;
+
+  /**
+   * \brief ControlStation interface (only available for RobotWare >= 8).
+   */
+  rw::controlstation::ControlStationInterface controlstation;
 
 private:
   using RWSResult = RWSClient::RWSResult;
