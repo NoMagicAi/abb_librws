@@ -78,8 +78,12 @@ static bool digitalSignalToBool(std::string const& value)
 RWSInterface::RWSInterface(RWSClient& client)
 : rws_client_ {client}
 , motionsystem {client}
-, controlstation {client}
 {
+  // Only create controlstation interface if RobotWare version is >= 8
+  SystemInfo system_info = getSystemInfo();
+  if (system_info.version.major >= 8) {
+    controlstation.emplace(client);
+  }
 }
 
 std::vector<cfg::moc::Arm> RWSInterface::getCFGArms()

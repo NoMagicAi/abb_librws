@@ -38,6 +38,7 @@
 
 #include <chrono>
 #include <cstdint>
+#include <optional>
 
 #include <abb_librws/common/rw/io.h>
 #include <abb_librws/rws_cfg.h>
@@ -375,8 +376,10 @@ public:
 
   /**
    * \brief ControlStation interface (only available for RobotWare >= 8).
+   *
+   * This is a std::optional because it's only created when the RobotWare version is >= 8.
    */
-  rw::controlstation::ControlStationInterface controlstation;
+  std::optional<rw::controlstation::ControlStationInterface> controlstation;
 
 private:
   using RWSResult = RWSClient::RWSResult;
