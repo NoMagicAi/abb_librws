@@ -12,6 +12,10 @@ namespace abb ::rws ::v2_0 ::rw ::controlstation {
 using abb::rws::v2_0::Resources;
 using abb::rws::POCOResult;
 
+namespace {
+constexpr char const* FORM_URLENCODED_CONTENT_TYPE = "application/x-www-form-urlencoded;v=2.0";
+}  // namespace
+
 ControlStationInterface::ControlStationInterface(RWSClient& rws_client) : rws_client_{rws_client} {}
 
 void ControlStationInterface::registerRemote(std::string const& control_station_name,
@@ -22,17 +26,16 @@ void ControlStationInterface::registerRemote(std::string const& control_station_
                         "&control-station-id=" + control_station_id +
                         "&pincode=" + pincode +
                         "&release-write-access-when-lost=" + (release_write_access_when_lost ? "true" : "false");
-  std::string content_type = "application/x-www-form-urlencoded;v=2.0";
 
-  rws_client_.httpPost(Resources::RW_CONTROLSTATION_REGISTER_REMOTE, content, content_type);
+  rws_client_.httpPost(Resources::RW_CONTROLSTATION_REGISTER_REMOTE, content, FORM_URLENCODED_CONTENT_TYPE);
 }
 
 void ControlStationInterface::requestWriteAccess() const {
-  rws_client_.httpPost(Resources::RW_CONTROLSTATION_WRITEACCESS_REQUEST);
+  rws_client_.httpPost(Resources::RW_CONTROLSTATION_WRITEACCESS_REQUEST,"",FORM_URLENCODED_CONTENT_TYPE);
 }
 
 void ControlStationInterface::releaseWriteAccess() const {
-  rws_client_.httpPost(Resources::RW_CONTROLSTATION_WRITEACCESS_RELEASE);
+  rws_client_.httpPost(Resources::RW_CONTROLSTATION_WRITEACCESS_RELEASE,"",FORM_URLENCODED_CONTENT_TYPE);
 }
 
 RWSClient::RWSResult ControlStationInterface::getWriteAccessStatus() const {
@@ -44,14 +47,12 @@ RWSClient::RWSResult ControlStationInterface::getWriteAccessStatus() const {
 
 void ControlStationInterface::allowMotionControl() const {
   std::string content = "allow-motion-control=true";
-  std::string content_type = "application/x-www-form-urlencoded;v=2.0";
-  rws_client_.httpPost(Resources::RW_CONTROLSTATION_MOTIONCONTROL, content, content_type);
+  rws_client_.httpPost(Resources::RW_CONTROLSTATION_MOTIONCONTROL, content, FORM_URLENCODED_CONTENT_TYPE);
 }
 
 void ControlStationInterface::releaseMotionControl() const {
   std::string content = "allow-motion-control=false";
-  std::string content_type = "application/x-www-form-urlencoded;v=2.0";
-  rws_client_.httpPost(Resources::RW_CONTROLSTATION_MOTIONCONTROL, content, content_type);
+  rws_client_.httpPost(Resources::RW_CONTROLSTATION_MOTIONCONTROL, content, FORM_URLENCODED_CONTENT_TYPE);
 }
 
 }  // namespace abb::rws::v2_0::rw::controlstation
