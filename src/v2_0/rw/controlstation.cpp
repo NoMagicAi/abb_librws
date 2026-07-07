@@ -8,7 +8,8 @@
 #include <abb_librws/v2_0/rw/controlstation.h>
 #include <abb_librws/v2_0/rws.h>
 #include <abb_librws/rws_poco_result.h>
-#include <abb_librws/rws_common.h>
+#include <abb_librws/parsing.h>
+#include <abb_librws/xml_attribute.h>
 
 namespace abb ::rws ::v2_0 ::rw ::controlstation {
 
@@ -98,12 +99,22 @@ std::string ControlStationWriteAccessStatusSubscribableResource::getURI() const 
 
 void ControlStationWriteAccessStatusSubscribableResource::processEvent(Poco::XML::Element const& li_element, std::function<void(SubscriptionEvent const&)> const& callback) const {
   // Check if this is a control station write access status event
-  if (li_element.getAttribute("class") == "controlstation-write-access-status-ev") {
+  if (li_element.getAttribute("class") == "controlstation-ev") {
     ControlStationExternalControlEvent event;
 
-    // Use the shared parse method to extract all fields
-    event.status = WriteAccessStatus::parse(&li_element);
+    // Parse subscription event format (different from GET request format)
+    auto status = std::make_shared<WriteAccessStatus>();
 
+    status->held_by_control_station_id = xmlFindTextContent(&li_element, XMLAttribute("class", "control-station-Id"));
+    status->held_by_control_station_name = xmlFindTextContent(&li_element, XMLAttribute("class", "control-station-name"));
+
+    std::string write_access_held_str = xmlFindTextContent(&li_element, XMLAttribute("class", "write-access-held"));
+    status->control_station_write_access_held = (write_access_held_str == "true");
+
+    std::string external_control_enabled_str = xmlFindTextContent(&li_element, XMLAttribute("class", "external-control-Enabled"));
+    status->control_station_external_control_enabled = (external_control_enabled_str == "true");
+
+    event.status = status;
     event.resource = std::make_shared<ControlStationWriteAccessStatusSubscribableResource>();
 
     callback(event);

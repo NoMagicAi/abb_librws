@@ -23,8 +23,11 @@
 #include <iostream>
 #include <functional>
 #include <boost/log/trivial.hpp>
-#include <abb_librws/v2_0/rw/controlstation.h>
 
+// Forward declaration to avoid circular dependency
+namespace abb::rws::v2_0::rw::controlstation {
+  struct WriteAccessStatus;
+}
 
 namespace abb :: rws
 {
@@ -213,7 +216,7 @@ namespace abb :: rws
     /**
      * \brief Write access status information
      */
-    rws::v2_0::rw::controlstation::WriteAccessStatus status;
+    std::shared_ptr<rws::v2_0::rw::controlstation::WriteAccessStatus> status;
   };
 
 
