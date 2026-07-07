@@ -2,8 +2,40 @@
 #include <string>
 
 #include <abb_librws/v2_0/rws_client.h>
+#include <abb_librws/rws.h>
 
 namespace abb ::rws ::v2_0 ::rw ::controlstation {
+
+/**
+ * \brief Write access status information from the control station.
+ */
+struct WriteAccessStatus {
+  std::string held_by_control_station_id;
+  std::string held_by_control_station_name;
+  bool control_station_write_access_held;
+  bool control_station_external_control_enabled;
+
+  /**
+   * \brief Parse WriteAccessStatus from a Poco XML Element.
+   *
+   * \param li_element XML element containing the control station write access status data
+   * \return WriteAccessStatus parsed from the XML element
+   *
+   * \throw std::runtime_error if element is null
+   */
+  static WriteAccessStatus parse(Poco::XML::Element const* li_element);
+};
+
+/**
+ * \brief Control station write access status subscription resource
+ */
+struct ControlStationWriteAccessStatusSubscribableResource: public SubscribableResource
+{
+  [[nodiscard]] std::string getURI() const override;
+
+  void processEvent(Poco::XML::Element const& li_element, std::function<void(SubscriptionEvent const&)> const& callback) const override;
+};
+
 /**
  * \brief A class for operating on controlstation in ABB controller (RobotWare >= 8).
  *
@@ -55,11 +87,11 @@ class ControlStationInterface {
    *
    * https://developercenter.robotstudio.com/api/RWS?urls.primaryName=ControlStation%20Service
    *
-   * \return RWSResult containing the write access status information.
+   * \return WriteAccessStatus containing the parsed write access status information.
    *
    * \throw \a RWSError if something goes wrong.
    */
-  RWSClient::RWSResult getWriteAccessStatus() const;
+  WriteAccessStatus getWriteAccessStatus() const;
 
   /**
    * \brief Allow motion control.
