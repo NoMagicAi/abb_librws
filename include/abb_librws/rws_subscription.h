@@ -23,11 +23,8 @@
 #include <iostream>
 #include <functional>
 #include <boost/log/trivial.hpp>
+#include <abb_librws/v2_0/rw/controlstation.h>
 
-// Forward declaration
-namespace abb::rws::v2_0::rw::controlstation {
-  struct WriteAccessStatus;
-}
 
 namespace abb :: rws
 {
