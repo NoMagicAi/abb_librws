@@ -39,7 +39,7 @@ struct ControlStationWriteAccessStatusSubscribableResource: public SubscribableR
 /**
  * \brief A class for operating on controlstation in ABB controller (RobotWare >= 8).
  *
- * https://developercenter.robotstudio.com/api/RWS?urls.primaryName=ControlStation%20Service
+ * https://robotwebservices.robotics.abb.com/api/service?stringValue=Control_Station_Service&resourceVersion=rw8
  */
 class ControlStationInterface {
  public:
@@ -48,7 +48,7 @@ class ControlStationInterface {
   /**
    * \brief Register as remote control station.
    *
-   * https://developercenter.robotstudio.com/api/RWS?urls.primaryName=ControlStation%20Service
+   * https://robotwebservices.robotics.abb.com/api/service?stringValue=Control_Station_Service&resourceVersion=rw8
    *
    * \param control_station_name name of the remote control station.
    * \param control_station_id unique identifier (UUID format).
@@ -67,7 +67,7 @@ class ControlStationInterface {
    *
    * Must be registered as a control station first.
    *
-   * https://developercenter.robotstudio.com/api/RWS?urls.primaryName=ControlStation%20Service
+   * https://robotwebservices.robotics.abb.com/api/service?stringValue=Control_Station_Service&resourceVersion=rw8
    *
    * \throw \a RWSError if something goes wrong.
    */
@@ -76,7 +76,7 @@ class ControlStationInterface {
   /**
    * \brief Release the write access currently held by this control station.
    *
-   * https://developercenter.robotstudio.com/api/RWS?urls.primaryName=ControlStation%20Service
+   * https://robotwebservices.robotics.abb.com/api/service?stringValue=Control_Station_Service&resourceVersion=rw8
    *
    * \throw \a RWSError if something goes wrong.
    */
@@ -85,7 +85,7 @@ class ControlStationInterface {
   /**
    * \brief Check the current write access status.
    *
-   * https://developercenter.robotstudio.com/api/RWS?urls.primaryName=ControlStation%20Service
+   * https://robotwebservices.robotics.abb.com/api/service?stringValue=Control_Station_Service&resourceVersion=rw8
    *
    * \return WriteAccessStatus containing the parsed write access status information.
    *
@@ -96,7 +96,7 @@ class ControlStationInterface {
   /**
    * \brief Allow motion control.
    *
-   * https://developercenter.robotstudio.com/api/RWS?urls.primaryName=ControlStation%20Service
+   * https://robotwebservices.robotics.abb.com/api/service?stringValue=Control_Station_Service&resourceVersion=rw8
    *
    * \throw \a RWSError if something goes wrong.
    */
@@ -105,7 +105,7 @@ class ControlStationInterface {
   /**
    * \brief Release motion control.
    *
-   * https://developercenter.robotstudio.com/api/RWS?urls.primaryName=ControlStation%20Service
+   * https://robotwebservices.robotics.abb.com/api/service?stringValue=Control_Station_Service&resourceVersion=rw8
    *
    * \throw \a RWSError if something goes wrong.
    */

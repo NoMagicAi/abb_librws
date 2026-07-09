@@ -79,7 +79,6 @@ set(
     src/v2_0/rws_progress.cpp
     src/v2_0/rw/rapid.cpp
     src/v2_0/rw/panel.cpp
-    src/v2_0/rw/io.cpp
     src/v2_0/rw/cfg.cpp
     src/v2_0/rw/ctrl.cpp
     src/v2_0/rw/retcode.cpp
