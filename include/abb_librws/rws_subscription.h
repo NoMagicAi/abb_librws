@@ -24,6 +24,10 @@
 #include <functional>
 #include <boost/log/trivial.hpp>
 
+// Forward declaration to avoid circular dependency
+namespace abb::rws::v2_0::rw::controlstation {
+  struct WriteAccessStatus;
+}
 
 namespace abb :: rws
 {
@@ -202,6 +206,17 @@ namespace abb :: rws
   {
     int domain; // domain number
     int seqnum; // seqnence numver of message in domain
+  };
+
+  /**
+   * \brief Event received when control station write access status changes.
+   */
+  struct ControlStationExternalControlEvent: public SubscriptionEvent
+  {
+    /**
+     * \brief Write access status information
+     */
+    std::shared_ptr<rws::v2_0::rw::controlstation::WriteAccessStatus> status;
   };
 
 

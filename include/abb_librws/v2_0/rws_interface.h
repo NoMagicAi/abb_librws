@@ -38,6 +38,7 @@
 
 #include <chrono>
 #include <cstdint>
+#include <optional>
 
 #include <abb_librws/common/rw/io.h>
 #include <abb_librws/rws_cfg.h>
@@ -47,6 +48,7 @@
 #include <abb_librws/v2_0/subscription.h>
 #include <abb_librws/xml_attribute.h>
 #include <abb_librws/v2_0/rw/motionsystem.h>
+#include <abb_librws/v2_0/rw/controlstation.h>
 
 namespace abb :: rws :: v2_0
 {
@@ -371,6 +373,13 @@ public:
   rws::rw::RAPIDTaskPcpState getTaskPointersPosition(const std::string& task);
 
   rw::motionsystem::MotionSystemInterface motionsystem;
+
+  /**
+   * \brief ControlStation interface (only available for RobotWare >= 8).
+   *
+   * This is a std::optional because it's only created when the RobotWare version is >= 8.
+   */
+  std::optional<rw::controlstation::ControlStationInterface> controlstation;
 
 private:
   using RWSResult = RWSClient::RWSResult;
