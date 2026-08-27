@@ -30,7 +30,7 @@ namespace abb :: rws :: v1_0 :: rw :: ctrl
         uri << Services::CTRL << "/safety/violation";
 
         RWSResult rws_result = parseXml(client.httpGet(uri.str()).content());
-        
+
         SafetyViolationInfo result;
         result.unsynchronized = std::stoi(xmlFindTextContent(rws_result, XMLAttribute(Identifiers::CLASS, "unsynchronized"))) != 0;
         result.toolPosViolation = std::stoi(xmlFindTextContent(rws_result, XMLAttribute(Identifiers::CLASS, "tool-pos-violation-status")))!= 0;
@@ -40,5 +40,14 @@ namespace abb :: rws :: v1_0 :: rw :: ctrl
         return result;
     }
 
+    void setTimeserver(RWSClient& client, std::string const& time_server_ip)
+    {
+        std::stringstream uri;
+        uri << Services::CTRL << "/clock/timeserver";
+
+        std::string content = "server-ip=" + time_server_ip;
+
+        client.httpPost(uri.str(), content, {Poco::Net::HTTPResponse::HTTP_OK});
+    }
 
 }

@@ -45,4 +45,15 @@ namespace abb :: rws :: v2_0 :: rw :: ctrl
         client.httpPost(uri.str(), content, content_type);
     }
 
+    void setTimeserver(RWSClient& client, std::string const& time_server_ip)
+    {
+        std::stringstream uri;
+        uri << Services::CTRL << "/clock/timeserver";
+
+        std::string content = "server-ip=" + time_server_ip;
+        std::string content_type = "application/x-www-form-urlencoded;v=2.0";
+
+        client.httpPost(uri.str(), content, content_type);
+    }
+
 }

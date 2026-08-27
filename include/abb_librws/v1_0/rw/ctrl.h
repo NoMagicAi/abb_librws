@@ -48,5 +48,16 @@ namespace abb :: rws :: v1_0 :: rw :: ctrl
    */
     void loadSafeMoveFile(RWSClient& client, const FileResource& resource);
 
+    /**
+     * \brief A function for setting the robot controller's time server.
+     *
+     * Setting the time server also forces the controller to immediately re-sync against it.
+     *
+     * \param client RWS client
+     * \param time_server_ip IP address of the time server
+     *
+     * \throw \a RWSError if something goes wrong.
+     */
+    void setTimeserver(RWSClient& client, std::string const& time_server_ip);
 
 }
