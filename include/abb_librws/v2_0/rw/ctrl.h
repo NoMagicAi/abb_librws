@@ -51,12 +51,37 @@ namespace abb :: rws :: v2_0 :: rw :: ctrl
     /**
      * \brief A function for setting the robot controller's time server.
      *
-     * Setting the time server also forces the controller to immediately re-sync against it.
-     *
      * \param client RWS client
      * \param time_server_ip IP address of the time server
      *
      * \throw \a RWSError if something goes wrong.
      */
     void setTimeserver(RWSClient& client, std::string const& time_server_ip);
+
+    /**
+     * \brief A function for retrieving the robot controller's configured time server and
+     * the time it reports for that server.
+     *
+     * \param client RWS client
+     *
+     * \return TimeserverInfo containing the configured time server and its reported time.
+     *
+     * \throw \a RWSError if something goes wrong.
+     */
+    TimeserverInfo getTimeserverInfo(RWSClient& client);
+
+    /**
+     * \brief A function for explicitly setting the robot controller's clock.
+     *
+     * \param client RWS client
+     * \param year four-digit year
+     * \param month month of year, 1-12
+     * \param day day of month, 1-31
+     * \param hour hour of day, 0-23
+     * \param minute minute of hour, 0-59
+     * \param second second of minute, 0-59
+     *
+     * \throw \a RWSError if something goes wrong.
+     */
+    void setDatetime(RWSClient& client, int year, int month, int day, int hour, int minute, int second);
 }
