@@ -84,4 +84,14 @@ namespace abb :: rws :: v2_0 :: rw :: ctrl
      * \throw \a RWSError if something goes wrong.
      */
     void setDatetime(RWSClient& client, int year, int month, int day, int hour, int minute, int second);
+
+    /**
+     * \brief A function for setting the robot controller's timezone.
+     *
+     * \param client RWS client
+     * \param timezone timezone name (e.g. "Europe/Stockholm"), empty string for UTC
+     *
+     * \throw \a RWSError if something goes wrong.
+     */
+    void setTimezone(RWSClient& client, std::string const& timezone);
 }

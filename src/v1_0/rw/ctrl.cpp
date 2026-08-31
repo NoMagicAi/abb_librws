@@ -79,4 +79,12 @@ namespace abb :: rws :: v1_0 :: rw :: ctrl
         client.httpPut(uri, content.str(), {Poco::Net::HTTPResponse::HTTP_OK});
     }
 
+    void setTimezone(RWSClient& client, std::string const& timezone)
+    {
+        std::string const uri = Services::CTRL + "/clock/timezone";
+        std::string const content = "timezone=" + timezone;
+
+        client.httpPost(uri, content, {Poco::Net::HTTPResponse::HTTP_OK});
+    }
+
 }
