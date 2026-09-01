@@ -83,7 +83,9 @@ namespace abb :: rws :: v2_0 :: rw :: ctrl
         std::string const uri = Services::CTRL + "/clock";
         std::string const content_type = "application/x-www-form-urlencoded;v=2.0";
 
-        client.httpPut(uri, content.str(), content_type);
+        client.httpPut(uri, content.str(), content_type,
+                        {Poco::Net::HTTPResponse::HTTP_OK, Poco::Net::HTTPResponse::HTTP_CREATED,
+                         Poco::Net::HTTPResponse::HTTP_NO_CONTENT});
     }
 
     void setTimezone(RWSClient& client, std::string const& timezone)

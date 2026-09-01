@@ -47,7 +47,7 @@ namespace abb :: rws :: v1_0 :: rw :: ctrl
         std::string const uri = Services::CTRL + "/clock/timeserver";
         std::string const content = "server-ip=" + time_server_ip;
 
-        client.httpPost(uri, content, {Poco::Net::HTTPResponse::HTTP_OK});
+        client.httpPost(uri, content, {Poco::Net::HTTPResponse::HTTP_OK, Poco::Net::HTTPResponse::HTTP_NO_CONTENT});
     }
 
     TimeserverInfo getTimeserverInfo(RWSClient& client)
@@ -76,7 +76,7 @@ namespace abb :: rws :: v1_0 :: rw :: ctrl
 
         std::string const uri = Services::CTRL + "/clock";
 
-        client.httpPut(uri, content.str(), {Poco::Net::HTTPResponse::HTTP_OK});
+        client.httpPut(uri, content.str(), {Poco::Net::HTTPResponse::HTTP_OK, Poco::Net::HTTPResponse::HTTP_NO_CONTENT});
     }
 
     void setTimezone(RWSClient& client, std::string const& timezone)
@@ -84,7 +84,7 @@ namespace abb :: rws :: v1_0 :: rw :: ctrl
         std::string const uri = Services::CTRL + "/clock/timezone";
         std::string const content = "timezone=" + timezone;
 
-        client.httpPost(uri, content, {Poco::Net::HTTPResponse::HTTP_OK});
+        client.httpPost(uri, content, {Poco::Net::HTTPResponse::HTTP_OK, Poco::Net::HTTPResponse::HTTP_NO_CONTENT});
     }
 
 }
