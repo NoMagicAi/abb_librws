@@ -2,6 +2,7 @@
 
 #include <abb_librws/rws.h>
 
+#include <ctime>
 #include <string>
 
 
@@ -34,6 +35,14 @@ namespace abb :: rws :: rw
         bool armViolation = false;
         //One of the robot axes is outside allowed area
         bool axisRangeViolation = false;
+    };
+
+    struct TimeserverInfo
+    {
+        // Configured time server address (IP or hostname)
+        std::string timeserver;
+        // Time reported by the controller for the configured time server, in epoch seconds
+        std::time_t time = 0;
     };
 
 }

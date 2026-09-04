@@ -40,7 +40,7 @@ namespace abb :: rws :: v1_0 :: subscription
     {
       try{
         closeSubscription(client_, subscription_group_id_);
-      }catch(const abb::rws::CommunicationError& ex){
+      }catch(const abb::rws::RWSError& ex){
         std::string info = boost::diagnostic_information(ex);
         BOOST_LOG_TRIVIAL(error) << "Failed to close subscription: " << info;
       }
