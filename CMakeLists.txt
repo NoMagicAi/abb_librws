@@ -43,7 +43,6 @@ set(
     src/rws_poco_result.cpp
     src/rws_rapid.cpp
     src/rws_resource.cpp
-    src/rws_state_machine_interface.cpp
     src/rws_subscription.cpp
     src/rws_websocket.cpp
     src/rws.cpp
@@ -57,21 +56,6 @@ set(
     src/common/rw/ctrl.cpp
     src/common/rw/elog.cpp
     src/common/rw/retcode.cpp
-
-    src/v1_0/rws.cpp
-    src/v1_0/rws_client.cpp
-    src/v1_0/rws_interface.cpp
-    src/v1_0/rws_progress.cpp
-    src/v1_0/rw/rapid.cpp
-    src/v1_0/rw/panel.cpp
-    src/v1_0/rw/io.cpp
-    src/v1_0/rw/cfg.cpp
-    src/v1_0/rw/ctrl.cpp
-    src/v1_0/rw/retcode.cpp
-    src/v1_0/subscription.cpp
-    src/v1_0/rw/elog.cpp
-    src/v1_0/rw/motionsystem.cpp
-    src/v1_0/rw/system.cpp
 
     src/v2_0/rws.cpp
     src/v2_0/rws_client.cpp
