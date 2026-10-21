@@ -43,9 +43,10 @@ jobs:
       uses: actions/cache/restore@v6
       with:
         path: ${{ env.POCO_PREFIX }}
-        key: poco-${{ env.POCO_COMMIT }}-ubuntu22.04
+        # Any change to this file, e.g. to the Poco flags, gives a new key and a new Poco build.
+        key: poco-${{ env.POCO_COMMIT }}-ubuntu22.04-${{ hashFiles('.github/workflows/linux.yml') }}
 
-    # The same flags as the robot-driver-abb-base image in NoMagicAi/monomagic.
+    # The same Poco modules as the robot-driver-abb-base image in NoMagicAi/monomagic.
     - name: Build Poco
       if: steps.poco-cache.outputs.cache-hit != 'true'
       run: |
@@ -53,9 +54,7 @@ jobs:
         git -C /tmp/poco fetch --depth 1 https://github.com/pocoproject/poco.git "$POCO_COMMIT"
         git -C /tmp/poco checkout FETCH_HEAD
         cmake -S /tmp/poco -B /tmp/poco/build -DCMAKE_INSTALL_PREFIX="$POCO_PREFIX" \
-          -DENABLE_JSON=OFF -DENABLE_XML=OFF -DENABLE_UTIL=OFF -DENABLE_MONGODB=OFF -DENABLE_REDIS=OFF \
-          -DENABLE_DATA=OFF -DENABLE_DATA_SQLITE=OFF -DENABLE_DATA_MYSQL=OFF -DENABLE_DATA_ODBC=OFF \
-          -DENABLE_SEVENZIP=OFF -DENABLE_ZIP=OFF -DENABLE_CPPPARSER=OFF -DENABLE_POCODOC=OFF \
+          -DENABLE_MONGODB=OFF -DENABLE_REDIS=OFF -DENABLE_DATA_SQLITE=OFF -DENABLE_ZIP=OFF \
           -DENABLE_PAGECOMPILER=OFF -DENABLE_PAGECOMPILER_FILE2PAGE=OFF
         cmake --build /tmp/poco/build -j"$(nproc)" --target install
 
