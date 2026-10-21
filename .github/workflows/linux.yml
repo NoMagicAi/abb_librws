@@ -40,7 +40,7 @@ jobs:
     # Ubuntu 22.04 ships Poco 1.11. Thus the job builds Poco 1.14 once and restores it from the cache after that.
     - name: Restore Poco from cache
       id: poco-cache
-      uses: actions/cache@v6
+      uses: actions/cache/restore@v6
       with:
         path: ${{ env.POCO_PREFIX }}
         key: poco-${{ env.POCO_COMMIT }}-ubuntu22.04
@@ -58,6 +58,15 @@ jobs:
           -DENABLE_SEVENZIP=OFF -DENABLE_ZIP=OFF -DENABLE_CPPPARSER=OFF -DENABLE_POCODOC=OFF \
           -DENABLE_PAGECOMPILER=OFF -DENABLE_PAGECOMPILER_FILE2PAGE=OFF
         cmake --build /tmp/poco/build -j"$(nproc)" --target install
+
+    # actions/cache saves only when the whole job succeeds. This step saves Poco as soon as its build
+    # succeeds. It has no always(), so a failed Poco build saves nothing.
+    - name: Save Poco to cache
+      if: steps.poco-cache.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v6
+      with:
+        path: ${{ env.POCO_PREFIX }}
+        key: ${{ steps.poco-cache.outputs.cache-primary-key }}
 
     # libPocoNetSSL needs libPocoCrypto, and the loader does not search the Poco prefix by default.
     # /etc is not in the cache, so this step also runs when the cache restores Poco.
