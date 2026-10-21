@@ -27,9 +27,6 @@ jobs:
       # The commit of the tag poco-1.14.0-release. The branch poco-1.14.0 can still get new commits.
       POCO_COMMIT: 02c86d4cddb14de293eabdb795e4a7c61745eb2b
       POCO_PREFIX: /opt/poco
-      # libPocoNetSSL needs libPocoCrypto. The RUNPATH of abb_librws-test applies only to its
-      # direct dependencies, so the loader finds libPocoCrypto only through this path.
-      LD_LIBRARY_PATH: /opt/poco/lib
 
     steps:
     - name: Install dependencies
@@ -61,6 +58,13 @@ jobs:
           -DENABLE_SEVENZIP=OFF -DENABLE_ZIP=OFF -DENABLE_CPPPARSER=OFF -DENABLE_POCODOC=OFF \
           -DENABLE_PAGECOMPILER=OFF -DENABLE_PAGECOMPILER_FILE2PAGE=OFF
         cmake --build /tmp/poco/build -j"$(nproc)" --target install
+
+    # libPocoNetSSL needs libPocoCrypto, and the loader does not search the Poco prefix by default.
+    # /etc is not in the cache, so this step also runs when the cache restores Poco.
+    - name: Register Poco with the loader
+      run: |
+        echo "$POCO_PREFIX/lib" > /etc/ld.so.conf.d/poco.conf
+        ldconfig
 
     - name: Build
       run: |
