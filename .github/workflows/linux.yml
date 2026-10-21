@@ -1,0 +1,60 @@
+name: Linux
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  build-and-test:
+    name: 'Build and test on Ubuntu 22.04'
+    runs-on: ubuntu-latest
+    # Ubuntu 22.04 is the base of the robot-driver-abb image in NoMagicAi/monomagic.
+    container: ubuntu:22.04
+    env:
+      # The commit of the tag poco-1.14.0-release. The branch poco-1.14.0 can still get new commits.
+      POCO_COMMIT: 02c86d4cddb14de293eabdb795e4a7c61745eb2b
+      POCO_PREFIX: /opt/poco
+      # libPocoNetSSL needs libPocoCrypto. The RUNPATH of abb_librws-test applies only to its
+      # direct dependencies, so the loader finds libPocoCrypto only through this path.
+      LD_LIBRARY_PATH: /opt/poco/lib
+
+    steps:
+    - name: Install dependencies
+      run: |
+        apt-get update
+        DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+          ca-certificates git cmake make g++ libssl-dev libboost-exception-dev libboost-log-dev libgtest-dev
+
+    - uses: actions/checkout@v7
+
+    # Ubuntu 22.04 ships Poco 1.11. Thus the job builds Poco 1.14 once and restores it from the cache after that.
+    - name: Restore Poco from cache
+      id: poco-cache
+      uses: actions/cache@v6
+      with:
+        path: ${{ env.POCO_PREFIX }}
+        key: poco-${{ env.POCO_COMMIT }}-ubuntu22.04
+
+    # The same flags as the robot-driver-abb-base image in NoMagicAi/monomagic.
+    - name: Build Poco
+      if: steps.poco-cache.outputs.cache-hit != 'true'
+      run: |
+        git init /tmp/poco
+        git -C /tmp/poco fetch --depth 1 https://github.com/pocoproject/poco.git "$POCO_COMMIT"
+        git -C /tmp/poco checkout FETCH_HEAD
+        cmake -S /tmp/poco -B /tmp/poco/build -DCMAKE_INSTALL_PREFIX="$POCO_PREFIX" \
+          -DENABLE_JSON=OFF -DENABLE_XML=OFF -DENABLE_UTIL=OFF -DENABLE_MONGODB=OFF -DENABLE_REDIS=OFF \
+          -DENABLE_DATA=OFF -DENABLE_DATA_SQLITE=OFF -DENABLE_DATA_MYSQL=OFF -DENABLE_DATA_ODBC=OFF \
+          -DENABLE_SEVENZIP=OFF -DENABLE_ZIP=OFF -DENABLE_CPPPARSER=OFF -DENABLE_POCODOC=OFF \
+          -DENABLE_PAGECOMPILER=OFF -DENABLE_PAGECOMPILER_FILE2PAGE=OFF
+        cmake --build /tmp/poco/build -j"$(nproc)" --target install
+
+    - name: Build
+      run: |
+        cmake -S . -B build -DCMAKE_PREFIX_PATH="$POCO_PREFIX"
+        cmake --build build -j"$(nproc)"
+
+    - name: Test
+      run: ctest --test-dir build --output-on-failure
