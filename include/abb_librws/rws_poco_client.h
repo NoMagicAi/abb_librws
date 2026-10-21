@@ -275,11 +275,11 @@ namespace rws
                       std::string& response_content);
 
     /**
-     * \brief A method for extracting and storing information from a cookie string.
+     * \brief A method for storing the cookies that a response sets. A cookie replaces a stored cookie with the same name.
      *
-     * \param cookie_string for the cookie string.
+     * \param response for the HTTP response.
      */
-    void extractAndStoreCookie(const std::string& cookie_string);
+    void updateCookies(const Poco::Net::HTTPResponse& response);
 
     /**
      * \brief A HTTP client session.

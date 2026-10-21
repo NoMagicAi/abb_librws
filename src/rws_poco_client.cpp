@@ -120,42 +120,21 @@ POCOResult POCOClient::makeHTTPRequest(const std::string& method,
   try
   {
     sendAndReceive(request, response, content, response_content);
+    updateCookies(response);
 
-    // Check if the server has sent an update for the cookies.
-    std::vector<HTTPCookie> temp_cookies;
-    response.getCookies(temp_cookies);
-    for (size_t i = 0; i < temp_cookies.size(); ++i)
-    {
-      if (cookies_.find(temp_cookies[i].getName()) != cookies_.end())
-      {
-        cookies_.set(temp_cookies[i].getName(), temp_cookies[i].getValue());
-      }
-      else
-      {
-        cookies_.add(temp_cookies[i].getName(), temp_cookies[i].getValue());
-      }
-    }
-
-    // Check if there was a server error, if so, make another attempt with a clean sheet.
-    if (response.getStatus() >= HTTPResponse::HTTP_INTERNAL_SERVER_ERROR)
-    {
-      http_client_session_.reset();
-      request.erase(HTTPRequest::COOKIE);
-      sendAndReceive(request, response, content, response_content);
-    }
-
-    // Check if the request was unauthorized, if so add credentials.
+    // RWS 2.0 answers 401 when the cookies name no session on the controller, e.g. after a logout or after
+    // 5 minutes without a request. Only then does the client log in to a new session.
     if (response.getStatus() == HTTPResponse::HTTP_UNAUTHORIZED)
     {
       authenticate(request, response, content, response_content);
     }
 
-
     return POCOResult {response.getStatus(), response.getReason(), response, response_content};
   }
   catch (CommunicationError const&)
   {
-    cookies_.clear();
+    // The session lives in the cookies, not in the TCP connection, so a new connection with the same cookies
+    // continues the session. Thus only the connection is reset.
     http_client_session_.reset();
 
     throw;
@@ -269,36 +248,23 @@ void POCOClient::authenticate(HTTPRequest& request,
                               const std::string& request_content,
                               std::string& response_content)
 {
-  // Remove any old cookies.
-  cookies_.clear();
-
   // Authenticate with the provided credentials.
   http_credentials_.authenticate(request, response);
 
-  // Contact the server, and extract and store the received cookies.
+  // The request still has the old cookies. If they name a live session, the controller keeps that session and sets
+  // no cookies. Thus the old cookies stay, and only the cookies that the response sets replace them.
   sendAndReceive(request, response, request_content, response_content);
-  std::vector<HTTPCookie> temp_cookies;
-  response.getCookies(temp_cookies);
-
-  for (size_t i = 0; i < temp_cookies.size(); ++i)
-  {
-    extractAndStoreCookie(temp_cookies[i].toString());
-  }
+  updateCookies(response);
 }
 
-void POCOClient::extractAndStoreCookie(const std::string& cookie_string)
+void POCOClient::updateCookies(const HTTPResponse& response)
 {
-  // Find the positions of the cookie delimiters.
-  size_t position_1 = cookie_string.find_first_of("=");
-  size_t position_2 = cookie_string.find_first_of(";");
+  std::vector<HTTPCookie> response_cookies;
+  response.getCookies(response_cookies);
 
-  // Extract and store the cookie (if the delimiters was found).
-  if (position_1 != std::string::npos && position_2 != std::string::npos)
+  for (HTTPCookie const& cookie : response_cookies)
   {
-    std::string result = cookie_string.substr(0, position_1++);
-    std::string result2 = cookie_string.substr(position_1, position_2 - position_1);
-
-    cookies_.add(result, result2);
+    cookies_.set(cookie.getName(), cookie.getValue());
   }
 }
 
