@@ -6,6 +6,17 @@ on:
       - master
   pull_request:
 
+# The job only reads the repository. Without this block, the token gets the repository default,
+# which is write access.
+permissions:
+  contents: read
+
+# A new push to a PR cancels the run of its older push. A push to master waits for the run on
+# master, and a newer push to master replaces a run that still waits.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   build-and-test:
     name: 'Build and test on Ubuntu 22.04'
