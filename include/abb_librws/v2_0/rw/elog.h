@@ -42,9 +42,31 @@ namespace abb ::rws ::v2_0 ::rw ::elog
      * @param domain domain number
      * @param seqnum sequence number to start from. If -1, the last @param limit messages are returned. Default -1.
      * @param lang The language in which messages will be returned. English default.
+     *             Empty: no lang parameter, so the messages have no text (title, desc, conseqs, causes, actions),
+     *             only the code and the arguments. The controller then does no text work, answers faster
+     *             and returns up to 200 messages (with lang at most 50).
      * @param limit The number of messages to return. Default 50.
      * @param order The order in which messages will be returned (fifo or lifo). LIFO default.
      * @return ElogMessage structure
      */
     std::vector<ElogMessage> getElogMessages(RWSClient& client, int const domain, int const seqnum = -1, std::string const& lang = Language::ENGLISH, int const limit = 50, Order const order = Order::LIFO);
+
+    /**
+     * @brief Get the elog text registry of the controller (GET /ctrl/registry/elogtext).
+     *
+     * The registry lists the elog text file of each domain. The path of a file in language xx is
+     * prepath + xx + postpath; it can be read with the file service. Not in the public RWS documentation,
+     * used by the ABB PC SDK. Available on RobotWare 7 real and virtual controllers.
+     *
+     * @param client RWSClient
+     * @return The registry XML document (namespace urn:abb-robotics-registry-elog-text).
+     */
+    std::string getElogTextRegistry(RWSClient& client);
+
+    /**
+     * @brief Extract the elog text registry XML document from the reply of GET /ctrl/registry/elogtext.
+     *
+     * @throw std::invalid_argument if the reply has no registry.
+     */
+    std::string parseElogTextRegistry(std::string const& xml_string);
 }

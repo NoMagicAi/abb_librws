@@ -116,6 +116,7 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME OR MYPROJECT_BUILD_TESTING)
   add_executable(${PROJECT_NAME}-test
       test/rws_poco_client_test.cpp
       test/rws_rapid_test.cpp
+      test/rws_elog_test.cpp
   )
 
   target_link_libraries(${PROJECT_NAME}-test
