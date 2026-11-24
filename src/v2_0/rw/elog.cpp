@@ -14,6 +14,8 @@ namespace abb ::rws ::v2_0 ::rw ::elog
 {
     using namespace rws::rw::elog;
 
+    std::string const ELOG_TEXT_REGISTRY_URI = "/ctrl/registry/elogtext";
+
     ElogSubscribableResource::ElogSubscribableResource(int domain)
         : domain_(domain)
     {
@@ -172,11 +174,29 @@ namespace abb ::rws ::v2_0 ::rw ::elog
     std::vector<ElogMessage> getElogMessages(RWSClient& client, int const domain, int const seqnum, std::string const& lang, int const limit, Order const order)
     {
         std::stringstream uri;
-        uri << "/rw/elog/" << domain << "?lang=" << lang << "&order=" << to_string(order);
+        uri << "/rw/elog/" << domain << "?order=" << to_string(order);
+        // Without lang the controller sends only the code and the arguments, not the text.
+        if (!lang.empty()) uri << "&lang=" << lang;
         if (seqnum >= 0) uri << "&elogseqnum=" << seqnum;
         if (limit > 0) uri << "&limit=" << limit;
         POCOResult poco_result = client.httpGet(uri.str(), {Poco::Net::HTTPResponse::HTTP_NO_CONTENT, Poco::Net::HTTPResponse::HTTP_OK}, "2.1");
         std::vector<ElogMessage> messages = parseElogMessagesXml(poco_result.content());
         return messages;
+    }
+
+    std::string parseElogTextRegistry(std::string const& xml_string)
+    {
+        Poco::AutoPtr<Poco::XML::Document> rws_result = parseXml(xml_string);
+        auto const nodes = xmlFindNodes(rws_result, XMLAttribute("class", "elogtext"));
+        if (nodes.empty())
+            BOOST_THROW_EXCEPTION(std::invalid_argument{"No elogtext registry in the reply of " + ELOG_TEXT_REGISTRY_URI});
+        // The registry is an XML document in a CDATA section; innerText() returns it as it is.
+        return nodes.front()->innerText();
+    }
+
+    std::string getElogTextRegistry(RWSClient& client)
+    {
+        POCOResult poco_result = client.httpGet(ELOG_TEXT_REGISTRY_URI);
+        return parseElogTextRegistry(poco_result.content());
     }
 }
